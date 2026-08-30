@@ -1,0 +1,25 @@
+{
+  "name": "cnmcp-stats-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-01-24",
+  "observability": {
+    "enabled": true
+  },
+  "triggers": {
+    "crons": ["17 3 * * *"]
+  },
+  "vars": {
+    "ALLOWED_ORIGINS": "https://www.cnmcp.com",
+    "EVENT_RATE_LIMIT_PER_HOUR": "120",
+    "RECEIPT_RETENTION_SECONDS": "691200",
+    "RATE_LIMIT_RETENTION_SECONDS": "7200"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "cnmcp-stats",
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

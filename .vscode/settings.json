@@ -1,0 +1,13 @@
+{
+  "css.validate": false,
+  "editor.formatOnSave": false,
+  "editor.tabSize": 2,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "headwind.runOnSave": false,
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "eslint.validate": ["javascript", "javascriptreact", "typescript"],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "commentTranslate.source": "Bing"
+}

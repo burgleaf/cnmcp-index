@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "beta-skill",
+  "kind": "skill",
+  "name": "贝塔代码审查 Skill",
+  "summary": "帮助编码代理执行结构化代码审查和质量检查。",
+  "repository": "https://github.com/cnmcp-fixtures/beta-skill",
+  "license": "Apache-2.0",
+  "author": { "name": "CNMCP Fixtures" },
+  "tags": ["code-quality"],
+  "compatibility": [
+    {
+      "platform": "codex",
+      "status": "supported",
+      "verifiedAt": "2025-02-01",
+      "installations": [
+        {
+          "type": "config",
+          "label": "配置 Skill",
+          "content": "{\"skillPath\": \"{{SKILL_PATH}}\"}",
+          "target": "~/.codex/config.json",
+          "placeholders": [
+            { "name": "SKILL_PATH", "description": "替换为 Skill 的本地绝对路径", "secret": false }
+          ]
+        }
+      ]
+    },
+    {
+      "platform": "claude-code",
+      "status": "partial",
+      "verifiedAt": "2025-02-02",
+      "note": "仅支持手动加载，暂不支持自动发现。",
+      "installations": [
+        {
+          "type": "manual",
+          "content": "将 Skill 文件复制到项目约定的目录。",
+          "target": "项目 Skill 目录"
+        }
+      ]
+    }
+  ],
+  "createdAt": "2025-02-01"
+}

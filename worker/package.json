@@ -1,0 +1,27 @@
+{
+  "name": "cnmcp-stats-worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "eslint src test vitest.config.ts worker-configuration.d.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check": "npm run lint && npm run typecheck && npm test",
+    "dry-run": "wrangler deploy --dry-run --outdir dist"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "1.1.2",
+    "@cloudflare/workers-types": "5.20260830.1",
+    "@eslint/js": "9.39.2",
+    "@types/node": "24.10.1",
+    "eslint": "9.39.2",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.68.0",
+    "vitest": "4.1.11",
+    "wrangler": "4.127.1"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

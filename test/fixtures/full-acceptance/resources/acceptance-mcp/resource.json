@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "id": "acceptance-mcp",
+  "kind": "mcp",
+  "name": "验收 MCP",
+  "nameEn": "Acceptance MCP",
+  "summary": "隔离验证 MCP 的静态详情、搜索筛选、安装复制与外链统计。",
+  "summaryEn": "Isolated MCP acceptance fixture for static pages and interactions.",
+  "repository": "https://example.com/acceptance-mcp-source",
+  "homepage": "https://example.com/acceptance-mcp-home",
+  "documentation": "https://example.com/acceptance-mcp-docs",
+  "license": "MIT",
+  "author": {
+    "name": "验收作者甲",
+    "url": "https://example.com/authors/alpha"
+  },
+  "tags": ["context", "testing"],
+  "compatibility": [
+    {
+      "platform": "codex",
+      "status": "native",
+      "verifiedAt": "2026-02-20",
+      "installations": [
+        {
+          "type": "command",
+          "label": "安装验收 MCP",
+          "shell": "bash",
+          "command": "acceptance-mcp install --token {{TOKEN_VALUE}}",
+          "target": "项目根目录终端",
+          "placeholders": [
+            {
+              "name": "TOKEN_VALUE",
+              "description": "本地测试令牌",
+              "secret": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "platform": "claude-code",
+      "status": "partial",
+      "verifiedAt": "2026-02-21",
+      "note": "仅支持本地项目，远程工作区需手动配置。",
+      "installations": [
+        {
+          "type": "config",
+          "label": "Claude Code 配置",
+          "content": "{\"endpoint\":\"{{SERVICE_URL}}\"}",
+          "target": "~/.claude/settings.json",
+          "placeholders": [
+            {
+              "name": "SERVICE_URL",
+              "description": "测试服务地址",
+              "secret": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "createdAt": "2026-02-18",
+  "updatedAt": "2026-02-21",
+  "visibility": "public",
+  "featured": true,
+  "preview": "preview.svg"
+}

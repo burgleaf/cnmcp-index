@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "alpha-mcp",
+  "kind": "mcp",
+  "name": "阿尔法 MCP",
+  "nameEn": "Alpha MCP",
+  "summary": "为编码代理提供经过筛选的上下文查询能力。",
+  "summaryEn": "Provides curated context lookup for coding agents.",
+  "repository": "https://github.com/cnmcp-fixtures/alpha-mcp",
+  "homepage": "https://example.com/alpha-mcp",
+  "documentation": "https://example.com/alpha-mcp/docs",
+  "license": "MIT",
+  "author": { "name": "CNMCP Fixtures", "url": "https://example.com" },
+  "tags": ["context", "productivity"],
+  "compatibility": [
+    {
+      "platform": "claude-code",
+      "status": "unsupported",
+      "verifiedAt": "2025-01-02",
+      "note": "当前没有 Claude Code 接入方式。"
+    },
+    {
+      "platform": "codex",
+      "status": "native",
+      "verifiedAt": "2025-01-02",
+      "installations": [
+        {
+          "type": "command",
+          "label": "添加 MCP",
+          "shell": "any",
+          "command": "codex mcp add alpha --token {{API_TOKEN}}",
+          "placeholders": [
+            { "name": "API_TOKEN", "description": "替换为用户自己的访问令牌", "secret": true }
+          ]
+        }
+      ]
+    }
+  ],
+  "createdAt": "2025-01-01",
+  "featured": true
+}

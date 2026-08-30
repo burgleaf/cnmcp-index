@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "replace-me-mcp",
+  "kind": "mcp",
+  "name": "请替换为资源名称",
+  "summary": "请用十个以上字符说明资源用途、适用场景与主要能力。",
+  "repository": "https://example.com/replace-me-mcp",
+  "documentation": "https://example.com/replace-me-mcp/docs",
+  "license": "MIT",
+  "author": {
+    "name": "请替换为作者名称",
+    "url": "https://example.com/author"
+  },
+  "tags": [
+    "productivity"
+  ],
+  "compatibility": [
+    {
+      "platform": "codex",
+      "status": "unknown",
+      "verifiedAt": "2026-01-01",
+      "note": "尚未完成兼容性核验。"
+    },
+    {
+      "platform": "claude-code",
+      "status": "unknown",
+      "verifiedAt": "2026-01-01",
+      "note": "尚未完成兼容性核验。"
+    }
+  ],
+  "createdAt": "2026-01-01",
+  "visibility": "public"
+}

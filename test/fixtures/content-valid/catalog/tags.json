@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "tags": [
+    { "id": "automation", "name": "自动化" },
+    { "id": "code-quality", "name": "代码质量" },
+    { "id": "context", "name": "上下文" },
+    { "id": "productivity", "name": "效率工具" }
+  ]
+}

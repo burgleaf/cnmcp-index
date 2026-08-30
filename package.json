@@ -1,0 +1,48 @@
+{
+  "name": "cnmcp-ai-resource-community",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "validate:resources": "node scripts/validate-resources.mjs",
+    "generate:catalog": "node scripts/generate-catalog.mjs",
+    "sync:stats:local": "node scripts/sync-stats-catalog.mjs --local",
+    "worker:check": "npm --prefix worker run check",
+    "worker:dry-run": "npm --prefix worker run dry-run",
+    "audit:static-runtime": "node scripts/audit-static-runtime.mjs",
+    "content:prepare": "yarn validate:resources && yarn generate:catalog",
+    "prebuild": "yarn content:prepare",
+    "build": "node scripts/build-static.mjs",
+    "lint": "eslint app components lib scripts test --ext .js,.mjs,.ts,.tsx --max-warnings=0",
+    "typecheck": "tsc --noEmit --incremental false",
+    "test": "jest --runInBand && yarn test:content",
+    "test:content": "node --test test/content/validate-resources.test.mjs test/content/generate-catalog.test.mjs test/content/build-static.test.mjs test/content/content-review-policy.test.mjs test/content/submission-assets.test.mjs test/content/sync-stats-catalog.test.mjs test/content/deployment-tooling.test.mjs test/content/deployment-workflows.test.mjs test/content/audit-static-runtime.test.mjs",
+    "test:static-fixture": "node test/static-resource-detail-fixture.mjs",
+    "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "next": "15.5.23",
+    "react": "19.1.9",
+    "react-dom": "19.1.9",
+    "react-markdown": "10.1.0",
+    "remark-gfm": "4.0.1"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "10.4.1",
+    "@testing-library/react": "16.3.0",
+    "@types/jest": "29.5.14",
+    "@types/node": "24.10.1",
+    "@types/react": "19.1.16",
+    "@types/react-dom": "19.1.9",
+    "ajv": "8.17.1",
+    "autoprefixer": "10.4.21",
+    "eslint": "8.57.1",
+    "eslint-config-next": "15.5.23",
+    "jest": "29.7.0",
+    "jest-environment-jsdom": "29.7.0",
+    "js-yaml": "4.1.0",
+    "postcss": "8.5.6",
+    "tailwindcss": "3.4.19",
+    "typescript": "5.9.3"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "acceptance-unlisted",
+  "kind": "skill",
+  "name": "不公开验收资源",
+  "summary": "仅用于验证 unlisted 资源不会进入公开 Catalog 与静态发现输出。",
+  "repository": "https://example.com/acceptance-unlisted-source",
+  "license": "MIT",
+  "author": { "name": "验收作者" },
+  "tags": ["testing"],
+  "compatibility": [
+    { "platform": "codex", "status": "unknown", "verifiedAt": "2026-02-18" }
+  ],
+  "createdAt": "2026-02-15",
+  "visibility": "unlisted"
+}

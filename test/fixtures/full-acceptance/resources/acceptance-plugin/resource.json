@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "acceptance-plugin",
+  "kind": "plugin",
+  "pluginScope": "ai-coding-tool",
+  "name": "验收 AI 编程插件",
+  "nameEn": "Acceptance AI Coding Plugin",
+  "summary": "隔离验证 AI 编程工具插件边界、不支持状态与目录交集筛选。",
+  "repository": "https://example.com/acceptance-plugin-source",
+  "homepage": "https://example.com/acceptance-plugin-home",
+  "documentation": "https://example.com/acceptance-plugin-docs",
+  "license": "BSD-3-Clause",
+  "author": {
+    "name": "验收作者丙"
+  },
+  "tags": ["productivity", "testing"],
+  "compatibility": [
+    {
+      "platform": "codex",
+      "status": "unsupported",
+      "verifiedAt": "2026-02-18"
+    },
+    {
+      "platform": "claude-code",
+      "status": "supported",
+      "verifiedAt": "2026-02-19",
+      "installations": [
+        {
+          "type": "link",
+          "label": "打开插件市场",
+          "url": "https://example.com/acceptance-plugin-install",
+          "target": "Claude Code 插件市场"
+        }
+      ]
+    }
+  ],
+  "createdAt": "2026-02-16",
+  "visibility": "public"
+}

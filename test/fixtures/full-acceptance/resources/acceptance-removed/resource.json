@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "acceptance-removed",
+  "kind": "mcp",
+  "name": "已下架验收资源",
+  "summary": "仅用于验证 removed 资源不会进入公开 Catalog 与静态发现输出。",
+  "repository": "https://example.com/acceptance-removed-source",
+  "license": "MIT",
+  "author": { "name": "验收作者" },
+  "tags": ["testing"],
+  "compatibility": [
+    { "platform": "claude-code", "status": "unknown", "verifiedAt": "2026-02-18" }
+  ],
+  "createdAt": "2026-02-14",
+  "visibility": "removed"
+}

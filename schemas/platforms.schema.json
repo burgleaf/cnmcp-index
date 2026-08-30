@@ -1,0 +1,27 @@
+{
+  "title": "CNMCP Platform Registry Schema v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "platforms"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "platforms": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "homepage", "icon", "enabled", "sortOrder"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "minLength": 2, "maxLength": 64 },
+          "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+          "shortName": { "type": "string", "minLength": 1, "maxLength": 30 },
+          "homepage": { "type": "string", "pattern": "^https://[^\\s]+$", "maxLength": 2048 },
+          "icon": { "type": "string", "pattern": "^/platforms/[A-Za-z0-9][A-Za-z0-9._-]*\\.(?:avif|jpe?g|png|webp|svg)$", "maxLength": 160 },
+          "enabled": { "type": "boolean" },
+          "sortOrder": { "type": "integer", "minimum": 0, "maximum": 10000 }
+        }
+      }
+    }
+  }
+}

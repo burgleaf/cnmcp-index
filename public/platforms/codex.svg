@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">Codex</title>
+  <rect width="64" height="64" rx="14" fill="#111827"/>
+  <path d="M22 18 10 32l12 14M42 18l12 14-12 14M37 13 27 51" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

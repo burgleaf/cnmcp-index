@@ -1,0 +1,66 @@
+name: 投稿 AI 扩展资源
+description: 推荐 MCP、Skill 或 AI 编程工具插件，由维护者审核后收录。
+title: "[资源投稿] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢投稿。请提供可核验的源码、许可证和兼容性信息。安装命令仅作为文本审核，维护者和站点不会自动执行。
+  - type: dropdown
+    id: resource-kind
+    attributes:
+      label: 资源类型
+      options:
+        - MCP
+        - Skill
+        - AI 编程工具插件
+    validations:
+      required: true
+  - type: input
+    id: repository-url
+    attributes:
+      label: 源码地址
+      description: 必须是公开可访问的 HTTPS 源码仓库地址。
+      placeholder: https://github.com/owner/repository
+    validations:
+      required: true
+  - type: textarea
+    id: resource-summary
+    attributes:
+      label: 中文摘要
+      description: 请说明用途、适用场景和主要能力。
+    validations:
+      required: true
+  - type: input
+    id: license
+    attributes:
+      label: 开源许可证
+      description: 请填写 SPDX 标识，例如 MIT、Apache-2.0。
+    validations:
+      required: true
+  - type: textarea
+    id: platform-compatibility
+    attributes:
+      label: 平台兼容性
+      description: 分别填写 Codex、Claude Code 的状态（native/supported/partial/unsupported/unknown）、最后核验日期和必要说明。
+      placeholder: |
+        Codex: supported，2026-01-01，说明……
+        Claude Code: unknown，2026-01-01，尚未核验。
+    validations:
+      required: true
+  - type: textarea
+    id: installation-text
+    attributes:
+      label: 安装或配置说明（可选）
+      description: 仅提交供审核的文本；请标明 shell、目标文件和需替换的占位符，不得包含真实密钥。
+  - type: checkboxes
+    id: contributor-confirmations
+    attributes:
+      label: 投稿确认
+      options:
+        - label: 我确认资源面向 AI 编程工具，源码和许可证信息真实可核验。
+          required: true
+        - label: 我理解提交 Issue 不会直接进入正式 Catalog，只有维护者审核合并后的内容才会发布。
+          required: true
+        - label: 我没有请求或设置精选/可信/审核状态；这些状态不由投稿者控制。
+          required: true

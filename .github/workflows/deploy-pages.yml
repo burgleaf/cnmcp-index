@@ -1,0 +1,108 @@
+name: Deploy Pages Production
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "public/**"
+      - "resources/**"
+      - "catalog/**"
+      - "schemas/**"
+      - "scripts/**"
+      - "test/**"
+      - "package.json"
+      - "yarn.lock"
+      - "next.config.ts"
+      - "tsconfig.json"
+      - "tailwind.config.js"
+      - "postcss.config.js"
+      - ".github/workflows/deploy-pages.yml"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: production-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Validate, gate, sync, build, smoke and publish
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    environment: production-pages
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_D1_DATABASE_ID: ${{ vars.CLOUDFLARE_D1_DATABASE_ID }}
+      CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      PRODUCTION_SITE_URL: ${{ vars.PRODUCTION_SITE_URL }}
+      NEXT_PUBLIC_SITE_URL: ${{ vars.PRODUCTION_SITE_URL }}
+      NEXT_PUBLIC_STATS_API_URL: ${{ vars.WORKER_API_URL }}
+      NEXT_PUBLIC_GITHUB_REPOSITORY_URL: ${{ vars.GITHUB_REPOSITORY_URL }}
+      NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN: ${{ vars.CLOUDFLARE_WEB_ANALYTICS_TOKEN }}
+      WRANGLER_CONFIG_OUTPUT: ${{ runner.temp }}/wrangler.production.json
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout default branch revision
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22.14.0"
+          cache: yarn
+          cache-dependency-path: yarn.lock
+
+      - name: Install root dependencies from Yarn lockfile
+        run: node .yarn/releases/yarn-1.22.19.cjs install --frozen-lockfile --non-interactive
+
+      - name: Install locked Wrangler CLI
+        run: npm ci --prefix worker --ignore-scripts
+
+      - name: Validate resource content
+        run: node .yarn/releases/yarn-1.22.19.cjs validate:resources
+
+      - name: Generate deterministic catalogs
+        run: node .yarn/releases/yarn-1.22.19.cjs generate:catalog
+
+      - name: Require matching Worker deployment when Worker paths changed
+        run: node scripts/wait-worker-deployment.mjs
+
+      - name: Validate protected deployment prerequisites
+        run: node scripts/check-cloudflare-prerequisites.mjs environment pages
+
+      - name: Prepare ephemeral Wrangler production config
+        run: node scripts/prepare-wrangler-config.mjs
+
+      - name: Synchronize remote D1 resource catalog
+        run: node scripts/sync-stats-catalog.mjs --remote --database cnmcp-stats --config "$WRANGLER_CONFIG_OUTPUT"
+
+      - name: Build root static export
+        run: node .yarn/releases/yarn-1.22.19.cjs build
+
+      - name: Write non-sensitive build summary
+        run: node scripts/ci-build-summary.mjs
+
+      - name: Deploy immutable candidate to Pages
+        id: candidate
+        env:
+          CANDIDATE_BRANCH: ci-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          set -o pipefail
+          node worker/node_modules/wrangler/bin/wrangler.js pages deploy out --project-name "$CLOUDFLARE_PAGES_PROJECT" --branch "$CANDIDATE_BRANCH" --commit-hash "$GITHUB_SHA" --commit-dirty=false 2>&1 | tee "$RUNNER_TEMP/pages-candidate.log"
+          node scripts/extract-pages-deployment-url.mjs "$RUNNER_TEMP/pages-candidate.log"
+
+      - name: Smoke test candidate static deployment
+        run: node scripts/smoke-deployment.mjs --target pages --base-url "${{ steps.candidate.outputs.url }}"
+
+      - name: Publish verified artifact to Pages production
+        run: node worker/node_modules/wrangler/bin/wrangler.js pages deploy out --project-name "$CLOUDFLARE_PAGES_PROJECT" --branch "$GITHUB_REF_NAME" --commit-hash "$GITHUB_SHA" --commit-dirty=false

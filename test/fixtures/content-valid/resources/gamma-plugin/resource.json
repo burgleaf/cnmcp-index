@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "gamma-plugin",
+  "kind": "plugin",
+  "pluginScope": "ai-coding-tool",
+  "name": "伽马编程插件",
+  "summary": "面向 AI 编程工具的自动化工作流扩展插件。",
+  "repository": "https://github.com/cnmcp-fixtures/gamma-plugin",
+  "license": "MIT",
+  "author": { "name": "CNMCP Fixtures" },
+  "tags": ["automation"],
+  "compatibility": [
+    {
+      "platform": "claude-code",
+      "status": "unknown",
+      "verifiedAt": "2025-03-01",
+      "note": "尚未获得足够信息确认兼容性。"
+    }
+  ],
+  "createdAt": "2025-03-01",
+  "visibility": "public"
+}

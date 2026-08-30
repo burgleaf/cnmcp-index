@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-labelledby="title description">
+  <title id="title">资源图片占位图</title>
+  <desc id="description">原始资源图片无法加载时显示的本地安全占位图</desc>
+  <rect width="640" height="360" rx="24" fill="#e2e8f0"/>
+  <path d="M215 250l72-80 52 53 37-39 61 66H215z" fill="#94a3b8"/>
+  <circle cx="404" cy="119" r="30" fill="#94a3b8"/>
+  <text x="320" y="306" text-anchor="middle" font-family="system-ui, sans-serif" font-size="22" fill="#475569">图片暂不可用</text>
+</svg>

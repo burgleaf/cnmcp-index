@@ -1,0 +1,118 @@
+name: PR Validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "public/**"
+      - "resources/**"
+      - "catalog/**"
+      - "schemas/**"
+      - "scripts/**"
+      - "test/**"
+      - "worker/**"
+      - "package.json"
+      - "yarn.lock"
+      - "next.config.ts"
+      - "tsconfig.json"
+      - "jest.config.js"
+      - ".github/workflows/**"
+  pull_request:
+    paths:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "public/**"
+      - "resources/**"
+      - "catalog/**"
+      - "schemas/**"
+      - "scripts/**"
+      - "test/**"
+      - "worker/**"
+      - "package.json"
+      - "yarn.lock"
+      - "next.config.ts"
+      - "tsconfig.json"
+      - "jest.config.js"
+      - ".github/workflows/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-validation-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Content, Web and Worker validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout pull request merge revision
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22.14.0"
+          cache: yarn
+          cache-dependency-path: yarn.lock
+
+      - name: Install root dependencies from Yarn lockfile
+        run: node .yarn/releases/yarn-1.22.19.cjs install --frozen-lockfile --non-interactive
+
+      - name: Validate resource content
+        run: node .yarn/releases/yarn-1.22.19.cjs validate:resources
+
+      - name: Generate deterministic catalogs
+        run: node .yarn/releases/yarn-1.22.19.cjs generate:catalog
+
+      - name: Check featured and maintainer-review security policy
+        run: node --test test/content/content-review-policy.test.mjs test/content/submission-assets.test.mjs
+
+      - name: Lint root application and scripts
+        run: node .yarn/releases/yarn-1.22.19.cjs lint
+
+      - name: Typecheck root application
+        run: node .yarn/releases/yarn-1.22.19.cjs typecheck
+
+      - name: Run all root tests
+        run: node .yarn/releases/yarn-1.22.19.cjs test
+
+      - name: Build static export
+        run: node .yarn/releases/yarn-1.22.19.cjs build
+
+      - name: Write non-sensitive build summary
+        run: node scripts/ci-build-summary.mjs
+
+      - name: Detect Worker-related changes
+        id: worker-changes
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          elif git diff --quiet "$BASE_SHA" "$GITHUB_SHA" -- worker scripts/sync-stats-catalog.mjs scripts/lib/stats-catalog-sync.mjs; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install Worker dependencies from npm lockfile
+        if: steps.worker-changes.outputs.changed == 'true'
+        run: npm ci --prefix worker --ignore-scripts
+
+      - name: Run Worker lint, typecheck and tests
+        if: steps.worker-changes.outputs.changed == 'true'
+        run: npm --prefix worker run check
+
+      - name: Build Worker deployment bundle without upload
+        if: steps.worker-changes.outputs.changed == 'true'
+        run: npm --prefix worker run dry-run

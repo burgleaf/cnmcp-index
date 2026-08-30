@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "acceptance-skill",
+  "kind": "skill",
+  "name": "验收 Skill",
+  "nameEn": "Acceptance Skill",
+  "summary": "隔离验证 Skill 的静态目录、平台标记与兼容性未知状态。",
+  "repository": "https://example.com/acceptance-skill-source",
+  "homepage": "https://example.com/acceptance-skill-home",
+  "documentation": "https://example.com/acceptance-skill-docs",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "验收作者乙"
+  },
+  "tags": ["documentation", "testing"],
+  "compatibility": [
+    {
+      "platform": "codex",
+      "status": "supported",
+      "verifiedAt": "2026-02-19",
+      "installations": [
+        {
+          "type": "manual",
+          "content": "将 SKILL.md 复制到项目技能目录。",
+          "target": "项目技能目录"
+        }
+      ]
+    },
+    {
+      "platform": "claude-code",
+      "status": "unknown",
+      "verifiedAt": "2026-02-20",
+      "note": "尚未完成 Claude Code 环境核验。"
+    }
+  ],
+  "createdAt": "2026-02-17",
+  "visibility": "public"
+}

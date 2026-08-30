@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "platforms": [
+    {
+      "id": "codex",
+      "name": "Codex",
+      "homepage": "https://openai.com/codex/",
+      "icon": "/platforms/codex.svg",
+      "enabled": true,
+      "sortOrder": 10
+    },
+    {
+      "id": "claude-code",
+      "name": "Claude Code",
+      "homepage": "https://www.anthropic.com/claude-code",
+      "icon": "/platforms/claude-code.svg",
+      "enabled": true,
+      "sortOrder": 20
+    }
+  ]
+}
