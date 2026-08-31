@@ -78,10 +78,13 @@ function orderClause(sort: DiscoveryListQuery["sort"]): string {
   return "score DESC, repo_full_name DESC";
 }
 
+const LIST_COLUMNS =
+  "repo_full_name, html_url, name, description, stars, kind, inferred_platforms, score, pushed_at, catalog_id";
+
 export async function listDiscoveryItems(db: D1Database, query: DiscoveryListQuery): Promise<DiscoveryItem[]> {
   const sql = query.kind
-    ? `SELECT * FROM candidates WHERE kind = ?1 ORDER BY ${orderClause(query.sort)} LIMIT ?2 OFFSET ?3`
-    : `SELECT * FROM candidates ORDER BY ${orderClause(query.sort)} LIMIT ?1 OFFSET ?2`;
+    ? `SELECT ${LIST_COLUMNS} FROM candidates WHERE kind = ?1 AND stars >= 1 ORDER BY ${orderClause(query.sort)} LIMIT ?2 OFFSET ?3`
+    : `SELECT ${LIST_COLUMNS} FROM candidates WHERE stars >= 1 ORDER BY ${orderClause(query.sort)} LIMIT ?1 OFFSET ?2`;
   const statement = query.kind
     ? db.prepare(sql).bind(query.kind, query.limit, query.offset)
     : db.prepare(sql).bind(query.limit, query.offset);
@@ -158,7 +161,10 @@ export async function listPromotionCandidates(
 ): Promise<StoredCandidate[]> {
   const result = await db
     .prepare(
-      `SELECT * FROM candidates
+      `SELECT repo_full_name, html_url, name, description, stars, forks, language, license,
+              topics, kind, inferred_platforms, score, pushed_at, sources, catalog_id,
+              promotion_status, issue_number, first_seen_at, last_crawled_at
+       FROM candidates
        WHERE promotion_status = 'none'
          AND catalog_id IS NULL
          AND kind IN ('mcp', 'skill', 'plugin')
@@ -178,6 +184,10 @@ export async function markIssued(db: D1Database, repoFullName: string, issueNumb
     )
     .bind(repoFullName, issueNumber)
     .run();
+}
+
+export async function pruneStaleCandidates(db: D1Database, now: number): Promise<void> {
+  await db.prepare("DELETE FROM candidates WHERE last_crawled_at < ?1 OR stars < 1").bind(now).run();
 }
 
 export async function startCrawlRun(db: D1Database, crawlDate: string, now: number): Promise<void> {

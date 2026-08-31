@@ -1,5 +1,13 @@
 import { classifyKind, inferPlatforms } from "./classify";
-import { catalogMapFromMatches, finishCrawlRun, listPromotionCandidates, markIssued, startCrawlRun, upsertCandidates } from "./db";
+import {
+  catalogMapFromMatches,
+  finishCrawlRun,
+  listPromotionCandidates,
+  markIssued,
+  pruneStaleCandidates,
+  startCrawlRun,
+  upsertCandidates,
+} from "./db";
 import { computeScore } from "./score";
 import { loadCatalogMatches } from "./sources/catalog";
 import { enrichGithubRepo, GITHUB_SEARCH_QUERIES, searchGithubRepositories } from "./sources/github-search";
@@ -69,6 +77,18 @@ export function mergeCandidates(groups: ReadonlyArray<ReadonlyArray<CandidateRec
   return [...merged.values()];
 }
 
+export function selectPersistedCandidates(
+  candidates: ReadonlyArray<CandidateRecord>,
+  options: Readonly<{ minStars: number; limit: number }>,
+): CandidateRecord[] {
+  const minStars = Math.max(1, options.minStars);
+  const limit = Math.max(0, options.limit);
+  return [...candidates]
+    .filter((item) => item.stars >= minStars)
+    .sort((left, right) => right.score - left.score || right.repoFullName.localeCompare(left.repoFullName))
+    .slice(0, limit);
+}
+
 export async function runDiscoveryCrawl(env: WorkerEnv, runtime: CrawlRuntime): Promise<CrawlStats> {
   const crawlDate = new Date(runtime.now).toISOString().slice(0, 10);
   await startCrawlRun(env.DB, crawlDate, runtime.now);
@@ -110,7 +130,12 @@ export async function runDiscoveryCrawl(env: WorkerEnv, runtime: CrawlRuntime): 
       : [];
     const catalogMap = catalogMapFromMatches(catalogMatches);
     stats.catalogMatched = catalogMap.size;
-    stats.upserted = await upsertCandidates(env.DB, merged, catalogMap, runtime.now);
+    const persisted = selectPersistedCandidates(merged, {
+      minStars: 1,
+      limit: Math.min(kindLimit * 2, 160),
+    });
+    stats.upserted = await upsertCandidates(env.DB, persisted, catalogMap, runtime.now);
+    await pruneStaleCandidates(env.DB, runtime.now);
 
     if (token && maxIssues > 0) {
       const promotions = await listPromotionCandidates(env.DB, minStars, maxIssues);

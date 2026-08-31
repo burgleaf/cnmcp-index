@@ -116,4 +116,68 @@ describe("发现列表与爬取写入", () => {
     expect(item).not.toHaveProperty("sources");
     expect(item).not.toHaveProperty("issueNumber");
   });
+
+  it("不把未能补到 star 的 Registry 条目写入 D1", async () => {
+    const fetchImpl: typeof fetch = async (input) => {
+      const url = String(input);
+      if (url.includes("registry.modelcontextprotocol.io")) {
+        return new Response(
+          JSON.stringify({
+            servers: [
+              {
+                server: {
+                  name: "io.acme/empty",
+                  description: "No stars yet",
+                  repository: { url: "https://github.com/acme/empty-mcp" },
+                },
+              },
+            ],
+            metadata: {},
+          }),
+          { status: 200 },
+        );
+      }
+      if (url.includes("/search/repositories")) {
+        return new Response(JSON.stringify({ items: [] }), { status: 200 });
+      }
+      if (url.includes("/git/trees/HEAD")) {
+        return new Response(JSON.stringify({ tree: [] }), { status: 200 });
+      }
+      return new Response("not found", { status: 404 });
+    };
+
+    const stats = await runDiscoveryCrawl(env, { fetch: fetchImpl, sleep: async () => undefined, now: NOW });
+    expect(stats.registry).toBe(1);
+    expect(stats.upserted).toBe(0);
+
+    const listed = await env.DB.prepare("SELECT COUNT(*) AS n FROM candidates").first<{ n: number }>();
+    expect(listed?.n).toBe(0);
+  });
+
+  it("下次爬取会清掉已有的 0 star 行", async () => {
+    await env.DB.prepare(
+      `INSERT INTO candidates (
+         repo_full_name, html_url, name, description, stars, forks, topics, kind,
+         inferred_platforms, score, sources, promotion_status, first_seen_at, last_crawled_at
+       ) VALUES ('acme/old-zero', 'https://github.com/acme/old-zero', 'old-zero', '', 0, 0, '[]', 'mcp', '[]', 10, '[]', 'none', 1, 1)`,
+    ).run();
+
+    const fetchImpl: typeof fetch = async (input) => {
+      const url = String(input);
+      if (url.includes("registry.modelcontextprotocol.io")) {
+        return new Response(JSON.stringify({ servers: [], metadata: {} }), { status: 200 });
+      }
+      if (url.includes("/search/repositories")) {
+        return new Response(JSON.stringify({ items: [] }), { status: 200 });
+      }
+      if (url.includes("/git/trees/HEAD")) {
+        return new Response(JSON.stringify({ tree: [] }), { status: 200 });
+      }
+      return new Response("not found", { status: 404 });
+    };
+
+    await runDiscoveryCrawl(env, { fetch: fetchImpl, sleep: async () => undefined, now: NOW });
+    const listed = await env.DB.prepare("SELECT COUNT(*) AS n FROM candidates").first<{ n: number }>();
+    expect(listed?.n).toBe(0);
+  });
 });
