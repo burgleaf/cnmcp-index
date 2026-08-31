@@ -1,15 +1,15 @@
 PRAGMA foreign_keys = ON;
 
-CREATE TABLE resource_catalog (
+CREATE TABLE IF NOT EXISTS resource_catalog (
   resource_id TEXT PRIMARY KEY,
   active INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0, 1)),
   synced_at INTEGER NOT NULL
 );
 
-CREATE INDEX resource_catalog_active_idx
+CREATE INDEX IF NOT EXISTS resource_catalog_active_idx
   ON resource_catalog(active, resource_id);
 
-CREATE TABLE resource_stats (
+CREATE TABLE IF NOT EXISTS resource_stats (
   resource_id TEXT PRIMARY KEY,
   command_copies INTEGER NOT NULL DEFAULT 0 CHECK (command_copies >= 0),
   source_visits INTEGER NOT NULL DEFAULT 0 CHECK (source_visits >= 0),
@@ -18,7 +18,7 @@ CREATE TABLE resource_stats (
     ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
-CREATE TABLE metric_receipts (
+CREATE TABLE IF NOT EXISTS metric_receipts (
   event_key TEXT PRIMARY KEY,
   resource_id TEXT NOT NULL,
   event_type TEXT NOT NULL CHECK (event_type IN ('command_copy', 'source_visit')),
@@ -28,23 +28,23 @@ CREATE TABLE metric_receipts (
     ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
-CREATE INDEX metric_receipts_expires_idx
+CREATE INDEX IF NOT EXISTS metric_receipts_expires_idx
   ON metric_receipts(expires_at);
 
-CREATE INDEX metric_receipts_resource_idx
+CREATE INDEX IF NOT EXISTS metric_receipts_resource_idx
   ON metric_receipts(resource_id);
 
-CREATE TABLE metric_rate_limits (
+CREATE TABLE IF NOT EXISTS metric_rate_limits (
   rate_key TEXT PRIMARY KEY,
   bucket_start INTEGER NOT NULL,
   event_count INTEGER NOT NULL DEFAULT 0 CHECK (event_count >= 0),
   expires_at INTEGER NOT NULL
 );
 
-CREATE INDEX metric_rate_limits_expires_idx
+CREATE INDEX IF NOT EXISTS metric_rate_limits_expires_idx
   ON metric_rate_limits(expires_at);
 
-CREATE TRIGGER metric_receipts_increment_stats
+CREATE TRIGGER IF NOT EXISTS metric_receipts_increment_stats
 AFTER INSERT ON metric_receipts
 BEGIN
   UPDATE resource_stats
@@ -57,11 +57,11 @@ END;
 
 -- Catalog 同步通过单条 INSERT 进入此视图。INSTEAD OF 触发器中的所有变更
 -- 与该 INSERT 构成一个原子 SQLite 语句，避免 D1 不支持的显式 BEGIN。
-CREATE VIEW resource_catalog_sync (resource_ids_json, synced_at) AS
+CREATE VIEW IF NOT EXISTS resource_catalog_sync (resource_ids_json, synced_at) AS
 SELECT CAST(NULL AS TEXT), CAST(NULL AS INTEGER)
 WHERE 0;
 
-CREATE TRIGGER resource_catalog_sync_apply
+CREATE TRIGGER IF NOT EXISTS resource_catalog_sync_apply
 INSTEAD OF INSERT ON resource_catalog_sync
 BEGIN
   SELECT CASE

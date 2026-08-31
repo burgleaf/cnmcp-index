@@ -51,6 +51,9 @@ test("Worker 生产工作流使用仓库级 Secrets，远程步骤严格按迁�
   assert.deepEqual(indexes, [...indexes].sort((a, b) => a - b));
   assert.match(source, /HASH_SALT is preconfigured/);
   assert.doesNotMatch(source, /HASH_SALT:\s*\$\{\{/);
+  assert.match(source, /d1 execute DB --remote/);
+  assert.match(source, /--file=worker\/migrations\/0001_initial_stats\.sql/);
+  assert.doesNotMatch(source, /d1 migrations apply/);
 });
 
 test("Pages 生产工作流在 Worker 安全门和 D1 同步后构建，先烟测候选再发布同一产物", async () => {
@@ -70,4 +73,7 @@ test("Pages 生产工作流在 Worker 安全门和 D1 同步后构建，先烟�
   assert.deepEqual(indexes, [...indexes].sort((a, b) => a - b));
   assert.match(source, /NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN/);
   assert.match(source, /worker\/node_modules\/wrangler\/bin\/wrangler\.js pages deploy/);
+  assert.match(source, /d1 execute DB --remote/);
+  assert.match(source, /--file=worker\/migrations\/0001_initial_stats\.sql/);
+  assert.doesNotMatch(source, /d1 migrations apply/);
 });
