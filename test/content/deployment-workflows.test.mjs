@@ -65,10 +65,11 @@ test("Pages 生产工作流在 Worker 安全门和 D1 同步后构建，先烟�
   assert.match(source, /secrets\.CLOUDFLARE_API_TOKEN/);
   assert.match(source, /secrets\.CLOUDFLARE_ACCOUNT_ID/);
   assert.match(source, /--project-name cnmcp-index/);
+  assert.match(source, /pages project create cnmcp-index --production-branch=main/);
   assert.match(source, /https:\/\/www\.cnmcp\.com/);
   assert.match(source, /https:\/\/api\.cnmcp\.com/);
   assert.doesNotMatch(source, /CLOUDFLARE_D1_DATABASE_ID|CLOUDFLARE_PAGES_PROJECT|prepare-wrangler-config|environment:\s*production/);
-  const ordered = ["Validate resource content", "Generate deterministic catalogs", "Require matching Worker deployment when Worker paths changed", "Apply remote D1 migrations", "Synchronize remote D1 resource catalog", "Build root static export", "Deploy immutable candidate to Pages", "Smoke test candidate static deployment", "Publish verified artifact to Pages production"];
+  const ordered = ["Validate resource content", "Generate deterministic catalogs", "Require matching Worker deployment when Worker paths changed", "Apply remote D1 migrations", "Synchronize remote D1 resource catalog", "Build root static export", "Ensure Pages project exists", "Deploy immutable candidate to Pages", "Smoke test candidate static deployment", "Publish verified artifact to Pages production"];
   const indexes = ordered.map((name) => stepIndex(value, "deploy", name));
   assert.ok(indexes.every((index) => index >= 0));
   assert.deepEqual(indexes, [...indexes].sort((a, b) => a - b));

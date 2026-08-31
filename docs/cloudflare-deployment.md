@@ -8,7 +8,7 @@ GitHub Actions 只定义流程。仓库不保存 Cloudflare API Token，也不�
 | --- | --- |
 | GitHub 仓库 | `https://github.com/burgleaf/cnmcp-index` |
 | Pages 主站 | `https://www.cnmcp.com` |
-| Pages 项目 | `cnmcp-index` |
+| Pages 项目 | `cnmcp-index`（工作流在首次发布时自动创建） |
 | Worker 名称 | `cnmcp-stats-api` |
 | Worker 入口 | `https://api.cnmcp.com` |
 | D1 数据库名 | `cnmcp-stats` |

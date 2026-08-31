@@ -89,6 +89,22 @@ jobs:
       - name: Write non-sensitive build summary
         run: node scripts/ci-build-summary.mjs
 
+      - name: Ensure Pages project exists
+        run: |
+          set +e
+          output="$(node worker/node_modules/wrangler/bin/wrangler.js pages project create cnmcp-index --production-branch=main 2>&1)"
+          status=$?
+          printf '%s\n' "$output"
+          if [ "$status" -eq 0 ]; then
+            echo "Created Pages project cnmcp-index."
+            exit 0
+          fi
+          if printf '%s\n' "$output" | grep -Eqi 'already exists'; then
+            echo "Pages project cnmcp-index already exists."
+            exit 0
+          fi
+          exit "$status"
+
       - name: Deploy immutable candidate to Pages
         id: candidate
         env:
