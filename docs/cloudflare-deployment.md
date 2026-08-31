@@ -53,6 +53,6 @@ Pull Request 工作流只有 `contents: read`，不会引用这些凭据。
 
 Worker 工作流固定执行：本地检查与 dry-run → 检查仓库级凭据与已提交的 D1 ID → remote D1 migrations → remote Catalog sync → Worker deploy → 协议烟测。任一步非零退出都会阻止后续步骤。
 
-Pages 工作流固定执行：内容校验/生成 → 同提交 Worker 成功门（仅 Worker 生产依赖路径变化时）→ remote Catalog sync → 静态构建 → 候选 Pages deployment → 完整静态路由烟测 → 将同一 `out/` 发布到生产分支。候选烟测或最终生产上传失败时，原生产 deployment 保持不变；生产上传由 Pages 原子创建新 deployment。
+Pages 工作流固定执行：内容校验/生成 → 同提交 Worker 成功门（仅 Worker 生产依赖路径变化时）→ remote D1 migrations → remote Catalog sync → 静态构建 → 候选 Pages deployment → 完整静态路由烟测 → 将同一 `out/` 发布到生产分支。候选烟测或最终生产上传失败时，原生产 deployment 保持不变；生产上传由 Pages 原子创建新 deployment。
 
 工作流中的所有 Wrangler 命令来自 `worker/package-lock.json` 锁定的 `wrangler@4.127.1`。远程步骤只会在默认分支 push，或 GitHub Actions 页面对 `Deploy Worker Production` / `Deploy Pages Production` 的手动 `workflow_dispatch` 中执行。手动发布 Pages 时不要求同一提交的 Worker 工作流已成功。

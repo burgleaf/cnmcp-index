@@ -77,6 +77,9 @@ jobs:
       - name: Validate protected deployment prerequisites
         run: node scripts/check-cloudflare-prerequisites.mjs environment pages
 
+      - name: Apply remote D1 migrations
+        run: node worker/node_modules/wrangler/bin/wrangler.js d1 migrations apply DB --remote --config worker/wrangler.jsonc
+
       - name: Synchronize remote D1 resource catalog
         run: node scripts/sync-stats-catalog.mjs --remote --database cnmcp-stats --config worker/wrangler.jsonc
 
