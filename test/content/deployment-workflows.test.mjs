@@ -55,6 +55,8 @@ test("Worker 生产工作流使用仓库级 Secrets，远程步骤严格按迁�
 
 test("Pages 生产工作流在 Worker 安全门和 D1 同步后构建，先烟测候选再发布同一产物", async () => {
   const { source, value } = await workflow("deploy-pages.yml");
+  assert.ok(value.on.workflow_dispatch === null || value.on.workflow_dispatch);
+  assert.match(source, /github\.event_name == 'workflow_dispatch'/);
   assert.equal(value.jobs.deploy.environment, undefined);
   assert.match(source, /secrets\.CLOUDFLARE_API_TOKEN/);
   assert.match(source, /secrets\.CLOUDFLARE_ACCOUNT_ID/);

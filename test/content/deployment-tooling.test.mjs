@@ -12,7 +12,7 @@ import {
 } from "../../scripts/check-cloudflare-prerequisites.mjs";
 import { extractPagesDeploymentUrl } from "../../scripts/extract-pages-deployment-url.mjs";
 import { createPagesSmokePaths } from "../../scripts/smoke-deployment.mjs";
-import { requiresWorkerDeployment } from "../../scripts/wait-worker-deployment.mjs";
+import { requiresWorkerDeployment, skipsWorkerDeploymentGate } from "../../scripts/wait-worker-deployment.mjs";
 
 const databaseId = "01234567-89ab-cdef-0123-456789abcdef";
 const baseEnvironment = {
@@ -97,4 +97,6 @@ test("Pages URL 提取与 Worker 路径门拒绝不受控输入并识别生产�
   assert.equal(requiresWorkerDeployment(["worker/src/index.ts"]), true);
   assert.equal(requiresWorkerDeployment(["scripts/sync-stats-catalog.mjs"]), true);
   assert.equal(requiresWorkerDeployment(["scripts/prepare-wrangler-config.mjs"]), false);
+  assert.equal(skipsWorkerDeploymentGate("workflow_dispatch"), true);
+  assert.equal(skipsWorkerDeploymentGate("push"), false);
 });

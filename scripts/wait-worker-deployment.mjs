@@ -14,6 +14,10 @@ export function requiresWorkerDeployment(files) {
   return files.some((file) => typeof file === "string" && WORKER_PATHS.some((pattern) => pattern.test(file)));
 }
 
+export function skipsWorkerDeploymentGate(eventName) {
+  return eventName === "workflow_dispatch";
+}
+
 async function githubJson(pathname, environment) {
   const response = await fetch(`${environment.GITHUB_API_URL ?? "https://api.github.com"}${pathname}`, {
     headers: {
@@ -45,6 +49,11 @@ async function changedFiles(event, environment) {
 const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
 export async function waitForWorkerDeployment(environment = process.env, options = {}) {
+  if (skipsWorkerDeploymentGate(environment.GITHUB_EVENT_NAME)) {
+    console.log("手动触发的 Pages 发布不要求同一提交的 Worker 工作流。");
+    return { required: false };
+  }
+
   const event = JSON.parse(await readFile(environment.GITHUB_EVENT_PATH, "utf8"));
   const files = await changedFiles(event, environment);
   if (!requiresWorkerDeployment(files)) {

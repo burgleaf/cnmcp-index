@@ -20,6 +20,7 @@ on:
       - "tailwind.config.js"
       - "postcss.config.js"
       - ".github/workflows/deploy-pages.yml"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -32,7 +33,7 @@ concurrency:
 jobs:
   deploy:
     name: Validate, gate, sync, build, smoke and publish
-    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    if: github.event_name == 'workflow_dispatch' || github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: ubuntu-latest
     timeout-minutes: 50
     env:
