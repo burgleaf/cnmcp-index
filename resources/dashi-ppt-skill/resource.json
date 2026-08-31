@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "id": "dashi-ppt-skill",
+  "kind": "skill",
+  "name": "大师 PPT Skill",
+  "nameEn": "Dashi PPT Skill",
+  "summary": "把文档交给 AI Agent，生成可在浏览器里改字、换图、调版式的演示文稿，并导出 HTML、PDF 或可编辑 PPTX。",
+  "summaryEn": "An agent skill that turns documents into browser-editable decks and exports HTML, PDF, or editable PPTX.",
+  "repository": "https://github.com/chuspeeism/dashi-ppt-skill",
+  "documentation": "https://github.com/chuspeeism/dashi-ppt-skill#readme",
+  "license": "AGPL-3.0",
+  "author": {
+    "name": "chuspeeism",
+    "url": "https://github.com/chuspeeism"
+  },
+  "tags": ["productivity", "documentation", "automation"],
+  "compatibility": [
+    {
+      "platform": "codex",
+      "status": "supported",
+      "verifiedAt": "2026-08-31",
+      "note": "依据上游 README 实测说明；Codex 可调用生图能力补充配图。",
+      "installations": [
+        {
+          "type": "command",
+          "label": "一键安装或更新",
+          "shell": "any",
+          "command": "npx dashi-ppt-skill@latest"
+        },
+        {
+          "type": "command",
+          "label": "国内镜像安装或更新",
+          "shell": "any",
+          "command": "npx --registry=https://registry.npmmirror.com dashi-ppt-skill@latest"
+        }
+      ]
+    },
+    {
+      "platform": "claude-code",
+      "status": "supported",
+      "verifiedAt": "2026-08-31",
+      "note": "依据上游 README 实测说明。",
+      "installations": [
+        {
+          "type": "command",
+          "label": "一键安装或更新",
+          "shell": "any",
+          "command": "npx dashi-ppt-skill@latest"
+        },
+        {
+          "type": "command",
+          "label": "国内镜像安装或更新",
+          "shell": "any",
+          "command": "npx --registry=https://registry.npmmirror.com dashi-ppt-skill@latest"
+        }
+      ]
+    }
+  ],
+  "createdAt": "2026-06-10",
+  "updatedAt": "2026-08-31",
+  "visibility": "public"
+}
