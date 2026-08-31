@@ -51,6 +51,7 @@ test("Worker 生产工作流使用仓库级 Secrets，远程步骤严格按迁�
   assert.deepEqual(indexes, [...indexes].sort((a, b) => a - b));
   assert.match(source, /HASH_SALT is preconfigured/);
   assert.doesNotMatch(source, /HASH_SALT:\s*\$\{\{/);
+  assert.match(source, /WORKER_API_URL: https:\/\/cnmcp-stats-api\.burgleaf\.workers\.dev/);
   assert.match(source, /d1 execute DB --remote/);
   assert.match(source, /--file=worker\/migrations\/0001_initial_stats\.sql/);
   assert.doesNotMatch(source, /d1 migrations apply/);
