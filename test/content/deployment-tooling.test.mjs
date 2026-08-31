@@ -92,6 +92,10 @@ test("Pages 烟测覆盖主页、列表、全部分类/启用平台、SEO、随�
 
 test("Pages URL 提取与 Worker 路径门拒绝不受控输入并识别生产相关变更", () => {
   assert.equal(extractPagesDeploymentUrl("Deployment complete! https://abc123.cnmcp.pages.dev"), "https://abc123.cnmcp.pages.dev");
+  assert.equal(
+    extractPagesDeploymentUrl("https://ci-1.cnmcp-index.pages.dev Deployment complete! https://ad48597b.cnmcp-index.pages.dev"),
+    "https://ad48597b.cnmcp-index.pages.dev",
+  );
   assert.throws(() => extractPagesDeploymentUrl("https://attacker.example"), /没有找到/);
   assert.equal(requiresWorkerDeployment(["app/page.tsx"]), false);
   assert.equal(requiresWorkerDeployment(["worker/src/index.ts"]), true);

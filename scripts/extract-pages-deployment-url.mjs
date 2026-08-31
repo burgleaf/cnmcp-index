@@ -2,14 +2,20 @@ import { appendFile, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+const UNIQUE_DEPLOYMENT_HOST = /^[a-f0-9]{8}\./i;
+
 export function extractPagesDeploymentUrl(log) {
   const matches = log.match(/https:\/\/[a-z0-9-]+(?:\.[a-z0-9-]+)*\.pages\.dev\/?/gi) ?? [];
-  if (!matches.length) throw new Error("Wrangler 输出中没有找到 Pages deployment URL");
-  const url = new URL(matches.at(-1));
-  if (url.protocol !== "https:" || !url.hostname.endsWith(".pages.dev") || url.username || url.password) {
-    throw new Error("Pages deployment URL 格式无效");
+  const origins = [];
+  for (const match of matches) {
+    const url = new URL(match);
+    if (url.protocol !== "https:" || !url.hostname.endsWith(".pages.dev") || url.username || url.password) {
+      throw new Error("Pages deployment URL 格式无效");
+    }
+    if (!origins.includes(url.origin)) origins.push(url.origin);
   }
-  return url.origin;
+  if (!origins.length) throw new Error("Wrangler 输出中没有找到 Pages deployment URL");
+  return origins.find((origin) => UNIQUE_DEPLOYMENT_HOST.test(new URL(origin).hostname)) ?? origins.at(-1);
 }
 
 async function runCli() {

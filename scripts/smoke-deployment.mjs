@@ -71,8 +71,24 @@ function expectNoStore(response, label) {
   }
 }
 
+async function waitForOrigin(origin) {
+  let lastError;
+  for (let attempt = 1; attempt <= 8; attempt += 1) {
+    try {
+      await request(new URL("/", origin));
+      return;
+    } catch (error) {
+      lastError = error;
+      console.log(`等待 Pages 候选地址就绪（${attempt}/8）`);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error("Pages 候选地址不可达");
+}
+
 export async function smokePages({ baseUrl, catalogPath = path.join(PROJECT_ROOT, ".generated", "resources.generated.json") }) {
   const origin = parseOrigin("Pages deployment URL", baseUrl);
+  await waitForOrigin(origin);
   const catalog = JSON.parse(await readFile(catalogPath, "utf8"));
   for (const pathname of createPagesSmokePaths(catalog)) await expectStatus(origin, pathname, 200);
   await expectStatus(origin, `/__cnmcp-smoke-missing-${randomUUID()}/`, 404);
