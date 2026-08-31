@@ -15,7 +15,7 @@ npx wrangler d1 migrations apply cnmcp-stats --local
 
 ## Cloudflare 配置边界
 
-`wrangler.jsonc` 仅声明普通变量和 `DB` binding。提交前必须把占位的 `database_id` 替换为目标环境真实 D1 ID；本仓库不配置真实 Cloudflare 账户。
+`wrangler.jsonc` 仅声明普通变量和 `DB` binding。提交前必须把占位的 `database_id` 替换为目标环境真实 D1 ID。GitHub 只需要仓库级 Secrets `CLOUDFLARE_API_TOKEN` 和 `CLOUDFLARE_ACCOUNT_ID`，详见 [`docs/cloudflare-deployment.md`](../docs/cloudflare-deployment.md)。
 
 `HASH_SALT` **只通过 Wrangler secret 配置**，不得写入 `wrangler.jsonc`、`.env`、前端变量、日志或 D1：
 

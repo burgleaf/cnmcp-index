@@ -39,9 +39,12 @@ test("PR 工作流只有只读权限，无 Cloudflare secret，并按要求执�
   assert.match(source, /npm ci --prefix worker/);
 });
 
-test("Worker 生产工作流使用受保护环境且远程步骤严格按迁移、同步、部署、烟测排序", async () => {
+test("Worker 生产工作流使用仓库级 Secrets，远程步骤严格按迁移、同步、部署、烟测排序", async () => {
   const { source, value } = await workflow("deploy-worker.yml");
-  assert.equal(value.jobs.deploy.environment, "production-worker");
+  assert.equal(value.jobs.deploy.environment, undefined);
+  assert.match(source, /secrets\.CLOUDFLARE_API_TOKEN/);
+  assert.match(source, /secrets\.CLOUDFLARE_ACCOUNT_ID/);
+  assert.doesNotMatch(source, /vars\.CLOUDFLARE_|CLOUDFLARE_D1_DATABASE_ID|prepare-wrangler-config|environment:\s*production/);
   const ordered = ["Run Worker lint, typecheck and tests", "Build Worker deployment bundle without upload", "Apply remote D1 migrations", "Synchronize remote D1 resource catalog", "Deploy Worker", "Smoke test Worker protocol and privacy boundaries"];
   const indexes = ordered.map((name) => stepIndex(value, "deploy", name));
   assert.ok(indexes.every((index) => index >= 0));
@@ -52,7 +55,13 @@ test("Worker 生产工作流使用受保护环境且远程步骤严格按迁移�
 
 test("Pages 生产工作流在 Worker 安全门和 D1 同步后构建，先烟测候选再发布同一产物", async () => {
   const { source, value } = await workflow("deploy-pages.yml");
-  assert.equal(value.jobs.deploy.environment, "production-pages");
+  assert.equal(value.jobs.deploy.environment, undefined);
+  assert.match(source, /secrets\.CLOUDFLARE_API_TOKEN/);
+  assert.match(source, /secrets\.CLOUDFLARE_ACCOUNT_ID/);
+  assert.match(source, /--project-name cnmcp-index/);
+  assert.match(source, /https:\/\/www\.cnmcp\.com/);
+  assert.match(source, /https:\/\/api\.cnmcp\.com/);
+  assert.doesNotMatch(source, /CLOUDFLARE_D1_DATABASE_ID|CLOUDFLARE_PAGES_PROJECT|prepare-wrangler-config|environment:\s*production/);
   const ordered = ["Validate resource content", "Generate deterministic catalogs", "Require matching Worker deployment when Worker paths changed", "Synchronize remote D1 resource catalog", "Build root static export", "Deploy immutable candidate to Pages", "Smoke test candidate static deployment", "Publish verified artifact to Pages production"];
   const indexes = ordered.map((name) => stepIndex(value, "deploy", name));
   assert.ok(indexes.every((index) => index >= 0));

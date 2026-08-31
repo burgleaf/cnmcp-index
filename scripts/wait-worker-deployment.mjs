@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const WORKER_PATHS = [
   /^worker\//,
-  /^scripts\/(?:sync-stats-catalog|prepare-wrangler-config|check-cloudflare-prerequisites|smoke-deployment)\.mjs$/,
+  /^scripts\/(?:sync-stats-catalog|check-cloudflare-prerequisites|smoke-deployment)\.mjs$/,
   /^scripts\/lib\/stats-catalog-sync\.mjs$/,
   /^\.github\/workflows\/deploy-worker\.yml$/,
 ];

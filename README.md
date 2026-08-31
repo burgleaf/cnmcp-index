@@ -80,7 +80,7 @@ examples/       投稿示例
 
 ## 部署
 
-Cloudflare Pages 发布静态 `out/`，Worker 与 D1 负责匿名统计。前置条件、GitHub Environment 与发布顺序见 [`docs/cloudflare-deployment.md`](./docs/cloudflare-deployment.md) 和 [`worker/README.md`](./worker/README.md)。
+Cloudflare Pages 发布静态 `out/`，Worker 与 D1 负责匿名统计。仓库级 Secrets、固定标识与发布顺序见 [`docs/cloudflare-deployment.md`](./docs/cloudflare-deployment.md) 和 [`worker/README.md`](./worker/README.md)。
 
 ## 许可
 

@@ -21,6 +21,6 @@
 2. 将 `Content Maintainer Review / Protected Content Review` 设为 required status check。
 3. 启用新提交后撤销旧批准（dismiss stale approvals），并禁止未通过 required checks 的绕过；是否允许管理员绕过应由仓库治理策略明确决定。
 4. 将后续内容校验/静态构建工作流也设为 required status checks。
-5. 生产部署工作流只允许默认分支触发，并使用受保护的 GitHub Environment 保存 Cloudflare 凭据。
+5. 生产部署工作流只允许默认分支触发。Cloudflare 凭据使用仓库级 Actions secrets（`CLOUDFLARE_API_TOKEN`、`CLOUDFLARE_ACCOUNT_ID`），不经过 Pull Request 工作流。
 
 即使将来增加 `.github/CODEOWNERS`，CODEOWNERS 文件本身也不能强制审核；仍需在平台侧启用“Require review from Code Owners”和默认分支保护。当前仓库未配置可验证的 Git remote/维护者账号，因此没有猜测不存在的用户名或团队，而使用仓库权限动态判定维护者。

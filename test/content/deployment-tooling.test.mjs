@@ -1,51 +1,42 @@
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
 import { createBuildSummary, generateBuildSummary } from "../../scripts/ci-build-summary.mjs";
-import { assertHashSaltSecret, validateDeploymentEnvironment } from "../../scripts/check-cloudflare-prerequisites.mjs";
+import {
+  assertCommittedD1DatabaseId,
+  assertHashSaltSecret,
+  validateDeploymentEnvironment,
+} from "../../scripts/check-cloudflare-prerequisites.mjs";
 import { extractPagesDeploymentUrl } from "../../scripts/extract-pages-deployment-url.mjs";
-import { createProductionWranglerConfig, prepareWranglerConfig } from "../../scripts/prepare-wrangler-config.mjs";
 import { createPagesSmokePaths } from "../../scripts/smoke-deployment.mjs";
 import { requiresWorkerDeployment } from "../../scripts/wait-worker-deployment.mjs";
 
 const databaseId = "01234567-89ab-cdef-0123-456789abcdef";
 const baseEnvironment = {
   CLOUDFLARE_ACCOUNT_ID: "0123456789abcdef0123456789abcdef",
-  CLOUDFLARE_D1_DATABASE_ID: databaseId,
   CLOUDFLARE_API_TOKEN: "test-only-token",
-  WORKER_API_URL: "https://api.cnmcp.com",
-  PRODUCTION_SITE_URL: "https://www.cnmcp.com",
-  CLOUDFLARE_PAGES_PROJECT: "cnmcp-community",
 };
 
-test("部署前置检查拒绝缺失、注入式项目名和非 HTTPS URL，且接受合法配置", () => {
+test("部署前置检查只要求仓库级 Token 与 Account ID", () => {
   assert.doesNotThrow(() => validateDeploymentEnvironment("worker", baseEnvironment));
   assert.doesNotThrow(() => validateDeploymentEnvironment("pages", baseEnvironment));
-  assert.throws(() => validateDeploymentEnvironment("pages", { ...baseEnvironment, CLOUDFLARE_PAGES_PROJECT: "name; rm" }), /格式/);
-  assert.throws(() => validateDeploymentEnvironment("worker", { ...baseEnvironment, WORKER_API_URL: "http://api.cnmcp.com" }), /HTTPS/);
+  assert.throws(() => validateDeploymentEnvironment("worker", { ...baseEnvironment, CLOUDFLARE_ACCOUNT_ID: "not-an-id" }), /格式/);
   assert.throws(() => validateDeploymentEnvironment("worker", { ...baseEnvironment, CLOUDFLARE_API_TOKEN: "" }), /缺少/);
+  assert.throws(() => validateDeploymentEnvironment("other", baseEnvironment), /worker 或 pages/);
 });
 
-test("临时 Wrangler 配置只替换 DB ID 且输出限制在 RUNNER_TEMP", async () => {
-  const config = { name: "worker", d1_databases: [{ binding: "DB", database_id: "placeholder" }] };
-  assert.equal(createProductionWranglerConfig(config, databaseId).d1_databases[0].database_id, databaseId);
-  assert.throws(() => createProductionWranglerConfig(config, "$(unsafe)"), /格式/);
-
-  const temp = await mkdtemp(path.join(os.tmpdir(), "cnmcp-config-"));
-  const inputPath = path.join(temp, "input.json");
-  const outputPath = path.join(temp, "generated", "production.json");
-  await mkdir(path.dirname(outputPath), { recursive: true });
-  await writeFile(inputPath, JSON.stringify(config));
+test("已提交的 D1 ID 必须是真实 ID，不能是占位符", async () => {
+  const temp = await mkdtemp(path.join(os.tmpdir(), "cnmcp-d1-"));
+  const valid = path.join(temp, "valid.jsonc");
+  const placeholder = path.join(temp, "placeholder.jsonc");
+  await writeFile(valid, JSON.stringify({ d1_databases: [{ binding: "DB", database_id: databaseId }] }));
+  await writeFile(placeholder, JSON.stringify({ d1_databases: [{ binding: "DB", database_id: "REPLACE_WITH_D1_DATABASE_ID" }] }));
   try {
-    await prepareWranglerConfig({ inputPath, databaseId, outputPath, runnerTemp: temp });
-    assert.equal(JSON.parse(await readFile(outputPath, "utf8")).d1_databases[0].database_id, databaseId);
-    await assert.rejects(
-      prepareWranglerConfig({ inputPath, databaseId, outputPath: path.join(temp, "..", "outside.json"), runnerTemp: temp }),
-      /RUNNER_TEMP/,
-    );
+    await assert.doesNotReject(assertCommittedD1DatabaseId(valid));
+    await assert.rejects(assertCommittedD1DatabaseId(placeholder), /真实 D1/);
   } finally {
     await rm(temp, { recursive: true, force: true });
   }
@@ -105,4 +96,5 @@ test("Pages URL 提取与 Worker 路径门拒绝不受控输入并识别生产�
   assert.equal(requiresWorkerDeployment(["app/page.tsx"]), false);
   assert.equal(requiresWorkerDeployment(["worker/src/index.ts"]), true);
   assert.equal(requiresWorkerDeployment(["scripts/sync-stats-catalog.mjs"]), true);
+  assert.equal(requiresWorkerDeployment(["scripts/prepare-wrangler-config.mjs"]), false);
 });

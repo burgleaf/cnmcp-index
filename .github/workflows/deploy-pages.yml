@@ -35,18 +35,14 @@ jobs:
     if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: ubuntu-latest
     timeout-minutes: 50
-    environment: production-pages
     env:
-      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
-      CLOUDFLARE_D1_DATABASE_ID: ${{ vars.CLOUDFLARE_D1_DATABASE_ID }}
-      CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      PRODUCTION_SITE_URL: ${{ vars.PRODUCTION_SITE_URL }}
-      NEXT_PUBLIC_SITE_URL: ${{ vars.PRODUCTION_SITE_URL }}
-      NEXT_PUBLIC_STATS_API_URL: ${{ vars.WORKER_API_URL }}
-      NEXT_PUBLIC_GITHUB_REPOSITORY_URL: ${{ vars.GITHUB_REPOSITORY_URL }}
+      PRODUCTION_SITE_URL: https://www.cnmcp.com
+      NEXT_PUBLIC_SITE_URL: https://www.cnmcp.com
+      NEXT_PUBLIC_STATS_API_URL: https://api.cnmcp.com
+      NEXT_PUBLIC_GITHUB_REPOSITORY_URL: https://github.com/burgleaf/cnmcp-index
       NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN: ${{ vars.CLOUDFLARE_WEB_ANALYTICS_TOKEN }}
-      WRANGLER_CONFIG_OUTPUT: ${{ runner.temp }}/wrangler.production.json
       GITHUB_TOKEN: ${{ github.token }}
     steps:
       - name: Checkout default branch revision
@@ -80,11 +76,8 @@ jobs:
       - name: Validate protected deployment prerequisites
         run: node scripts/check-cloudflare-prerequisites.mjs environment pages
 
-      - name: Prepare ephemeral Wrangler production config
-        run: node scripts/prepare-wrangler-config.mjs
-
       - name: Synchronize remote D1 resource catalog
-        run: node scripts/sync-stats-catalog.mjs --remote --database cnmcp-stats --config "$WRANGLER_CONFIG_OUTPUT"
+        run: node scripts/sync-stats-catalog.mjs --remote --database cnmcp-stats --config worker/wrangler.jsonc
 
       - name: Build root static export
         run: node .yarn/releases/yarn-1.22.19.cjs build
@@ -98,11 +91,11 @@ jobs:
           CANDIDATE_BRANCH: ci-${{ github.run_id }}-${{ github.run_attempt }}
         run: |
           set -o pipefail
-          node worker/node_modules/wrangler/bin/wrangler.js pages deploy out --project-name "$CLOUDFLARE_PAGES_PROJECT" --branch "$CANDIDATE_BRANCH" --commit-hash "$GITHUB_SHA" --commit-dirty=false 2>&1 | tee "$RUNNER_TEMP/pages-candidate.log"
+          node worker/node_modules/wrangler/bin/wrangler.js pages deploy out --project-name cnmcp-index --branch "$CANDIDATE_BRANCH" --commit-hash "$GITHUB_SHA" --commit-dirty=false 2>&1 | tee "$RUNNER_TEMP/pages-candidate.log"
           node scripts/extract-pages-deployment-url.mjs "$RUNNER_TEMP/pages-candidate.log"
 
       - name: Smoke test candidate static deployment
         run: node scripts/smoke-deployment.mjs --target pages --base-url "${{ steps.candidate.outputs.url }}"
 
       - name: Publish verified artifact to Pages production
-        run: node worker/node_modules/wrangler/bin/wrangler.js pages deploy out --project-name "$CLOUDFLARE_PAGES_PROJECT" --branch "$GITHUB_REF_NAME" --commit-hash "$GITHUB_SHA" --commit-dirty=false
+        run: node worker/node_modules/wrangler/bin/wrangler.js pages deploy out --project-name cnmcp-index --branch "$GITHUB_REF_NAME" --commit-hash "$GITHUB_SHA" --commit-dirty=false
