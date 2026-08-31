@@ -1,5 +1,6 @@
 export const PRODUCTION_SITE_URL = "https://www.cnmcp.com";
 const DEFAULT_STATS_API_URL = "https://api.cnmcp.com";
+const DEFAULT_DISCOVERY_API_URL = "https://discovery.cnmcp.com";
 const SENSITIVE_PUBLIC_NAME = /(SECRET|TOKEN|PASSWORD|PRIVATE_KEY|HASH_SALT)/i;
 const PUBLIC_ANALYTICS_TOKEN_NAME = "NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN";
 const WEB_ANALYTICS_TOKEN_PATTERN = /^[a-f0-9]{32}$/i;
@@ -9,6 +10,7 @@ type EnvironmentSource = Readonly<Record<string, string | undefined>>;
 export type PublicEnvironment = Readonly<{
   siteUrl: string;
   statsApiUrl: string;
+  discoveryApiUrl: string;
   githubRepositoryUrl?: string;
   cloudflareWebAnalyticsToken?: string;
 }>;
@@ -103,6 +105,10 @@ export function readPublicEnvironment(
     statsApiUrl: parseHttpsOrigin(
       "NEXT_PUBLIC_STATS_API_URL",
       environment.NEXT_PUBLIC_STATS_API_URL?.trim() || DEFAULT_STATS_API_URL,
+    ),
+    discoveryApiUrl: parseHttpsOrigin(
+      "NEXT_PUBLIC_DISCOVERY_API_URL",
+      environment.NEXT_PUBLIC_DISCOVERY_API_URL?.trim() || DEFAULT_DISCOVERY_API_URL,
     ),
     ...(githubRepositoryUrl
       ? { githubRepositoryUrl: parseGitHubRepositoryUrl(githubRepositoryUrl) }

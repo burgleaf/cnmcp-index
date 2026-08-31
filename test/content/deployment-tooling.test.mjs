@@ -8,6 +8,8 @@ import { createBuildSummary, generateBuildSummary } from "../../scripts/ci-build
 import {
   assertCommittedD1DatabaseId,
   assertHashSaltSecret,
+  assertNamedSecret,
+  DISCOVERY_D1_PLACEHOLDER,
   validateDeploymentEnvironment,
 } from "../../scripts/check-cloudflare-prerequisites.mjs";
 import { extractPagesDeploymentUrl } from "../../scripts/extract-pages-deployment-url.mjs";
@@ -23,9 +25,10 @@ const baseEnvironment = {
 test("部署前置检查只要求仓库级 Token 与 Account ID", () => {
   assert.doesNotThrow(() => validateDeploymentEnvironment("worker", baseEnvironment));
   assert.doesNotThrow(() => validateDeploymentEnvironment("pages", baseEnvironment));
+  assert.doesNotThrow(() => validateDeploymentEnvironment("discovery", baseEnvironment));
   assert.throws(() => validateDeploymentEnvironment("worker", { ...baseEnvironment, CLOUDFLARE_ACCOUNT_ID: "not-an-id" }), /格式/);
   assert.throws(() => validateDeploymentEnvironment("worker", { ...baseEnvironment, CLOUDFLARE_API_TOKEN: "" }), /缺少/);
-  assert.throws(() => validateDeploymentEnvironment("other", baseEnvironment), /worker 或 pages/);
+  assert.throws(() => validateDeploymentEnvironment("other", baseEnvironment), /worker、pages 或 discovery/);
 });
 
 test("已提交的 D1 ID 必须是真实 ID，不能是占位符", async () => {
@@ -37,6 +40,9 @@ test("已提交的 D1 ID 必须是真实 ID，不能是占位符", async () => {
   try {
     await assert.doesNotReject(assertCommittedD1DatabaseId(valid));
     await assert.rejects(assertCommittedD1DatabaseId(placeholder), /真实 D1/);
+    await writeFile(placeholder, JSON.stringify({ d1_databases: [{ binding: "DB", database_id: DISCOVERY_D1_PLACEHOLDER }] }));
+    await assert.doesNotReject(assertCommittedD1DatabaseId(placeholder));
+    await assert.rejects(assertCommittedD1DatabaseId(placeholder, { disallowIds: [DISCOVERY_D1_PLACEHOLDER] }), /占位 D1/);
   } finally {
     await rm(temp, { recursive: true, force: true });
   }
@@ -51,6 +57,8 @@ test("HASH_SALT 检查只验证名称存在，不要求或输出 secret 值", as
   try {
     await assert.doesNotReject(assertHashSaltSecret(valid));
     await assert.rejects(assertHashSaltSecret(invalid), /HASH_SALT/);
+    await assert.doesNotReject(assertNamedSecret(valid, "HASH_SALT"));
+    await assert.rejects(assertNamedSecret(invalid, "GITHUB_TOKEN"), /GITHUB_TOKEN/);
   } finally {
     await rm(temp, { recursive: true, force: true });
   }
@@ -87,7 +95,7 @@ test("Pages 烟测覆盖主页、列表、全部分类/启用平台、SEO、随�
     indexes: { kinds: { mcp: [], plugin: [], skill: [] } },
     platforms: [{ id: "codex", enabled: true }, { id: "later", enabled: false }],
   }, 0);
-  assert.deepEqual(paths, ["/", "/resources/", "/category/mcp/", "/category/plugin/", "/category/skill/", "/platform/codex/", "/sitemap.xml", "/robots.txt", "/resources/safe-resource/"]);
+  assert.deepEqual(paths, ["/", "/resources/", "/discover/", "/category/mcp/", "/category/plugin/", "/category/skill/", "/platform/codex/", "/sitemap.xml", "/robots.txt", "/resources/safe-resource/"]);
 });
 
 test("Pages URL 提取与 Worker 路径门拒绝不受控输入并识别生产相关变更", () => {

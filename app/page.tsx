@@ -18,9 +18,9 @@ export default function HomePage() {
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-8 text-slate-600">CNMCP AI 扩展社区收录 MCP、Skill 和 AI 编程工具插件。目录内容来自社区审核后合并的 Git 仓库。</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link className="rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700" href="/resources">浏览资源目录</Link>
-            <Link className="rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-ink hover:border-brand" href="/platform/codex">查看 Codex 资源</Link>
+            <Link className="rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-ink hover:border-brand" href="/discover">查看 GitHub 热门发现</Link>
           </div>
-          <p className="mt-5 text-sm text-slate-500">页面静态提供；统计服务暂时不可用时，资源内容仍可正常访问。</p>
+          <p className="mt-5 text-sm text-slate-500">发现列表来自 GitHub 热度，未经安装与兼容性核验。页面静态提供；统计或发现服务暂时不可用时，正式 Catalog 仍可访问。</p>
         </div>
       </section>
 

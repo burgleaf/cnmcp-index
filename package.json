@@ -9,6 +9,8 @@
     "sync:stats:local": "node scripts/sync-stats-catalog.mjs --local",
     "worker:check": "npm --prefix worker run check",
     "worker:dry-run": "npm --prefix worker run dry-run",
+    "discovery:check": "npm --prefix discovery run check",
+    "discovery:dry-run": "npm --prefix discovery run dry-run",
     "audit:static-runtime": "node scripts/audit-static-runtime.mjs",
     "content:prepare": "yarn validate:resources && yarn generate:catalog",
     "prebuild": "yarn content:prepare",

@@ -14,6 +14,7 @@ on:
       - "scripts/**"
       - "test/**"
       - "worker/**"
+      - "discovery/**"
       - "package.json"
       - "yarn.lock"
       - "next.config.ts"
@@ -32,6 +33,7 @@ on:
       - "scripts/**"
       - "test/**"
       - "worker/**"
+      - "discovery/**"
       - "package.json"
       - "yarn.lock"
       - "next.config.ts"
@@ -116,3 +118,28 @@ jobs:
       - name: Build Worker deployment bundle without upload
         if: steps.worker-changes.outputs.changed == 'true'
         run: npm --prefix worker run dry-run
+
+      - name: Detect Discovery-related changes
+        id: discovery-changes
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          elif git diff --quiet "$BASE_SHA" "$GITHUB_SHA" -- discovery; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install Discovery dependencies from npm lockfile
+        if: steps.discovery-changes.outputs.changed == 'true'
+        run: npm ci --prefix discovery --ignore-scripts
+
+      - name: Run Discovery lint, typecheck and tests
+        if: steps.discovery-changes.outputs.changed == 'true'
+        run: npm --prefix discovery run check
+
+      - name: Build Discovery deployment bundle without upload
+        if: steps.discovery-changes.outputs.changed == 'true'
+        run: npm --prefix discovery run dry-run

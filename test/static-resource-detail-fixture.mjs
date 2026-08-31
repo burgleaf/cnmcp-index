@@ -186,6 +186,7 @@ async function main() {
       "https://www.cnmcp.com/platform/codex/",
       "https://www.cnmcp.com/platform/claude-code/",
       "https://www.cnmcp.com/submit/",
+      "https://www.cnmcp.com/discover/",
     ]) assertContains(sitemap, expected, "sitemap");
     for (const excluded of [...EXCLUDED_RESOURCE_IDS, "__empty-catalog__"]) {
       assert.ok(!sitemap.includes(excluded), `sitemap 不得包含：${excluded}`);

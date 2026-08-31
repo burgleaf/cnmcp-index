@@ -6,6 +6,9 @@
 /worker/node_modules/
 /worker/.wrangler/
 /worker/dist/
+/discovery/node_modules/
+/discovery/.wrangler/
+/discovery/dist/
 /.pnp
 .pnp.js
 pnpm-lock.yaml
@@ -50,3 +53,6 @@ yarn-error.log*
 
 # local spec/workspace files
 .kiro/
+
+docs/design/
+.dev.vars

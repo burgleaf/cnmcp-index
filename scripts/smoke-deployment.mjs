@@ -33,6 +33,7 @@ export function createPagesSmokePaths(catalog, resourceIndex) {
   const paths = [
     "/",
     "/resources/",
+    "/discover/",
     ...kinds.map((kind) => `/category/${encodeURIComponent(kind)}/`),
     ...platforms.map((platform) => `/platform/${encodeURIComponent(platform)}/`),
     "/sitemap.xml",
@@ -94,6 +95,29 @@ export async function smokePages({ baseUrl, catalogPath = path.join(PROJECT_ROOT
   await expectStatus(origin, `/__cnmcp-smoke-missing-${randomUUID()}/`, 404);
 }
 
+export async function smokeDiscovery({ baseUrl, origin }) {
+  const apiOrigin = parseOrigin("Discovery API URL", baseUrl);
+  const allowedOrigin = parseOrigin("生产站点 Origin", origin);
+
+  const list = await expectStatus(apiOrigin, "/v1/discovery", 200);
+  expectNoStore(list, "GET /v1/discovery");
+
+  const cors = await expectStatus(apiOrigin, "/v1/discovery", 200, { headers: { Origin: allowedOrigin } });
+  expectNoStore(cors, "CORS GET /v1/discovery");
+  if (cors.headers.get("Access-Control-Allow-Origin") !== allowedOrigin) throw new Error("允许 Origin 的 CORS 响应头不匹配");
+
+  const forbidden = await expectStatus(apiOrigin, "/v1/discovery", 403, { headers: { Origin: "https://invalid.example" } });
+  expectNoStore(forbidden, "拒绝 Origin");
+
+  const unknownRoute = await expectStatus(apiOrigin, `/v1/unknown-${randomUUID()}`, 404);
+  expectNoStore(unknownRoute, "未知路由");
+
+  const invalidKind = await expectStatus(apiOrigin, "/v1/discovery?kind=not-a-kind", 400);
+  expectNoStore(invalidKind, "非法 kind");
+  const payload = await invalidKind.json();
+  if (payload?.error?.code !== "INVALID_KIND") throw new Error("非法 kind 错误协议不匹配");
+}
+
 export async function smokeWorker({ baseUrl, origin }) {
   const apiOrigin = parseOrigin("Worker API URL", baseUrl);
   const allowedOrigin = parseOrigin("生产站点 Origin", origin);
@@ -142,7 +166,8 @@ async function runCli() {
   const options = parseArguments(process.argv.slice(2));
   if (options.target === "pages") await smokePages({ baseUrl: options.baseUrl, catalogPath: options.catalog });
   else if (options.target === "worker") await smokeWorker({ baseUrl: options.baseUrl, origin: options.origin });
-  else throw new Error("--target 必须是 pages 或 worker");
+  else if (options.target === "discovery") await smokeDiscovery({ baseUrl: options.baseUrl, origin: options.origin });
+  else throw new Error("--target 必须是 pages、worker 或 discovery");
   console.log(`${options.target} 烟雾检查通过。`);
 }
 

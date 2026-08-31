@@ -1,6 +1,6 @@
 # Cloudflare 部署前置条件
 
-GitHub Actions 只定义流程。仓库不保存 Cloudflare API Token，也不自动创建生产资源。站点 URL、Worker 入口、Pages 项目名写死在工作流里；D1 ID 写在 `worker/wrangler.jsonc`。
+GitHub Actions 只定义流程。仓库不保存 Cloudflare API Token，也不自动创建生产资源。站点 URL、Worker 入口、Pages 项目名写死在工作流里；统计 D1 ID 写在 `worker/wrangler.jsonc`，发现 D1 ID 写在 `discovery/wrangler.jsonc`。
 
 ## 固定标识
 
@@ -12,6 +12,9 @@ GitHub Actions 只定义流程。仓库不保存 Cloudflare API Token，也不�
 | Worker 名称 | `cnmcp-stats-api` |
 | Worker 入口 | `https://api.cnmcp.com` |
 | D1 数据库名 | `cnmcp-stats` |
+| Discovery Worker 名称 | `cnmcp-discovery-api` |
+| Discovery Worker 入口 | `https://discovery.cnmcp.com` |
+| Discovery D1 数据库名 | `cnmcp-discovery` |
 
 ## 一次性创建 Cloudflare 资源
 
@@ -26,10 +29,27 @@ npx wrangler d1 create cnmcp-stats
 
 未填入真实 ID 前，远程 migration、Catalog 同步和 Worker/Pages 部署都应视为不可执行。
 
+发现服务使用独立 D1。把 `discovery/wrangler.jsonc` 中的占位 ID `00000000-0000-4000-8000-000000000001` 替换为真实 ID 前，Discovery 生产部署不可执行：
+
+```sh
+cd discovery
+npm ci
+npx wrangler d1 create cnmcp-discovery
+```
+
+需要 Cloudflare **Workers Paid**。在 Cloudflare 为 `cnmcp-discovery-api` 绑定自定义域 `discovery.cnmcp.com`。
+
 首次发布前，为 `cnmcp-stats-api` 预配置 `HASH_SALT`（至少 32 字节熵）。工作流只调用 `wrangler secret list --format json` 检查名称存在，不读取或输出值。不要把它配成 GitHub Secret、Variable 或 `NEXT_PUBLIC_*`：
 
 ```sh
 npx wrangler secret put HASH_SALT
+```
+
+首次发布 Discovery 前，为 `cnmcp-discovery-api` 预配置 `GITHUB_TOKEN`（公开仓库只读 + 本仓库 `issues:write`）。同样只通过 Wrangler secret 配置：
+
+```sh
+cd discovery
+npx wrangler secret put GITHUB_TOKEN
 ```
 
 ## GitHub Secrets
@@ -38,7 +58,7 @@ npx wrangler secret put HASH_SALT
 
 | Secret | 必需 | 说明 |
 | --- | --- | --- |
-| `CLOUDFLARE_API_TOKEN` | 是 | 最小权限 token；只授权目标账户的 D1 与对应 Worker/Pages 项目。 |
+| `CLOUDFLARE_API_TOKEN` | 是 | 最小权限 token；只授权目标账户的 D1 与对应 Worker/Pages/Discovery 项目。 |
 | `CLOUDFLARE_ACCOUNT_ID` | 是 | 32 位账户 ID。 |
 
 可选仓库 Variable（不是 Secret）：
@@ -53,6 +73,8 @@ Pull Request 工作流只有 `contents: read`，不会引用这些凭据。
 
 Worker 工作流固定执行：本地检查与 dry-run → 检查仓库级凭据与已提交的 D1 ID → 用 `d1 execute --file` 导入远程 schema → remote Catalog sync → Worker deploy → 协议烟测。任一步非零退出都会阻止后续步骤。
 
+Discovery 工作流固定执行：本地检查与 dry-run → 检查仓库级凭据与已提交的非占位 D1 ID → 确认 `GITHUB_TOKEN` secret 存在 → 用 `d1 execute --file` 导入远程 schema → Worker deploy → 协议烟测。不写入 `resources/`，也不做 Catalog 同步。
+
 Pages 工作流固定执行：内容校验/生成 → 同提交 Worker 成功门（仅 Worker 生产依赖路径变化时）→ 用 `d1 execute --file` 导入远程 schema → remote Catalog sync → 静态构建 → 候选 Pages deployment → 完整静态路由烟测 → 将同一 `out/` 发布到生产分支。候选烟测或最终生产上传失败时，原生产 deployment 保持不变；生产上传由 Pages 原子创建新 deployment。远程 schema 不用 `d1 migrations apply`：D1 `/query` 会按分号拆开 `CREATE TRIGGER` 体，导致 `incomplete input`。
 
-工作流中的所有 Wrangler 命令来自 `worker/package-lock.json` 锁定的 `wrangler@4.127.1`。远程步骤只会在默认分支 push，或 GitHub Actions 页面对 `Deploy Worker Production` / `Deploy Pages Production` 的手动 `workflow_dispatch` 中执行。手动发布 Pages 时不要求同一提交的 Worker 工作流已成功。
+统计 Worker 的 Wrangler 命令来自 `worker/package-lock.json` 锁定的 `wrangler@4.127.1`。Discovery Worker 使用 `discovery/package-lock.json` 中的同一 Wrangler 版本。远程步骤只会在默认分支 push，或 GitHub Actions 页面对 `Deploy Worker Production` / `Deploy Pages Production` / `Deploy Discovery Production` 的手动 `workflow_dispatch` 中执行。手动发布 Pages 时不要求同一提交的 Worker 或 Discovery 工作流已成功。

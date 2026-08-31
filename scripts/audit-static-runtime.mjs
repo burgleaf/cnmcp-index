@@ -10,6 +10,7 @@ const WEB_SOURCE_EXTENSIONS = new Set([".js", ".jsx", ".mjs", ".cjs", ".ts", ".t
 const EXPECTED_APP_PAGES = new Set([
   "page.tsx",
   "category/[kind]/page.tsx",
+  "discover/page.tsx",
   "platform/[platform]/page.tsx",
   "resources/page.tsx",
   "resources/[id]/page.tsx",
@@ -51,6 +52,7 @@ const FORBIDDEN_MODULES = [
   /^next\/(?:server|headers)$/,
   /^(?:next-auth|passport|prisma|@prisma\/client|sequelize|mongoose|mysql2?|pg|sqlite3|better-sqlite3|typeorm)(?:\/|$)/,
   /(?:^|\/)worker(?:\/|$)/,
+  /(?:^|\/)discovery(?:\/|$)/,
   /(?:^|\/)src\/(?:pages|services)(?:\/|$)/,
 ];
 const FORBIDDEN_LEGACY_OUTPUT_ROOTS = new Set([
@@ -153,7 +155,7 @@ async function auditPackageAndConfig(projectRoot) {
 
   const requiredScripts = [
     "validate:resources", "generate:catalog", "build", "lint", "typecheck", "test", "test:static-fixture",
-    "worker:check", "worker:dry-run", "audit:static-runtime",
+    "worker:check", "worker:dry-run", "discovery:check", "discovery:dry-run", "audit:static-runtime",
   ];
   const missingScripts = requiredScripts.filter((name) => typeof scripts[name] !== "string");
   if (missingScripts.length > 0) issues.push(`缺少审计所需根脚本：${missingScripts.join(", ")}`);
@@ -239,32 +241,43 @@ async function auditWebSources(projectRoot) {
   );
 }
 
-async function auditWorkerBoundary(projectRoot) {
+async function auditIndependentWorker(projectRoot, directory, label) {
   const issues = [];
-  const workerPackagePath = path.join(projectRoot, "worker", "package.json");
+  const workerPackagePath = path.join(projectRoot, directory, "package.json");
   if (!(await exists(workerPackagePath))) {
-    issues.push("缺少独立 worker/package.json");
+    issues.push(`缺少独立 ${directory}/package.json`);
   } else {
     const workerPackage = await readJson(workerPackagePath);
-    if (workerPackage.private !== true) issues.push("Worker package 必须保持 private");
-    if (workerPackage.type !== "module") issues.push("Worker package 未声明独立 ESM 边界");
+    if (workerPackage.private !== true) issues.push(`${label} package 必须保持 private`);
+    if (workerPackage.type !== "module") issues.push(`${label} package 未声明独立 ESM 边界`);
     for (const script of ["check", "dry-run"]) {
-      if (typeof workerPackage.scripts?.[script] !== "string") issues.push(`Worker 缺少独立 ${script} 脚本`);
+      if (typeof workerPackage.scripts?.[script] !== "string") issues.push(`${label} 缺少独立 ${script} 脚本`);
     }
   }
 
   const rootPackage = await readJson(path.join(projectRoot, "package.json"));
-  for (const script of ["worker:check", "worker:dry-run"]) {
-    if (!/(?:npm|yarn)\s+--prefix\s+worker\s+run\s+/.test(rootPackage.scripts?.[script] ?? "")) {
-      issues.push(`${script} 未通过 worker 子工程边界调用`);
+  const checkScript = directory === "worker" ? "worker:check" : "discovery:check";
+  const dryRunScript = directory === "worker" ? "worker:dry-run" : "discovery:dry-run";
+  for (const script of [checkScript, dryRunScript]) {
+    const pattern = new RegExp(`(?:npm|yarn)\\s+--prefix\\s+${directory}\\s+run\\s+`);
+    if (!pattern.test(rootPackage.scripts?.[script] ?? "")) {
+      issues.push(`${script} 未通过 ${directory} 子工程边界调用`);
     }
   }
+  return issues;
+}
+
+async function auditWorkerBoundary(projectRoot) {
+  const issues = [
+    ...(await auditIndependentWorker(projectRoot, "worker", "Worker")),
+    ...(await auditIndependentWorker(projectRoot, "discovery", "Discovery Worker")),
+  ];
 
   return createCheck(
     "worker-boundary",
     "Worker 独立工程且 Web 不导入 Worker",
     issues,
-    "Worker 使用独立 package/lockfile/check/dry-run；Web 导入隔离由 web-source-boundary 同时验证。",
+    "统计与发现 Worker 使用独立 package/lockfile/check/dry-run；Web 导入隔离由 web-source-boundary 同时验证。",
   );
 }
 

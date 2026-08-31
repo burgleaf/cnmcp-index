@@ -8,6 +8,7 @@ describe("SiteHeader", () => {
 
     expect(html).toContain("CNMCP AI 扩展社区");
     expect(html).toContain('aria-label="主导航"');
+    expect(html).toContain('href="/discover"');
     expect(html).toContain('href="/resources"');
     expect(html).toContain('href="/category/mcp"');
     expect(html).toContain('href="/category/skill"');

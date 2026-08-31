@@ -12,6 +12,7 @@ const appPages = [
   "platform/[platform]/page.tsx",
   "resources/page.tsx",
   "resources/[id]/page.tsx",
+  "discover/page.tsx",
   "submit/page.tsx",
   "tags/[tag]/page.tsx",
 ];
@@ -34,6 +35,8 @@ async function createStaticProjectFixture() {
     "test:static-fixture": "node fixture.mjs",
     "worker:check": "npm --prefix worker run check",
     "worker:dry-run": "npm --prefix worker run dry-run",
+    "discovery:check": "npm --prefix discovery run check",
+    "discovery:dry-run": "npm --prefix discovery run dry-run",
     "audit:static-runtime": "node scripts/audit-static-runtime.mjs",
   };
   await writeFixtureFile(projectRoot, "package.json", JSON.stringify({ scripts, dependencies: { next: "15.5.23" } }));
@@ -45,6 +48,7 @@ async function createStaticProjectFixture() {
   await writeFixtureFile(projectRoot, "lib/catalog.ts", "import catalog from \"../public/catalog.json\"; export { catalog };\n");
   await writeFixtureFile(projectRoot, "public/catalog.json", "{}\n");
   await writeFixtureFile(projectRoot, "worker/package.json", JSON.stringify({ private: true, type: "module", scripts: { check: "vitest run", "dry-run": "wrangler deploy --dry-run" } }));
+  await writeFixtureFile(projectRoot, "discovery/package.json", JSON.stringify({ private: true, type: "module", scripts: { check: "vitest run", "dry-run": "wrangler deploy --dry-run" } }));
   for (const file of ["index.html", "404.html", "catalog.json", "sitemap.xml", "robots.txt", "_next/static/app.js"]) {
     await writeFixtureFile(projectRoot, `out/${file}`, "fixture\n");
   }

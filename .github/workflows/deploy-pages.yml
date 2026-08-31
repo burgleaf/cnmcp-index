@@ -42,6 +42,7 @@ jobs:
       PRODUCTION_SITE_URL: https://www.cnmcp.com
       NEXT_PUBLIC_SITE_URL: https://www.cnmcp.com
       NEXT_PUBLIC_STATS_API_URL: https://api.cnmcp.com
+      NEXT_PUBLIC_DISCOVERY_API_URL: https://discovery.cnmcp.com
       NEXT_PUBLIC_GITHUB_REPOSITORY_URL: https://github.com/burgleaf/cnmcp-index
       NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN: ${{ vars.CLOUDFLARE_WEB_ANALYTICS_TOKEN }}
       GITHUB_TOKEN: ${{ github.token }}

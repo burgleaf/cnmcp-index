@@ -18,7 +18,7 @@ export function createSitemapEntries(input: Readonly<{
   platforms: ReadonlyArray<Platform>;
   tags: ReadonlyArray<Tag>;
 }>): MetadataRoute.Sitemap {
-  const fixedEntries: MetadataRoute.Sitemap = ["/", "/resources/", "/submit/"].map(
+  const fixedEntries: MetadataRoute.Sitemap = ["/", "/resources/", "/discover/", "/submit/"].map(
     (pathname) => ({ url: siteUrl(pathname) }),
   );
   const categoryEntries: MetadataRoute.Sitemap = RESOURCE_KINDS.map((kind) => ({

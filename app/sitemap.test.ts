@@ -23,6 +23,7 @@ describe("静态 sitemap 与 robots", () => {
       "https://www.cnmcp.com/",
       "https://www.cnmcp.com/resources/",
       "https://www.cnmcp.com/submit/",
+      "https://www.cnmcp.com/discover/",
       "https://www.cnmcp.com/category/mcp/",
       "https://www.cnmcp.com/category/skill/",
       "https://www.cnmcp.com/category/plugin/",

@@ -1,0 +1,34 @@
+{
+  "name": "cnmcp-discovery-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-09-24",
+  "observability": {
+    "enabled": true
+  },
+  "triggers": {
+    "crons": ["0 4 * * *"]
+  },
+  "vars": {
+    "ALLOWED_ORIGINS": "https://www.cnmcp.com",
+    "CATALOG_REPOSITORY": "burgleaf/cnmcp-index",
+    "PROMOTION_MIN_STARS": "50",
+    "PROMOTION_MAX_ISSUES_PER_CRAWL": "5",
+    "SOURCE_KIND_LIMIT": "80",
+    "SEARCH_PAGES_PER_QUERY": "2"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "cnmcp-discovery",
+      "database_id": "2aa22e9e-dd5d-4aff-8bf6-10af1821245e",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "workflows": [
+    {
+      "binding": "DISCOVERY_WORKFLOW",
+      "name": "cnmcp-discovery-crawl",
+      "class_name": "DiscoveryCrawlWorkflow"
+    }
+  ]
+}

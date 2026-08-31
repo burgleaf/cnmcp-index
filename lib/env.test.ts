@@ -5,6 +5,7 @@ describe("readPublicEnvironment", () => {
     expect(readPublicEnvironment({})).toEqual({
       siteUrl: "https://www.cnmcp.com",
       statsApiUrl: "https://api.cnmcp.com",
+      discoveryApiUrl: "https://discovery.cnmcp.com",
     });
   });
 
@@ -13,10 +14,12 @@ describe("readPublicEnvironment", () => {
       readPublicEnvironment({
         NEXT_PUBLIC_SITE_URL: " https://preview.cnmcp.com/ ",
         NEXT_PUBLIC_STATS_API_URL: "https://stats.cnmcp.com/",
+        NEXT_PUBLIC_DISCOVERY_API_URL: "https://discovery-preview.cnmcp.com/",
       }),
     ).toEqual({
       siteUrl: "https://preview.cnmcp.com",
       statsApiUrl: "https://stats.cnmcp.com",
+      discoveryApiUrl: "https://discovery-preview.cnmcp.com",
     });
   });
 
@@ -36,6 +39,7 @@ describe("readPublicEnvironment", () => {
     ).toEqual({
       siteUrl: "https://www.cnmcp.com",
       statsApiUrl: "https://api.cnmcp.com",
+      discoveryApiUrl: "https://discovery.cnmcp.com",
       cloudflareWebAnalyticsToken: "0123456789abcdef0123456789abcdef",
     });
     expect(() =>
@@ -55,6 +59,7 @@ describe("readPublicEnvironment", () => {
     ).toEqual({
       siteUrl: "https://www.cnmcp.com",
       statsApiUrl: "https://api.cnmcp.com",
+      discoveryApiUrl: "https://discovery.cnmcp.com",
     });
   });
 });
