@@ -16,7 +16,7 @@ npx wrangler d1 execute DB --local --file=migrations/0001_discovery.sql
 手动触发定时入口（需 `wrangler dev`）：
 
 ```sh
-curl "http://localhost:8787/__scheduled?cron=0+4+*+*+*"
+curl "http://localhost:8787/__scheduled?cron=0+16+*+*+*"
 ```
 
 不要在未审批时添加 `--remote`、执行远程迁移或部署。
@@ -44,4 +44,4 @@ Token 需要：公开仓库只读，以及本仓库 `issues:write`（用于创�
 
 需要 Cloudflare **Workers Paid**：Cron 与 Workflow 的 CPU / 墙钟时间 Free 档不够。
 
-Cron 每日 04:00 UTC 启动幂等 Workflow（instance id=`crawl-YYYY-MM-DD`）。日志仅输出 path、status、errorCode、durationMs，不包含 token、Issue 正文或安装命令。
+Cron 每日 16:00 UTC（北京时间 00:00）启动幂等 Workflow（instance id=`crawl-YYYY-MM-DD`，按 UTC 日期）。日志仅输出 path、status、errorCode、durationMs，不包含 token、Issue 正文或安装命令。

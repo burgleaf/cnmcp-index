@@ -6,7 +6,7 @@
     "enabled": true
   },
   "triggers": {
-    "crons": ["0 4 * * *"]
+    "crons": ["0 16 * * *"]
   },
   "vars": {
     "ALLOWED_ORIGINS": "https://www.cnmcp.com",
