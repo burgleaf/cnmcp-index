@@ -58,5 +58,6 @@
   ],
   "createdAt": "2026-06-10",
   "updatedAt": "2026-08-31",
-  "visibility": "public"
+  "visibility": "public",
+  "featured": true
 }
