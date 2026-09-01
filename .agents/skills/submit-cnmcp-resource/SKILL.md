@@ -11,7 +11,7 @@ description: Submits an MCP, Skill, or AI coding-tool plugin to the CNMCP catalo
 
 ## 选择路径
 
-- **投稿**：用户拥有或可代表一条公开源码仓库，希望收录进正式 Catalog。补齐 `resource.json`，校验后通过 GitHub API 开 **Ready for review** 的正式 PR。
+- **投稿**：用户拥有或可代表一条公开源码仓库，希望收录进正式 Catalog。补齐 `resource.json` 和 `README.md`，校验后通过 GitHub API 开 **Ready for review** 的正式 PR。
 - **阻塞回退**：仅在补齐、修复、GitHub 授权重试之后仍无法继续，并且用户明确同意时，才使用 Issue Form `.github/ISSUE_TEMPLATE/resource-submission.yml`。Issue 只写一个真实阻塞点和解除步骤。
 - **高级 PR**：用户明确要求自己操作 Git / Codespaces。遵循仓库 README 与 PR 模板；需要本地校验时用稀疏检出，不要下载无关历史。
 
@@ -43,7 +43,7 @@ description: Submits an MCP, Skill, or AI coding-tool plugin to the CNMCP catalo
    ```text
    resources/<resource-id>/
    ├── resource.json
-   ├── README.md          # 可选，禁止原始 HTML 和非 HTTPS 外链
+   ├── README.md          # 必需；禁止原始 HTML 和非 HTTPS 外链
    └── logo.webp|preview.webp  # 可选本地图片
    ```
 
@@ -58,6 +58,9 @@ description: Submits an MCP, Skill, or AI coding-tool plugin to the CNMCP catalo
    - **禁止**新增 `verified` 或 `reviewStatus`
    - 选择双语时同时填 `nameEn` / `summaryEn`
    - 不要把真实密钥写进文件
+   - `README.md` 必须面向详情页阅读：包含资源简介、核心能力、快速开始和资源入口；简洁的上游内容摘录或人工摘要均可。
+   - README 必须通过 HTTPS 链接标注上游仓库或文档来源；不直接嵌入上游原始 HTML，也不复制与资源使用无关的徽章、广告或长篇变更记录。
+   - 快速开始优先给出可复制的官方命令；存在平台差异时才分平台列出，完整安装细节链接至上游文档。
 7. **禁止执行**源仓库或 `resource.json` 中的第三方安装命令（包括 `npx`、`pip`、`npm install` 指向该项目）。兼容性根据 README、文档和公开说明填写；不确定就用 `unknown` 并写 note。
 8. 校验：在临时目录放入 `schemas/`、`catalog/`、`resources/`（含现有条目与新条目）后运行 `yarn validate:resources`。能跑时再跑 `yarn lint`。不要把 QA、预览、`catalog.json` 或临时文件放进 PR。
 9. 发布：
@@ -65,7 +68,7 @@ description: Submits an MCP, Skill, or AI coding-tool plugin to the CNMCP catalo
    - 否则：创建或复用用户 fork，用 GitHub Contents 或 Git Data API（blob/tree/commit/ref）只提交这一条资源
    - 向默认分支开 PR，`draft: false`
    - 用户明确要求草稿或材料未完成时才用 Draft，并写剩余工作
-   - PR 正文包含：查重结果、类型判断依据、作者/来源、安装文本未经执行、校验结果、关联 Issue
+   - PR 正文包含：查重结果、类型判断依据、作者/来源、README 内容来源（摘要或上游摘录）、安装文本未经执行、校验结果、关联 Issue
    - PR 标记 `<!-- cnmcp-flow: submission -->`
    - 一个 PR 只含一条资源
 10. 跟进 CI。结构/格式错误直接修；收录判断、质量或重复争议先问用户。
