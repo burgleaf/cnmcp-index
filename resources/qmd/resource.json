@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "qmd",
+  "kind": "mcp",
+  "name": "QMD MCP",
+  "summary": "在本地索引 Markdown 文档、知识库和会议记录，并通过关键词、向量与混合检索向 AI Agent 提供上下文。",
+  "repository": "https://github.com/tobi/qmd",
+  "license": "MIT",
+  "author": { "name": "tobi", "url": "https://github.com/tobi" },
+  "tags": ["context", "documentation", "productivity"],
+  "compatibility": [
+    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游提供 Claude Code 插件安装和手动 MCP 配置两种方式；未执行安装命令。" },
+    { "platform": "codex", "status": "unknown", "verifiedAt": "2026-09-01", "note": "上游提供通用 stdio 与 HTTP MCP Server，但未单独给出 Codex 配置核验结果。" }
+  ],
+  "createdAt": "2026-09-01",
+  "visibility": "public"
+}

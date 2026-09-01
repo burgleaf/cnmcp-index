@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "claude-video",
+  "kind": "skill",
+  "name": "Claude Video",
+  "summary": "让 AI 编程助手提取视频字幕与关键帧，并基于画面和时间戳回答内容分析、故障诊断等问题。",
+  "repository": "https://github.com/bradautomates/claude-video",
+  "license": "MIT",
+  "author": { "name": "bradautomates", "url": "https://github.com/bradautomates" },
+  "tags": ["automation", "productivity"],
+  "compatibility": [
+    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游提供 Claude Code 插件市场安装方式，Skill 源文件位于 skills/watch；未执行安装命令。" },
+    { "platform": "codex", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游提供 Agent Skills CLI 与 Codex 插件清单，并明确列出 Codex；未执行安装命令。" }
+  ],
+  "createdAt": "2026-09-01",
+  "visibility": "public"
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "code-review-graph",
+  "kind": "mcp",
+  "name": "Code Review Graph",
+  "summary": "用 Tree-sitter 构建增量代码关系图，并通过 MCP 向 AI 编程助手提供影响范围、风险和精确上下文。",
+  "repository": "https://github.com/tirth8205/code-review-graph",
+  "homepage": "https://code-review-graph.com",
+  "license": "MIT",
+  "author": { "name": "tirth8205", "url": "https://github.com/tirth8205" },
+  "tags": ["automation", "code-quality", "context"],
+  "compatibility": [
+    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游安装器明确支持 Claude Code 并写入对应 MCP 配置；未执行安装命令。" },
+    { "platform": "codex", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游安装器明确支持 Codex 并写入对应 MCP 配置；未执行安装命令。" }
+  ],
+  "createdAt": "2026-09-01",
+  "visibility": "public"
+}

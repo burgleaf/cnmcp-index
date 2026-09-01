@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "claude-seo",
+  "kind": "plugin",
+  "pluginScope": "ai-coding-tool",
+  "name": "Claude SEO",
+  "summary": "为 Claude Code 提供技术 SEO、内容质量、结构化数据、GEO、本地与国际化 SEO 分析工作流。",
+  "repository": "https://github.com/AgriciDaniel/claude-seo",
+  "homepage": "https://claude-seo.md",
+  "license": "MIT",
+  "author": { "name": "AgriciDaniel", "url": "https://github.com/AgriciDaniel" },
+  "tags": ["automation", "code-quality", "web-development"],
+  "compatibility": [
+    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游将其定义为 Claude Code 插件，并提供插件市场安装流程；未执行安装命令。" },
+    { "platform": "codex", "status": "unknown", "verifiedAt": "2026-09-01", "note": "上游为 Codex 指向另一个独立仓库，本条目未核验当前仓库的 Codex 兼容性。" }
+  ],
+  "createdAt": "2026-09-01",
+  "visibility": "public"
+}

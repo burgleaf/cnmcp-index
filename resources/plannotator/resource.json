@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "plannotator",
+  "kind": "plugin",
+  "pluginScope": "ai-coding-tool",
+  "name": "Plannotator",
+  "summary": "在本地浏览器中批注 AI 编程助手生成的计划、文档和代码差异，并把结构化反馈直接送回助手。",
+  "repository": "https://github.com/backnotprop/plannotator",
+  "homepage": "https://plannotator.ai",
+  "documentation": "https://docs.plannotator.ai/open-source/start/installation",
+  "license": "Apache-2.0",
+  "author": { "name": "backnotprop", "url": "https://github.com/backnotprop" },
+  "tags": ["code-quality", "productivity"],
+  "compatibility": [
+    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游声明通过 hooks、skills 和命令直接接入 Claude Code；未执行安装命令。" },
+    { "platform": "codex", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游明确支持 Codex，并提供 Codex 命令与 Skill 交互方式；未执行安装命令。" }
+  ],
+  "createdAt": "2026-09-01",
+  "visibility": "public"
+}

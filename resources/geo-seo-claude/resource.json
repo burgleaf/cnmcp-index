@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "geo-seo-claude",
+  "kind": "skill",
+  "name": "GEO SEO Claude",
+  "summary": "通过一组 Claude Code Skills 和子智能体执行 GEO、技术 SEO、内容、结构化数据及客户报告工作流。",
+  "repository": "https://github.com/zubair-trabzada/geo-seo-claude",
+  "license": "MIT",
+  "author": { "name": "zubair-trabzada", "url": "https://github.com/zubair-trabzada" },
+  "tags": ["automation", "productivity", "web-development"],
+  "compatibility": [
+    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游提供主 SKILL.md、多个子 Skill 及 Claude Code 安装路径；未执行安装命令。" },
+    { "platform": "codex", "status": "unknown", "verifiedAt": "2026-09-01", "note": "上游安装与运行说明面向 Claude Code，尚未发现明确的 Codex 核验信息。" }
+  ],
+  "createdAt": "2026-09-01",
+  "visibility": "public"
+}

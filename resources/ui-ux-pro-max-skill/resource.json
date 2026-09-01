@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "ui-ux-pro-max-skill",
+  "kind": "skill",
+  "name": "UI UX Pro Max",
+  "summary": "为 AI 编程助手提供 UI/UX 设计规则、行业模式、配色与字体资料，以及多种前端技术栈的界面实现指导。",
+  "repository": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+  "homepage": "https://www.uupm.cc/",
+  "license": "MIT",
+  "author": { "name": "nextlevelbuilder", "url": "https://github.com/nextlevelbuilder" },
+  "tags": ["code-quality", "productivity", "web-development"],
+  "compatibility": [
+    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游提供 Claude Code 插件市场与 Skill 目录安装方式；未执行安装命令。" },
+    { "platform": "codex", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游 CLI 明确支持 Codex，并生成对应 Skill 目录；未执行安装命令。" }
+  ],
+  "createdAt": "2026-09-01",
+  "visibility": "public"
+}

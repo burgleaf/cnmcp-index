@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "pinchtab",
+  "kind": "mcp",
+  "name": "PinchTab MCP",
+  "summary": "提供本地浏览器自动化控制面、HTTP API 和 MCP Server，让 AI Agent 操作 Chrome、提取页面并管理多实例。",
+  "repository": "https://github.com/pinchtab/pinchtab",
+  "license": "MIT",
+  "author": { "name": "pinchtab", "url": "https://github.com/pinchtab" },
+  "tags": ["automation", "web-development"],
+  "compatibility": [
+    { "platform": "claude-code", "status": "unknown", "verifiedAt": "2026-09-01", "note": "上游提供通用 MCP Server，但未在 README 中单独给出 Claude Code 的配置核验结果。" },
+    { "platform": "codex", "status": "unknown", "verifiedAt": "2026-09-01", "note": "上游提供通用 MCP Server，但未在 README 中单独给出 Codex 的配置核验结果。" }
+  ],
+  "createdAt": "2026-09-01",
+  "visibility": "public"
+}

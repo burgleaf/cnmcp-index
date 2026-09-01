@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "beads",
+  "kind": "mcp",
+  "name": "Beads MCP",
+  "summary": "为 AI 编程助手维护基于依赖关系的任务和长期工作记忆，并提供 CLI、MCP 与 Codex、Claude Code 集成。",
+  "repository": "https://github.com/gastownhall/beads",
+  "homepage": "https://beads.gascity.com",
+  "license": "MIT",
+  "author": { "name": "gastownhall", "url": "https://github.com/gastownhall" },
+  "tags": ["context", "git", "productivity"],
+  "compatibility": [
+    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游提供 Claude Code hooks、settings 和 MCP 相关集成文档；未执行安装命令。" },
+    { "platform": "codex", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游提供 bd setup codex，可安装 Skill、AGENTS.md 指引和 hooks；未执行安装命令。" }
+  ],
+  "createdAt": "2026-09-01",
+  "visibility": "public"
+}

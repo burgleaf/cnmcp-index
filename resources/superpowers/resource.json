@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "superpowers",
+  "kind": "plugin",
+  "pluginScope": "ai-coding-tool",
+  "name": "Superpowers",
+  "summary": "通过可组合 Skills 和强制工作流，让 AI 编程助手按需求澄清、设计、测试驱动实现、审查和交付流程工作。",
+  "repository": "https://github.com/obra/superpowers",
+  "license": "MIT",
+  "author": { "name": "obra", "url": "https://github.com/obra" },
+  "tags": ["code-quality", "productivity", "testing"],
+  "compatibility": [
+    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游已进入 Claude 官方插件市场，并提供替代市场安装方式；未执行安装命令。" },
+    { "platform": "codex", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游已进入 Codex 官方插件市场，并提供 Codex App 与 CLI 安装说明；未执行安装命令。" }
+  ],
+  "createdAt": "2026-09-01",
+  "visibility": "public"
+}

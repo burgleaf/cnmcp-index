@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "claude-mem",
+  "kind": "plugin",
+  "pluginScope": "ai-coding-tool",
+  "name": "Claude Mem",
+  "summary": "自动捕获和压缩 AI 编程会话，在后续任务中注入相关上下文，并提供本地记忆检索与 MCP 搜索工具。",
+  "repository": "https://github.com/thedotmack/claude-mem",
+  "homepage": "https://claude-mem.ai",
+  "documentation": "https://docs.claude-mem.ai/",
+  "license": "Apache-2.0",
+  "author": { "name": "thedotmack", "url": "https://github.com/thedotmack" },
+  "tags": ["context", "productivity"],
+  "compatibility": [
+    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游将 Claude Code 插件作为主要安装方式，并提供 hooks 与记忆搜索能力；未执行安装命令。" },
+    { "platform": "codex", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游项目说明明确列出 Codex 为支持的 Agent，并提供通用 MCP 能力；未执行安装命令。" }
+  ],
+  "createdAt": "2026-09-01",
+  "visibility": "public"
+}

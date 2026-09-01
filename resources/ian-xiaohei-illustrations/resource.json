@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "ian-xiaohei-illustrations",
+  "kind": "skill",
+  "name": "Ian 小黑正文配图 Skill",
+  "summary": "为中文文章、帖子和知识文档生成 16:9 白底手绘正文配图，并保持统一的小黑怪诞视觉风格。",
+  "repository": "https://github.com/helloianneo/ian-xiaohei-illustrations",
+  "homepage": "https://www.ianneo.xyz",
+  "license": "MIT",
+  "author": { "name": "helloianneo", "url": "https://github.com/helloianneo" },
+  "tags": ["automation", "productivity"],
+  "compatibility": [
+    { "platform": "codex", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游 README 明确提供 Codex Skill 目录与安装说明；未执行安装命令。" },
+    { "platform": "claude-code", "status": "unknown", "verifiedAt": "2026-09-01", "note": "上游主要面向 Codex，尚未发现针对 Claude Code 的明确兼容性说明。" }
+  ],
+  "createdAt": "2026-09-01",
+  "visibility": "public"
+}

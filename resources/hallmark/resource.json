@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "hallmark",
+  "kind": "skill",
+  "name": "Hallmark",
+  "summary": "面向网页设计的 Agent Skill，通过主题、版式和工艺规则减少千篇一律的 AI 生成视觉效果。",
+  "repository": "https://github.com/Nutlope/hallmark",
+  "homepage": "https://www.usehallmark.com/",
+  "license": "MIT",
+  "author": { "name": "Nutlope", "url": "https://github.com/Nutlope" },
+  "tags": ["code-quality", "web-development"],
+  "compatibility": [
+    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游 README 明确提供 Claude Code Skill 安装目录；未执行安装命令。" },
+    { "platform": "codex", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游 README 明确提供 Codex Skill 安装目录；未执行安装命令。" }
+  ],
+  "createdAt": "2026-09-01",
+  "visibility": "public"
+}

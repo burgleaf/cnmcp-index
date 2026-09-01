@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "i-have-adhd",
+  "kind": "skill",
+  "name": "I Have ADHD",
+  "summary": "用行动优先、编号步骤和限制旁支等规则约束 AI 编程助手，让回答更直接、紧凑且便于执行。",
+  "repository": "https://github.com/ayghri/i-have-adhd",
+  "license": "MIT",
+  "author": { "name": "ayghri", "url": "https://github.com/ayghri" },
+  "tags": ["context", "productivity"],
+  "compatibility": [
+    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游提供 Claude Code 插件市场安装方式和标准 SKILL.md；未执行安装命令。" },
+    { "platform": "codex", "status": "unknown", "verifiedAt": "2026-09-01", "note": "该项目采用 Agent Skill 结构，但上游未提供明确的 Codex 安装与核验说明。" }
+  ],
+  "createdAt": "2026-09-01",
+  "visibility": "public"
+}

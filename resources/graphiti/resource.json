@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "graphiti",
+  "kind": "mcp",
+  "name": "Graphiti MCP",
+  "summary": "为 AI Agent 构建具有时间感知能力的实时知识图谱，并通过独立 MCP Server 提供节点、关系与记忆操作。",
+  "repository": "https://github.com/getzep/graphiti",
+  "documentation": "https://help.getzep.com/graphiti",
+  "license": "Apache-2.0",
+  "author": { "name": "getzep", "url": "https://github.com/getzep" },
+  "tags": ["context", "database"],
+  "compatibility": [
+    { "platform": "claude-code", "status": "unknown", "verifiedAt": "2026-09-01", "note": "上游包含通用 MCP Server 实现，但未在主 README 中单独核验 Claude Code 配置。" },
+    { "platform": "codex", "status": "unknown", "verifiedAt": "2026-09-01", "note": "上游包含通用 MCP Server 实现，但未在主 README 中单独核验 Codex 配置。" }
+  ],
+  "createdAt": "2026-09-01",
+  "visibility": "public"
+}

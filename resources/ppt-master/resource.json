@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "ppt-master",
+  "kind": "skill",
+  "name": "PPT Master",
+  "summary": "让 AI Agent 把主题、文档或既有演示稿转换为可编辑 PPTX，支持原生形状、图表、表格、动画和旁白。",
+  "repository": "https://github.com/hugohe3/ppt-master",
+  "homepage": "https://hugohe3.github.io/ppt-master-examples/",
+  "license": "MIT",
+  "author": { "name": "hugohe3", "url": "https://github.com/hugohe3" },
+  "tags": ["automation", "documentation", "productivity"],
+  "compatibility": [
+    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游提供 Claude Code 插件市场与 Skill 安装方式，并说明主要在 Claude Code 测试；未执行安装命令。" },
+    { "platform": "codex", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游提供跨 Agent Skills CLI 安装方式并明确列出 Codex；未执行安装命令。" }
+  ],
+  "createdAt": "2026-09-01",
+  "visibility": "public"
+}

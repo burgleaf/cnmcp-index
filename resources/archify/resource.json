@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "archify",
+  "kind": "skill",
+  "name": "Archify",
+  "summary": "让 AI 编程助手把代码仓库或系统描述编译为可交互、可验证并可导出的架构图、流程图和时序图。",
+  "repository": "https://github.com/tt-a1i/archify",
+  "homepage": "https://tt-a1i.github.io/archify/",
+  "license": "MIT",
+  "author": { "name": "tt-a1i", "url": "https://github.com/tt-a1i" },
+  "tags": ["automation", "documentation", "productivity"],
+  "compatibility": [
+    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游明确列出 Claude Code Skill 目录和安装方法；未执行安装命令。" },
+    { "platform": "codex", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游明确列出 Codex CLI Skill 目录和安装方法；未执行安装命令。" }
+  ],
+  "createdAt": "2026-09-01",
+  "visibility": "public"
+}
