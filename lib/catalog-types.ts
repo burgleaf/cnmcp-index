@@ -11,6 +11,29 @@ export const COMPATIBILITY_STATUSES = [
 export type CompatibilityStatus = (typeof COMPATIBILITY_STATUSES)[number];
 export type ResourceVisibility = "public" | "unlisted" | "removed";
 
+export type SourceStats = Readonly<{
+  stars: number;
+  forks: number;
+  pushedAt: string | null;
+  archived: boolean;
+  fetchedAt: string;
+}>;
+
+export type ResourceQuality = Readonly<{
+  score: number;
+  stars: number;
+  forks: number;
+  pushedAt: string | null;
+  archived: boolean;
+  breakdown: Readonly<{
+    stars: number;
+    activity: number;
+    forks: number;
+    completeness: number;
+    editorial: number;
+  }>;
+}>;
+
 export type Installation = Readonly<{
   type: "command" | "config" | "link" | "manual";
   label?: string;
@@ -31,6 +54,7 @@ export type PlatformCompatibility = Readonly<{
   status: CompatibilityStatus;
   verifiedAt: string;
   note?: string;
+  evidenceUrl?: string;
   installations?: ReadonlyArray<Installation>;
 }>;
 
@@ -52,6 +76,8 @@ export type Resource = Readonly<{
   compatibility: ReadonlyArray<PlatformCompatibility>;
   createdAt: string;
   updatedAt?: string;
+  sourceStats?: SourceStats;
+  quality?: ResourceQuality;
   visibility?: ResourceVisibility;
   featured: boolean;
   logo?: string;
@@ -69,7 +95,17 @@ export type Platform = Readonly<{
   sortOrder: number;
 }>;
 
-export type Tag = Readonly<{ id: string; name: string }>;
+export const TAG_GROUPS = ["profession", "industry", "task", "capability"] as const;
+export type TagGroup = (typeof TAG_GROUPS)[number];
+export type Tag = Readonly<{
+  id: string;
+  name: string;
+  nameEn: string;
+  description: string;
+  aliases: ReadonlyArray<string>;
+  group: TagGroup;
+  sortOrder: number;
+}>;
 
 export type ResourceSummaryPlatform = Readonly<{
   id: string;
@@ -89,7 +125,9 @@ export type ResourceSummary = Readonly<{
   platforms: ReadonlyArray<ResourceSummaryPlatform>;
   logo?: string;
   createdAt: string;
+  updatedAt?: string;
   featured: boolean;
+  quality?: ResourceQuality;
   normalizedSearchText?: string;
 }>;
 
@@ -111,4 +149,5 @@ export type ClientCatalog = Readonly<{
   schemaVersion: 1;
   resources: ReadonlyArray<ResourceSummary>;
   indexes: CatalogIndexes;
+  tags?: ReadonlyArray<Tag>;
 }>;

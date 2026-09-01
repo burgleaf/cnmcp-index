@@ -32,7 +32,7 @@ export function createCatalogAccess(catalog: GeneratedCatalog): CatalogAccess {
   const publicResources = catalog.resources.filter(isPublic);
   const resourcesById = new Map(publicResources.map((resource) => [resource.id, resource]));
   const platforms = [...catalog.platforms].sort(comparePlatforms);
-  const tags = [...catalog.tags].sort((left, right) => left.id.localeCompare(right.id));
+  const tags = [...catalog.tags].sort((left, right) => left.sortOrder - right.sortOrder || left.id.localeCompare(right.id));
 
   const resourcesForIds = (ids: ReadonlyArray<string> | undefined): ReadonlyArray<Resource> =>
     (ids ?? []).flatMap((id) => {

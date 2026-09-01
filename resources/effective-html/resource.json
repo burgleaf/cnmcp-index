@@ -6,12 +6,42 @@
   "summary": "一组用于生成报告、线框图、交互原型、计划和架构图的 HTML Agent Skills，强调自包含与可验证输出。",
   "repository": "https://github.com/plannotator/effective-html",
   "license": "MIT",
-  "author": { "name": "plannotator", "url": "https://github.com/plannotator" },
-  "tags": ["documentation", "productivity", "web-development"],
+  "author": {
+    "name": "plannotator",
+    "url": "https://github.com/plannotator"
+  },
+  "tags": [
+    "documentation",
+    "productivity",
+    "web-development",
+    "designer",
+    "product-manager",
+    "visualization",
+    "planning"
+  ],
   "compatibility": [
-    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游提供 Claude Code 插件市场安装方式和独立 Skill 安装说明；未执行安装命令。" },
-    { "platform": "codex", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游提供 Codex 插件市场安装方式，并保留独立 SKILL.md；未执行安装命令。" }
+    {
+      "platform": "claude-code",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游提供 Claude Code 插件市场安装方式和独立 Skill 安装说明；未执行安装命令。",
+      "evidenceUrl": "https://github.com/plannotator/effective-html"
+    },
+    {
+      "platform": "codex",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游提供 Codex 插件市场安装方式，并保留独立 SKILL.md；未执行安装命令。",
+      "evidenceUrl": "https://github.com/plannotator/effective-html"
+    }
   ],
   "createdAt": "2026-09-01",
-  "visibility": "public"
+  "visibility": "public",
+  "sourceStats": {
+    "stars": 2830,
+    "forks": 197,
+    "pushedAt": "2026-08-03T23:19:01Z",
+    "archived": false,
+    "fetchedAt": "2026-09-01"
+  }
 }

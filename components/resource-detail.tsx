@@ -1,12 +1,13 @@
 import type { Platform, Resource } from "@/lib/catalog-types";
 
-import { InstallPanel } from "./install-panel";
+import { AiInstallPanel } from "./ai-install-panel";
 import { MarkdownContent } from "./markdown-content";
 import { PlatformBadge } from "./platform-badge";
 import { ResourceStats } from "./resource-stats";
 import { SafeImage } from "./safe-image";
 import { StatsProvider } from "./stats-provider";
 import { TrackedResourceLink } from "./tracked-resource-link";
+import { TagLink } from "./tag-link";
 
 const KIND_LABELS = {
   mcp: "MCP",
@@ -52,8 +53,8 @@ export function ResourceDetail({
           <dl className="mt-7 grid gap-4 border-t border-slate-100 pt-6 text-sm sm:grid-cols-2 lg:grid-cols-4">
             <div><dt className="font-medium text-slate-500">作者</dt><dd className="mt-1 text-ink">{resource.author.url ? <ExternalLink href={resource.author.url}>{resource.author.name}</ExternalLink> : resource.author.name}</dd></div>
             <div><dt className="font-medium text-slate-500">许可证</dt><dd className="mt-1 text-ink">{resource.license}</dd></div>
-            <div><dt className="font-medium text-slate-500">收录日期</dt><dd className="mt-1 text-ink">{resource.createdAt}</dd></div>
-            <div><dt className="font-medium text-slate-500">最近更新</dt><dd className="mt-1 text-ink">{resource.updatedAt ?? "未单独标注"}</dd></div>
+            <div><dt className="font-medium text-slate-500">综合质量</dt><dd className="mt-1 text-ink">{resource.quality?.score ?? "暂无评分"}</dd></div>
+            <div><dt className="font-medium text-slate-500">上游活跃</dt><dd className="mt-1 text-ink">{resource.quality?.pushedAt?.slice(0, 10) ?? resource.updatedAt ?? "未获取"}</dd></div>
           </dl>
 
           <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm">
@@ -62,7 +63,7 @@ export function ResourceDetail({
             {resource.documentation ? <TrackedResourceLink href={resource.documentation} resourceId={resource.id}>使用文档</TrackedResourceLink> : null}
           </div>
           <ul aria-label="资源标签" className="mt-5 flex flex-wrap gap-2">
-            {resource.tags.map((tag) => <li className="rounded-md bg-slate-100 px-2.5 py-1 text-sm text-slate-700" key={tag}>#{tag}</li>)}
+            {resource.tags.map((tag) => <li key={tag}><TagLink compact tagId={tag} /></li>)}
           </ul>
         </header>
 
@@ -75,8 +76,15 @@ export function ResourceDetail({
           </section>
 
           <aside className="space-y-5">
+            <section aria-labelledby="quality-score-heading" className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="flex items-end justify-between gap-3"><h2 className="text-xl font-bold text-ink" id="quality-score-heading">质量评分</h2><strong className="text-3xl text-brand">{resource.quality?.score ?? "—"}</strong></div>
+              <p className="mt-2 text-xs leading-5 text-slate-500">不使用本站收录时间，也不按支持平台数量加分。</p>
+              <dl className="mt-4 grid grid-cols-2 gap-3 text-sm"><div><dt className="text-slate-500">Stars</dt><dd className="mt-1 font-semibold">{(resource.quality?.stars ?? 0).toLocaleString("zh-CN")}</dd></div><div><dt className="text-slate-500">Forks</dt><dd className="mt-1 font-semibold">{(resource.quality?.forks ?? 0).toLocaleString("zh-CN")}</dd></div><div><dt className="text-slate-500">最近推送</dt><dd className="mt-1 font-semibold">{resource.quality?.pushedAt?.slice(0, 10) ?? "未知"}</dd></div><div><dt className="text-slate-500">仓库状态</dt><dd className="mt-1 font-semibold">{resource.quality?.archived ? "已归档" : "活跃"}</dd></div></dl>
+              {resource.sourceStats?.fetchedAt ? <p className="mt-4 border-t border-slate-100 pt-3 text-xs text-slate-500">数据快照：{resource.sourceStats.fetchedAt}</p> : null}
+            </section>
             <section aria-labelledby="compatibility-heading" className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <h2 className="text-xl font-bold text-ink" id="compatibility-heading">平台兼容性</h2>
+              <h2 className="text-xl font-bold text-ink" id="compatibility-heading">原作者支持的平台</h2>
+              <p className="mt-2 text-xs leading-5 text-slate-500">这里只呈现上游声明与核验证据，不作为目录筛选或质量加分项。</p>
               <div className="mt-4 space-y-4">
                 {resource.compatibility.map((entry) => {
                   const platformName = platformNames.get(entry.platform) ?? entry.platform;
@@ -85,6 +93,7 @@ export function ResourceDetail({
                       <PlatformBadge platformName={platformName} status={entry.status} verifiedAt={entry.verifiedAt} />
                       <p className="mt-2 text-xs text-slate-600">最后核验日期：{entry.verifiedAt}</p>
                       {entry.note ? <p className="mt-2 text-sm leading-6 text-slate-700">{entry.note}</p> : null}
+                      {entry.evidenceUrl ? <a className="mt-2 inline-block text-xs font-semibold text-brand hover:underline" href={entry.evidenceUrl} rel="noopener noreferrer" target="_blank">查看上游证据</a> : null}
                     </div>
                   );
                 })}
@@ -102,9 +111,7 @@ export function ResourceDetail({
           </aside>
         </div>
 
-        <div className="mt-8">
-          <InstallPanel compatibility={resource.compatibility} platforms={platforms} resourceId={resource.id} />
-        </div>
+        <div className="mt-8"><AiInstallPanel platforms={platforms} resource={resource} /></div>
       </article>
     </main>
   );

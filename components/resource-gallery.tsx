@@ -1,20 +1,17 @@
-import type { Platform, Resource, ResourceSummary } from "@/lib/catalog-types";
+import type { Resource, ResourceSummary } from "@/lib/catalog-types";
 
 import { EmptyState } from "./empty-state";
 import { ResourceCard } from "./resource-card";
-import { StatsProvider } from "./stats-provider";
 
 type GalleryResource = Resource | ResourceSummary;
 
 export function ResourceGallery({
   resources,
-  platforms,
   emptyTitle = "暂无公开资源",
   emptyDescription = "当前目录中还没有可展示的公开资源，请稍后再来。",
   emptyAction,
 }: Readonly<{
   resources: ReadonlyArray<GalleryResource>;
-  platforms: ReadonlyArray<Platform>;
   emptyTitle?: string;
   emptyDescription?: string;
   emptyAction?: React.ReactNode;
@@ -23,14 +20,9 @@ export function ResourceGallery({
     return <EmptyState action={emptyAction} description={emptyDescription} title={emptyTitle} />;
   }
 
-  const resourceIds = [...new Set(resources.map((resource) => resource.id))].sort();
   return (
-    <StatsProvider key={resourceIds.join(",")} resourceIds={resourceIds}>
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {resources.map((resource) => (
-          <ResourceCard key={resource.id} platforms={platforms} resource={resource} />
-        ))}
-      </div>
-    </StatsProvider>
+    <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+      {resources.map((resource) => <ResourceCard key={resource.id} resource={resource} />)}
+    </div>
   );
 }

@@ -7,12 +7,43 @@
   "repository": "https://github.com/tt-a1i/archify",
   "homepage": "https://tt-a1i.github.io/archify/",
   "license": "MIT",
-  "author": { "name": "tt-a1i", "url": "https://github.com/tt-a1i" },
-  "tags": ["automation", "documentation", "productivity"],
+  "author": {
+    "name": "tt-a1i",
+    "url": "https://github.com/tt-a1i"
+  },
+  "tags": [
+    "automation",
+    "documentation",
+    "productivity",
+    "developer",
+    "product-manager",
+    "software-engineering",
+    "architecture",
+    "visualization"
+  ],
   "compatibility": [
-    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游明确列出 Claude Code Skill 目录和安装方法；未执行安装命令。" },
-    { "platform": "codex", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游明确列出 Codex CLI Skill 目录和安装方法；未执行安装命令。" }
+    {
+      "platform": "claude-code",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游明确列出 Claude Code Skill 目录和安装方法；未执行安装命令。",
+      "evidenceUrl": "https://github.com/tt-a1i/archify"
+    },
+    {
+      "platform": "codex",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游明确列出 Codex CLI Skill 目录和安装方法；未执行安装命令。",
+      "evidenceUrl": "https://github.com/tt-a1i/archify"
+    }
   ],
   "createdAt": "2026-09-01",
-  "visibility": "public"
+  "visibility": "public",
+  "sourceStats": {
+    "stars": 40576,
+    "forks": 2567,
+    "pushedAt": "2026-09-01T04:14:19Z",
+    "archived": false,
+    "fetchedAt": "2026-09-01"
+  }
 }

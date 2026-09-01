@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { CollectionPage } from "@/components/collection-page";
-import { getEnabledPlatforms, getResourcesByKind } from "@/lib/catalog";
+import { getResourcesByKind } from "@/lib/catalog";
 import { RESOURCE_KINDS, type ResourceKind } from "@/lib/catalog-types";
+import { PRODUCTION_SITE_URL } from "@/lib/env";
 import { createCategoryStaticParams } from "@/lib/static-params";
 
 const KIND_CONTENT: Readonly<Record<ResourceKind, Readonly<{ title: string; description: string }>>> = {
@@ -20,7 +21,8 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Readonly<{ params: Promise<{ kind: string }> }>): Promise<Metadata> {
   const { kind } = await params;
-  return { title: kind in KIND_CONTENT ? KIND_CONTENT[kind as ResourceKind].title : "资源分类" };
+  const content = KIND_CONTENT[kind as ResourceKind];
+  return content ? { title: content.title, description: content.description, alternates: { canonical: `${PRODUCTION_SITE_URL}/category/${kind}/` } } : { title: "资源分类" };
 }
 
 export default async function CategoryPage({ params }: Readonly<{ params: Promise<{ kind: string }> }>) {
@@ -28,5 +30,5 @@ export default async function CategoryPage({ params }: Readonly<{ params: Promis
   if (!RESOURCE_KINDS.includes(kind as ResourceKind)) notFound();
   const resourceKind = kind as ResourceKind;
   const content = KIND_CONTENT[resourceKind];
-  return <CollectionPage description={content.description} eyebrow="资源分类" platforms={getEnabledPlatforms()} resources={getResourcesByKind(resourceKind)} title={content.title} />;
+  return <CollectionPage description={content.description} eyebrow="资源分类" resources={getResourcesByKind(resourceKind)} title={content.title} />;
 }

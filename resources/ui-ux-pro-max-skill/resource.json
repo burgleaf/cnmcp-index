@@ -7,12 +7,42 @@
   "repository": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
   "homepage": "https://www.uupm.cc/",
   "license": "MIT",
-  "author": { "name": "nextlevelbuilder", "url": "https://github.com/nextlevelbuilder" },
-  "tags": ["code-quality", "productivity", "web-development"],
+  "author": {
+    "name": "nextlevelbuilder",
+    "url": "https://github.com/nextlevelbuilder"
+  },
+  "tags": [
+    "code-quality",
+    "productivity",
+    "web-development",
+    "designer",
+    "developer",
+    "accessibility",
+    "visualization"
+  ],
   "compatibility": [
-    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游提供 Claude Code 插件市场与 Skill 目录安装方式；未执行安装命令。" },
-    { "platform": "codex", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游 CLI 明确支持 Codex，并生成对应 Skill 目录；未执行安装命令。" }
+    {
+      "platform": "claude-code",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游提供 Claude Code 插件市场与 Skill 目录安装方式；未执行安装命令。",
+      "evidenceUrl": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill"
+    },
+    {
+      "platform": "codex",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游 CLI 明确支持 Codex，并生成对应 Skill 目录；未执行安装命令。",
+      "evidenceUrl": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill"
+    }
   ],
   "createdAt": "2026-09-01",
-  "visibility": "public"
+  "visibility": "public",
+  "sourceStats": {
+    "stars": 123701,
+    "forks": 13234,
+    "pushedAt": "2026-08-31T18:42:36Z",
+    "archived": false,
+    "fetchedAt": "2026-09-01"
+  }
 }

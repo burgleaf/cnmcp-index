@@ -28,6 +28,7 @@
     "components/**/*.tsx",
     "lib/**/*.ts",
     "lib/**/*.tsx",
+    "lib/**/*.d.mts",
     "next.config.ts"
   ],
   "exclude": ["node_modules"]

@@ -24,6 +24,7 @@ export const detailFixtureResource: Resource = {
       platform: "codex",
       status: "native",
       verifiedAt: "2026-02-01",
+      evidenceUrl: "https://example.com/docs/codex",
       installations: [{
         type: "command",
         label: "Codex 命令",
@@ -38,6 +39,7 @@ export const detailFixtureResource: Resource = {
       status: "partial",
       verifiedAt: "2026-02-02",
       note: "仅支持本地项目配置。",
+      evidenceUrl: "https://example.com/docs/claude-code",
       installations: [{
         type: "config",
         label: "Claude Code 配置",
@@ -50,6 +52,7 @@ export const detailFixtureResource: Resource = {
       platform: "registered-ai",
       status: "supported",
       verifiedAt: "2026-02-03",
+      evidenceUrl: "https://example.com/docs/registered",
       installations: [
         { type: "manual", content: "在平台注册页中启用扩展。", target: "平台注册页" },
         { type: "link", url: "https://example.com/install", label: "平台市场" },
@@ -58,6 +61,8 @@ export const detailFixtureResource: Resource = {
   ],
   createdAt: "2026-01-01",
   updatedAt: "2026-02-03",
+  sourceStats: { stars: 1200, forks: 80, pushedAt: "2026-02-03T10:00:00Z", archived: false, fetchedAt: "2026-02-04" },
+  quality: { score: 81.5, stars: 1200, forks: 80, pushedAt: "2026-02-03T10:00:00Z", archived: false, breakdown: { stars: 24.6, activity: 25, forks: 4.8, completeness: 15, editorial: 10 } },
   visibility: "public",
   featured: true,
   preview: "/resource-assets/fixture-mcp/preview.webp",

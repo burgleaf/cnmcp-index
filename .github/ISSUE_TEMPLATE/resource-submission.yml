@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        感谢投稿。请提供可核验的源码、许可证和兼容性信息。安装命令仅作为文本审核，维护者和站点不会自动执行。
+        感谢投稿。请提供可核验的源码、许可证、使用场景和上游支持证据。详情页会生成 AI 安装提示词，维护者和站点不会自动执行第三方命令。
   - type: dropdown
     id: resource-kind
     attributes:
@@ -41,18 +41,13 @@ body:
   - type: textarea
     id: platform-compatibility
     attributes:
-      label: 平台兼容性
-      description: 分别填写 Codex、Claude Code 的状态（native/supported/partial/unsupported/unknown）、最后核验日期和必要说明。
+      label: 原作者支持的平台
+      description: 只记录上游明确声明；填写状态、最后核验日期、必要说明和证据链接。未知时请写 unknown，不要猜测。
       placeholder: |
-        Codex: supported，2026-01-01，说明……
+        Codex: supported，2026-01-01，证据 https://...
         Claude Code: unknown，2026-01-01，尚未核验。
     validations:
       required: true
-  - type: textarea
-    id: installation-text
-    attributes:
-      label: 安装或配置说明（可选）
-      description: 仅提交供审核的文本；请标明 shell、目标文件和需替换的占位符，不得包含真实密钥。
   - type: checkboxes
     id: contributor-confirmations
     attributes:

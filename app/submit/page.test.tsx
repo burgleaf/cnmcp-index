@@ -16,7 +16,7 @@ describe("中文投稿页", () => {
     expect(html).toContain("使用 Issue Form");
     expect(html).toContain("直接提交 Pull Request");
     expect(html).toContain("resource.json 示例");
-    expect(html).toContain("Codex/Claude Code 兼容状态");
+    expect(html).toContain("原作者支持平台的证据");
     expect(html).toContain("featured");
     expect(html).toContain("verified");
     expect(html).toContain("reviewStatus");

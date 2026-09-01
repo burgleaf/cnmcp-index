@@ -7,12 +7,42 @@
   "summary": "为 AI 编程助手提供跨会话持久记忆、检索、自动捕获 hooks、MCP 工具和可按需加载的记忆 Skills。",
   "repository": "https://github.com/rohitg00/agentmemory",
   "license": "Apache-2.0",
-  "author": { "name": "rohitg00", "url": "https://github.com/rohitg00" },
-  "tags": ["context", "productivity"],
+  "author": {
+    "name": "rohitg00",
+    "url": "https://github.com/rohitg00"
+  },
+  "tags": [
+    "context",
+    "productivity",
+    "developer",
+    "software-engineering",
+    "memory",
+    "knowledge-management",
+    "local-first"
+  ],
   "compatibility": [
-    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游提供 Claude Code 插件、MCP 配置和 hooks 接入说明；未执行安装命令。" },
-    { "platform": "codex", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游提供 Codex 插件市场、MCP Server 和 Skills 接入说明；未执行安装命令。" }
+    {
+      "platform": "claude-code",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游提供 Claude Code 插件、MCP 配置和 hooks 接入说明；未执行安装命令。",
+      "evidenceUrl": "https://github.com/rohitg00/agentmemory"
+    },
+    {
+      "platform": "codex",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游提供 Codex 插件市场、MCP Server 和 Skills 接入说明；未执行安装命令。",
+      "evidenceUrl": "https://github.com/rohitg00/agentmemory"
+    }
   ],
   "createdAt": "2026-09-01",
-  "visibility": "public"
+  "visibility": "public",
+  "sourceStats": {
+    "stars": 27884,
+    "forks": 2405,
+    "pushedAt": "2026-08-23T14:54:08Z",
+    "archived": false,
+    "fetchedAt": "2026-09-01"
+  }
 }

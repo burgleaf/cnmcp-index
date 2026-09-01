@@ -6,12 +6,39 @@
   "summary": "提供本地浏览器自动化控制面、HTTP API 和 MCP Server，让 AI Agent 操作 Chrome、提取页面并管理多实例。",
   "repository": "https://github.com/pinchtab/pinchtab",
   "license": "MIT",
-  "author": { "name": "pinchtab", "url": "https://github.com/pinchtab" },
-  "tags": ["automation", "web-development"],
+  "author": {
+    "name": "pinchtab",
+    "url": "https://github.com/pinchtab"
+  },
+  "tags": [
+    "automation",
+    "web-development",
+    "developer",
+    "researcher",
+    "browser-automation",
+    "local-first"
+  ],
   "compatibility": [
-    { "platform": "claude-code", "status": "unknown", "verifiedAt": "2026-09-01", "note": "上游提供通用 MCP Server，但未在 README 中单独给出 Claude Code 的配置核验结果。" },
-    { "platform": "codex", "status": "unknown", "verifiedAt": "2026-09-01", "note": "上游提供通用 MCP Server，但未在 README 中单独给出 Codex 的配置核验结果。" }
+    {
+      "platform": "claude-code",
+      "status": "unknown",
+      "verifiedAt": "2026-09-01",
+      "note": "上游提供通用 MCP Server，但未在 README 中单独给出 Claude Code 的配置核验结果。"
+    },
+    {
+      "platform": "codex",
+      "status": "unknown",
+      "verifiedAt": "2026-09-01",
+      "note": "上游提供通用 MCP Server，但未在 README 中单独给出 Codex 的配置核验结果。"
+    }
   ],
   "createdAt": "2026-09-01",
-  "visibility": "public"
+  "visibility": "public",
+  "sourceStats": {
+    "stars": 10205,
+    "forks": 773,
+    "pushedAt": "2026-09-01T08:33:29Z",
+    "archived": false,
+    "fetchedAt": "2026-09-01"
+  }
 }

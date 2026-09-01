@@ -25,12 +25,6 @@ const SORT_LABELS: Readonly<Record<DiscoverySort, string>> = {
   recent: "最近更新",
 };
 
-const PLATFORM_LABELS: Readonly<Record<string, string>> = {
-  codex: "Codex",
-  "claude-code": "Claude Code",
-  deepseek: "DeepSeek",
-};
-
 const PAGE_SIZE = 30;
 
 function mergeItems(current: ReadonlyArray<DiscoveryItem>, incoming: ReadonlyArray<DiscoveryItem>): DiscoveryItem[] {
@@ -180,15 +174,6 @@ export function DiscoveryGallery() {
                   </div>
                   <h3 className="mt-4 text-xl font-semibold text-ink">{item.name}</h3>
                   <p className="mt-2 flex-1 text-sm leading-6 text-slate-600">{item.description || "暂无简介"}</p>
-                  {item.inferredPlatforms.length > 0 ? (
-                    <ul aria-label="推断平台" className="mt-4 flex flex-wrap gap-2">
-                      {item.inferredPlatforms.map((platform) => (
-                        <li className="rounded-md bg-slate-100 px-2 py-1 text-xs text-slate-700" key={platform}>
-                          {PLATFORM_LABELS[platform] ?? platform}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
                   <div className="mt-5 flex flex-wrap gap-3 text-sm font-semibold">
                     <a
                       className="text-brand hover:underline"

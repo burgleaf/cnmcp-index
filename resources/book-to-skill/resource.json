@@ -6,12 +6,42 @@
   "summary": "把技术书籍、文档目录或多份资料转换为可按需加载的 Agent Skill，并按章节组织知识与决策规则。",
   "repository": "https://github.com/virgiliojr94/book-to-skill",
   "license": "MIT",
-  "author": { "name": "virgiliojr94", "url": "https://github.com/virgiliojr94" },
-  "tags": ["automation", "documentation", "productivity"],
+  "author": {
+    "name": "virgiliojr94",
+    "url": "https://github.com/virgiliojr94"
+  },
+  "tags": [
+    "automation",
+    "documentation",
+    "productivity",
+    "educator",
+    "researcher",
+    "education",
+    "learning",
+    "knowledge-management"
+  ],
   "compatibility": [
-    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游 README 提供 Claude Code Skill 安装路径，并声明兼容 Agent Skills 标准；未执行安装命令。" },
-    { "platform": "codex", "status": "unknown", "verifiedAt": "2026-09-01", "note": "上游列出多个 Agent Skills 宿主，但未明确单独核验 Codex。" }
+    {
+      "platform": "claude-code",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游 README 提供 Claude Code Skill 安装路径，并声明兼容 Agent Skills 标准；未执行安装命令。",
+      "evidenceUrl": "https://github.com/virgiliojr94/book-to-skill"
+    },
+    {
+      "platform": "codex",
+      "status": "unknown",
+      "verifiedAt": "2026-09-01",
+      "note": "上游列出多个 Agent Skills 宿主，但未明确单独核验 Codex。"
+    }
   ],
   "createdAt": "2026-09-01",
-  "visibility": "public"
+  "visibility": "public",
+  "sourceStats": {
+    "stars": 27714,
+    "forks": 2860,
+    "pushedAt": "2026-08-31T22:55:41Z",
+    "archived": false,
+    "fetchedAt": "2026-09-01"
+  }
 }

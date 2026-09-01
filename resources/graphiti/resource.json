@@ -7,12 +7,40 @@
   "repository": "https://github.com/getzep/graphiti",
   "documentation": "https://help.getzep.com/graphiti",
   "license": "Apache-2.0",
-  "author": { "name": "getzep", "url": "https://github.com/getzep" },
-  "tags": ["context", "database"],
+  "author": {
+    "name": "getzep",
+    "url": "https://github.com/getzep"
+  },
+  "tags": [
+    "context",
+    "database",
+    "developer",
+    "researcher",
+    "knowledge-management",
+    "knowledge-graph",
+    "memory"
+  ],
   "compatibility": [
-    { "platform": "claude-code", "status": "unknown", "verifiedAt": "2026-09-01", "note": "上游包含通用 MCP Server 实现，但未在主 README 中单独核验 Claude Code 配置。" },
-    { "platform": "codex", "status": "unknown", "verifiedAt": "2026-09-01", "note": "上游包含通用 MCP Server 实现，但未在主 README 中单独核验 Codex 配置。" }
+    {
+      "platform": "claude-code",
+      "status": "unknown",
+      "verifiedAt": "2026-09-01",
+      "note": "上游包含通用 MCP Server 实现，但未在主 README 中单独核验 Claude Code 配置。"
+    },
+    {
+      "platform": "codex",
+      "status": "unknown",
+      "verifiedAt": "2026-09-01",
+      "note": "上游包含通用 MCP Server 实现，但未在主 README 中单独核验 Codex 配置。"
+    }
   ],
   "createdAt": "2026-09-01",
-  "visibility": "public"
+  "visibility": "public",
+  "sourceStats": {
+    "stars": 30483,
+    "forks": 3094,
+    "pushedAt": "2026-08-30T09:09:01Z",
+    "archived": false,
+    "fetchedAt": "2026-09-01"
+  }
 }

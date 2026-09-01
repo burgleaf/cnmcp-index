@@ -36,7 +36,7 @@ export default function SubmitPage() {
         <p className="text-sm font-semibold text-brand">社区投稿</p>
         <h1 className="mt-2 text-4xl font-bold tracking-tight text-ink">投稿 AI 扩展资源</h1>
         <p className="mt-4 text-lg leading-8 text-slate-700">
-          推荐复制一段提示词，交给 Cursor、Codex 或其他 AI 助手完成校验并提交 Pull Request。
+          推荐复制一段提示词，交给你正在使用的 AI 助手完成校验并提交 Pull Request。
           也可以继续使用 GitHub Issue Form 或手写 PR。投稿内容只有在维护者审核并合并到默认分支后，才会进入正式 Catalog 和生产站点。
         </p>
       </header>
@@ -62,7 +62,7 @@ export default function SubmitPage() {
         <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="text-2xl font-bold text-ink">使用 Issue Form</h2>
           <p className="mt-3 leading-7 text-slate-700">
-            适合不想直接修改文件、也不使用 AI 助手的投稿者。表单会收集资源类型、源码地址、中文摘要、许可证以及 Codex/Claude Code 兼容状态和核验日期。
+            适合不想直接修改文件、也不使用 AI 助手的投稿者。表单会收集资源类型、源码地址、中文摘要、许可证以及原作者支持平台的证据和核验日期。
           </p>
           <div className="mt-5">
             {links ? <ExternalAction href={links.issueForm}>打开资源投稿表单</ExternalAction> : <span className="text-sm text-slate-500">配置仓库地址后提供入口</span>}
@@ -94,9 +94,9 @@ export default function SubmitPage() {
         <h2 className="text-2xl font-bold text-ink" id="required-fields">必填信息与审核边界</h2>
         <ul className="mt-4 list-disc space-y-2 pl-6 leading-7 text-slate-700">
           <li>类型只能是 MCP、Skill 或面向已注册 AI 编程工具的插件。</li>
-          <li>必须提供公开 HTTPS 源码地址、许可证、作者、受控标签和平台兼容性。</li>
-          <li>兼容状态必须是 native、supported、partial、unsupported 或 unknown，并附最后核验日期。</li>
-          <li>安装命令和配置只作为文本展示与复制；站点、CI 和审核流程都不会执行第三方命令。</li>
+          <li>必须提供公开 HTTPS 源码地址、许可证、作者，以及面向职业、任务和能力的受控标签。</li>
+          <li>平台支持只记录原作者声明，附核验日期与证据链接；它不会影响质量排序。</li>
+          <li>详情页统一生成 AI 安装提示词；站点、CI 和审核流程都不会执行第三方命令。</li>
           <li>投稿者不得控制 <code>featured</code>，也不得添加不存在的 <code>verified</code> 或 <code>reviewStatus</code>。精选不代表安全审计。</li>
         </ul>
       </section>

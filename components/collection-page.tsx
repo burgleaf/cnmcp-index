@@ -1,4 +1,4 @@
-import type { Platform, Resource } from "@/lib/catalog-types";
+import type { Resource } from "@/lib/catalog-types";
 
 import { ResourceGallery } from "./resource-gallery";
 
@@ -7,13 +7,11 @@ export function CollectionPage({
   title,
   description,
   resources,
-  platforms,
 }: Readonly<{
   eyebrow: string;
   title: string;
   description: string;
   resources: ReadonlyArray<Resource>;
-  platforms: ReadonlyArray<Platform>;
 }>) {
   return (
     <main className="mx-auto min-h-[calc(100vh-145px)] max-w-6xl px-6 py-12">
@@ -22,7 +20,7 @@ export function CollectionPage({
         <h1 className="mt-3 text-4xl font-bold tracking-tight text-ink">{title}</h1>
         <p className="mt-4 text-base leading-7 text-slate-600">{description}</p>
       </header>
-      <ResourceGallery platforms={platforms} resources={resources} />
+      <ResourceGallery resources={resources} />
     </main>
   );
 }

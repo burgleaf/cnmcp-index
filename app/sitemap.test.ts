@@ -13,8 +13,8 @@ describe("静态 sitemap 与 robots", () => {
       ],
       platforms: detailFixturePlatforms,
       tags: [
-        { id: "testing", name: "测试" },
-        { id: "__empty-catalog__", name: "空目录哨兵" },
+        { id: "testing", name: "测试", nameEn: "Testing", description: "测试资源", aliases: [], group: "task", sortOrder: 10 },
+        { id: "__empty-catalog__", name: "空目录哨兵", nameEn: "Empty", description: "占位", aliases: [], group: "capability", sortOrder: 20 },
       ],
     });
     const urls = entries.map(({ url }) => url);
@@ -22,17 +22,17 @@ describe("静态 sitemap 与 robots", () => {
     expect(urls).toEqual(expect.arrayContaining([
       "https://www.cnmcp.com/",
       "https://www.cnmcp.com/resources/",
+      "https://www.cnmcp.com/topics/",
       "https://www.cnmcp.com/submit/",
       "https://www.cnmcp.com/discover/",
       "https://www.cnmcp.com/category/mcp/",
       "https://www.cnmcp.com/category/skill/",
       "https://www.cnmcp.com/category/plugin/",
-      "https://www.cnmcp.com/platform/codex/",
-      "https://www.cnmcp.com/platform/claude-code/",
       "https://www.cnmcp.com/tags/testing/",
       "https://www.cnmcp.com/resources/fixture-mcp/",
     ]));
     expect(urls).not.toContain("https://www.cnmcp.com/platform/registered-ai/");
+    expect(urls.join("\n")).not.toMatch(/\/platform\//);
     expect(urls.join("\n")).not.toMatch(/hidden-resource|removed-resource|__empty-catalog__/);
     expect(urls.every((url) => url.startsWith("https://www.cnmcp.com/"))).toBe(true);
   });

@@ -101,7 +101,7 @@ async function verifyResourceHtml(targetRoot, resource) {
   assert.equal(jsonLd.license, resource.license, `${resource.id} JSON-LD license`);
   assert.equal(jsonLd.author.name, resource.author.name, `${resource.id} JSON-LD author`);
   assert.deepEqual(
-    jsonLd.additionalProperty.slice(1).map((entry) => entry.name),
+    jsonLd.additionalProperty.slice(3).map((entry) => entry.name),
     ["Codex", "Claude Code"],
     `${resource.id} JSON-LD 兼容平台`,
   );
@@ -149,9 +149,10 @@ async function main() {
       assertContains(home, `href="/resources/${resourceId}/"`, `首页 ${resourceId} 详情入口`);
     }
     const directory = await readFile(path.join(targetRoot, "out", "resources", "index.html"), "utf8");
-    for (const expected of ["搜索资源", "资源类型", "平台", "兼容状态", "标签", "排序"]) {
+    for (const expected of ["搜索名称、用途、作者", "全部", "MCP", "Skill", "插件", "综合质量"]) {
       assertContains(directory, expected, "资源目录静态表单");
     }
+    for (const excluded of ["全部平台", "兼容状态", "最近收录"]) assert.ok(!directory.includes(excluded), `资源目录不应包含：${excluded}`);
 
     for (const kind of ["mcp", "skill", "plugin"]) {
       await readFile(path.join(targetRoot, "out", "category", kind, "index.html"), "utf8");
@@ -162,16 +163,15 @@ async function main() {
 
     const mcpHtml = await readFile(path.join(targetRoot, "out", "resources", "acceptance-mcp", "index.html"), "utf8");
     for (const expected of [
-      "acceptance-mcp install --token {{TOKEN_VALUE}}",
-      "{{SERVICE_URL}}",
-      "~/.claude/settings.json",
-      "Secret 敏感值",
-      "普通变量",
+      "复制 AI 安装提示词",
+      "先阅读源码仓库和官方安装文档",
+      "检查我的操作系统",
+      "完整卸载",
       "仅支持本地项目，远程工作区需手动配置",
       "隔离验收说明",
-    ]) assertContains(mcpHtml, expected, "MCP 安装与 Markdown");
+    ]) assertContains(mcpHtml, expected, "MCP AI 安装与 Markdown");
     const pluginHtml = await readFile(path.join(targetRoot, "out", "resources", "acceptance-plugin", "index.html"), "utf8");
-    assertContains(pluginHtml, "该平台当前不支持，不提供安装入口", "plugin unsupported 安装边界");
+    assertContains(pluginHtml, "原作者支持的平台", "plugin 上游支持边界");
     for (const label of ["原生支持", "支持", "部分支持", "不支持", "兼容性未知"]) {
       const allHtml = await Promise.all(PUBLIC_RESOURCE_IDS.map((id) => readFile(path.join(targetRoot, "out", "resources", id, "index.html"), "utf8")));
       assert.ok(allHtml.some((html) => html.includes(label)), `静态详情缺少兼容五态：${label}`);
@@ -183,11 +183,11 @@ async function main() {
       "https://www.cnmcp.com/category/mcp/",
       "https://www.cnmcp.com/category/skill/",
       "https://www.cnmcp.com/category/plugin/",
-      "https://www.cnmcp.com/platform/codex/",
-      "https://www.cnmcp.com/platform/claude-code/",
+      "https://www.cnmcp.com/topics/",
       "https://www.cnmcp.com/submit/",
       "https://www.cnmcp.com/discover/",
     ]) assertContains(sitemap, expected, "sitemap");
+    assert.ok(!sitemap.includes("/platform/"), "sitemap 不得包含旧平台入口");
     for (const excluded of [...EXCLUDED_RESOURCE_IDS, "__empty-catalog__"]) {
       assert.ok(!sitemap.includes(excluded), `sitemap 不得包含：${excluded}`);
       await assert.rejects(readFile(path.join(targetRoot, "out", "resources", excluded, "index.html"), "utf8"), { code: "ENOENT" });

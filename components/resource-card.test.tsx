@@ -1,13 +1,8 @@
 import { renderToStaticMarkup } from "react-dom/server";
 
-import type { Platform, Resource } from "@/lib/catalog-types";
+import type { Resource } from "@/lib/catalog-types";
 
 import { ResourceCard } from "./resource-card";
-
-const platforms: ReadonlyArray<Platform> = [
-  { id: "codex", name: "Codex", homepage: "https://example.com/codex", icon: "/platforms/codex.svg", enabled: true, sortOrder: 10 },
-  { id: "claude-code", name: "Claude Code", homepage: "https://example.com/claude", icon: "/platforms/claude.svg", enabled: true, sortOrder: 20 },
-];
 
 const resource: Resource = {
   schemaVersion: 1,
@@ -25,15 +20,16 @@ const resource: Resource = {
 };
 
 describe("ResourceCard", () => {
-  it("展示字段、统计占位，并把未声明平台准确显示为未知", () => {
-    const html = renderToStaticMarkup(<ResourceCard platforms={platforms} resource={resource} />);
+  it("展示用途、标签和质量，不展示平台或本站收录时间", () => {
+    const html = renderToStaticMarkup(<ResourceCard resource={resource} />);
     expect(html).toContain("测试 MCP");
     expect(html).toContain('href="/resources/test-mcp"');
     expect(html).toContain("用于验证资源卡片全部必需字段");
-    expect(html).toContain("#context");
-    expect(html).toContain("Codex：部分支持，最后核验日期 2026-01-02");
-    expect(html).toContain("Claude Code：兼容性未知");
-    expect(html).toContain("统计服务暂不可用");
-    expect(html).toContain("不能按 0 展示");
+    expect(html).toContain("上下文");
+    expect(html).toContain("综合质量");
+    expect(html).not.toContain("Codex");
+    expect(html).not.toContain("Claude Code");
+    expect(html).not.toContain("收录日期");
+    expect(html).not.toContain("统计服务");
   });
 });

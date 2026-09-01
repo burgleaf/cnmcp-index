@@ -13,51 +13,40 @@
     "name": "chuspeeism",
     "url": "https://github.com/chuspeeism"
   },
-  "tags": ["productivity", "documentation", "automation"],
+  "tags": [
+    "productivity",
+    "documentation",
+    "automation",
+    "content-creator",
+    "educator",
+    "presentations",
+    "visualization"
+  ],
   "compatibility": [
     {
       "platform": "codex",
       "status": "supported",
       "verifiedAt": "2026-08-31",
       "note": "依据上游 README 实测说明；Codex 可调用生图能力补充配图。",
-      "installations": [
-        {
-          "type": "command",
-          "label": "一键安装或更新",
-          "shell": "any",
-          "command": "npx dashi-ppt-skill@latest"
-        },
-        {
-          "type": "command",
-          "label": "国内镜像安装或更新",
-          "shell": "any",
-          "command": "npx --registry=https://registry.npmmirror.com dashi-ppt-skill@latest"
-        }
-      ]
+      "evidenceUrl": "https://github.com/chuspeeism/dashi-ppt-skill#readme"
     },
     {
       "platform": "claude-code",
       "status": "supported",
       "verifiedAt": "2026-08-31",
       "note": "依据上游 README 实测说明。",
-      "installations": [
-        {
-          "type": "command",
-          "label": "一键安装或更新",
-          "shell": "any",
-          "command": "npx dashi-ppt-skill@latest"
-        },
-        {
-          "type": "command",
-          "label": "国内镜像安装或更新",
-          "shell": "any",
-          "command": "npx --registry=https://registry.npmmirror.com dashi-ppt-skill@latest"
-        }
-      ]
+      "evidenceUrl": "https://github.com/chuspeeism/dashi-ppt-skill#readme"
     }
   ],
   "createdAt": "2026-06-10",
   "updatedAt": "2026-08-31",
   "visibility": "public",
-  "featured": true
+  "featured": true,
+  "sourceStats": {
+    "stars": 7181,
+    "forks": 670,
+    "pushedAt": "2026-07-30T14:02:31Z",
+    "archived": false,
+    "fetchedAt": "2026-09-01"
+  }
 }

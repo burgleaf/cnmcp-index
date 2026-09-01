@@ -9,12 +9,42 @@
   "homepage": "https://plannotator.ai",
   "documentation": "https://docs.plannotator.ai/open-source/start/installation",
   "license": "Apache-2.0",
-  "author": { "name": "backnotprop", "url": "https://github.com/backnotprop" },
-  "tags": ["code-quality", "productivity"],
+  "author": {
+    "name": "backnotprop",
+    "url": "https://github.com/backnotprop"
+  },
+  "tags": [
+    "code-quality",
+    "productivity",
+    "developer",
+    "product-manager",
+    "planning",
+    "code-review",
+    "local-first"
+  ],
   "compatibility": [
-    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游声明通过 hooks、skills 和命令直接接入 Claude Code；未执行安装命令。" },
-    { "platform": "codex", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游明确支持 Codex，并提供 Codex 命令与 Skill 交互方式；未执行安装命令。" }
+    {
+      "platform": "claude-code",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游声明通过 hooks、skills 和命令直接接入 Claude Code；未执行安装命令。",
+      "evidenceUrl": "https://docs.plannotator.ai/open-source/start/installation"
+    },
+    {
+      "platform": "codex",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游明确支持 Codex，并提供 Codex 命令与 Skill 交互方式；未执行安装命令。",
+      "evidenceUrl": "https://docs.plannotator.ai/open-source/start/installation"
+    }
   ],
   "createdAt": "2026-09-01",
-  "visibility": "public"
+  "visibility": "public",
+  "sourceStats": {
+    "stars": 8327,
+    "forks": 613,
+    "pushedAt": "2026-08-31T21:13:25Z",
+    "archived": false,
+    "fetchedAt": "2026-09-01"
+  }
 }

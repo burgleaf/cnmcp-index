@@ -32,7 +32,10 @@ const catalog: GeneratedCatalog = {
     { id: "codex", name: "Codex", homepage: "https://example.com/codex", icon: "/platforms/codex.svg", enabled: true, sortOrder: 10 },
     { id: "disabled", name: "Disabled", homepage: "https://example.com/disabled", icon: "/platforms/disabled.svg", enabled: false, sortOrder: 30 },
   ],
-  tags: [{ id: "testing", name: "测试" }, { id: "context", name: "上下文" }],
+  tags: [
+    { id: "testing", name: "测试", nameEn: "Testing", description: "测试", aliases: [], group: "task", sortOrder: 20 },
+    { id: "context", name: "上下文", nameEn: "Context", description: "上下文", aliases: [], group: "capability", sortOrder: 10 },
+  ],
 };
 
 describe("构建期 Catalog 数据访问", () => {
@@ -50,7 +53,7 @@ describe("构建期 Catalog 数据访问", () => {
   it("按 sortOrder 返回平台并只枚举真正使用的公开标签", () => {
     expect(access.getAllPlatforms().map(({ id }) => id)).toEqual(["codex", "claude-code", "disabled"]);
     expect(access.getEnabledPlatforms().map(({ id }) => id)).toEqual(["codex", "claude-code"]);
-    expect(access.getUsedTags()).toEqual([{ id: "context", name: "上下文" }]);
+    expect(access.getUsedTags()).toEqual([{ id: "context", name: "上下文", nameEn: "Context", description: "上下文", aliases: [], group: "capability", sortOrder: 10 }]);
   });
 
   it("未知 ID、平台和标签返回空结果", () => {

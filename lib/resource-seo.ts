@@ -120,6 +120,8 @@ export function createResourceJsonLd(
       : {}),
     additionalProperty: [
       { "@type": "PropertyValue", name: "资源类型", value: resource.kind },
+      { "@type": "PropertyValue", name: "综合质量", value: resource.quality?.score ?? "未评分" },
+      { "@type": "PropertyValue", name: "GitHub Stars", value: resource.quality?.stars ?? 0 },
       ...compatiblePlatforms,
     ],
   };

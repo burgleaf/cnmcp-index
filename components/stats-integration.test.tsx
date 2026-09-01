@@ -47,17 +47,14 @@ describe("Web 统计集成", () => {
     jest.restoreAllMocks();
   });
 
-  it("列表对全部去重资源只发送一次批量请求并向卡片分发", async () => {
+  it("列表卡片只展示上游质量，不请求站内运行时统计", async () => {
     const fetchMock = jest.fn().mockResolvedValue(response(statsBody(["first-resource", "second-resource"])));
     global.fetch = fetchMock;
 
-    render(<ResourceGallery platforms={[]} resources={[summary("first-resource"), summary("second-resource")]} />);
+    render(<ResourceGallery resources={[summary("first-resource"), summary("second-resource")]} />);
 
-    await waitFor(() => expect(screen.getAllByLabelText("统计数据可用")).toHaveLength(2));
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-    const requestUrl = new URL(fetchMock.mock.calls[0][0] as string);
-    expect(requestUrl.pathname).toBe("/v1/stats");
-    expect(requestUrl.searchParams.get("ids")?.split(",").sort()).toEqual(["first-resource", "second-resource"]);
+    expect(screen.getByRole("link", { name: "first-resource" })).toBeTruthy();
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("超过 Worker 上限时按 100 个合理分批且每个 ID 只请求一次", async () => {
@@ -124,13 +121,13 @@ describe("Web 统计集成", () => {
     ["503", () => Promise.resolve(response({ error: { code: "UNAVAILABLE", message: "Unavailable" } }, 503))],
     ["协议错误", () => Promise.resolve(response({ generatedAt: 20, resources: [], invalid: true }))],
     ["网络错误", () => Promise.reject(new Error("offline"))],
-  ])("Worker %s 时统计降级且静态详情与安装说明仍完整", async (_label, implementation) => {
+  ])("Worker %s 时统计降级且静态详情与 AI 安装入口仍完整", async (_label, implementation) => {
     global.fetch = jest.fn(implementation) as unknown as typeof fetch;
     render(<ResourceDetail platforms={detailFixturePlatforms} resource={detailFixtureResource} />);
 
     await waitFor(() => expect(screen.getByText(/统计服务暂不可用/)).toBeTruthy());
     expect(screen.getByRole("heading", { name: detailFixtureResource.name })).toBeTruthy();
-    expect(screen.getByText("tool install --token {{TOKEN_VALUE}}")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "复制 AI 安装提示词" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "源码仓库" }).getAttribute("href")).toBe(detailFixtureResource.repository);
     expect(screen.queryByText("命令/配置复制次数")).toBeNull();
   });
@@ -147,7 +144,7 @@ describe("Web 统计集成", () => {
     });
     expect(screen.getByText(/统计服务暂不可用/)).toBeTruthy();
     expect(screen.getByRole("heading", { name: detailFixtureResource.name })).toBeTruthy();
-    expect(screen.getByText("tool install --token {{TOKEN_VALUE}}")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "复制 AI 安装提示词" })).toBeTruthy();
     jest.useRealTimers();
   });
 

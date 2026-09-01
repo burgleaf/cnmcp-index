@@ -5,7 +5,7 @@
   "pluginScope": "ai-coding-tool",
   "name": "ECC 智能体工程系统",
   "nameEn": "ECC Agent Harness Operating System",
-  "summary": "面向 Claude Code 与 Codex 的智能体工程插件，整合 286 个 Skill、68 个专业智能体、工作流、Hooks、MCP 配置，以及测试、安全、代码审查和上下文管理能力。",
+  "summary": "面向 AI 编程助手的智能体工程插件，整合 286 个 Skill、68 个专业智能体、工作流、Hooks、MCP 配置，以及测试、安全、代码审查和上下文管理能力。",
   "summaryEn": "An agent engineering plugin for Claude Code and Codex that bundles 286 skills, 68 specialized agents, workflows, hooks, MCP configurations, testing, security, code review, and context management.",
   "repository": "https://github.com/affaan-m/ECC",
   "homepage": "https://ecc.tools",
@@ -21,7 +21,11 @@
     "code-quality",
     "testing",
     "security",
-    "context"
+    "context",
+    "developer",
+    "software-engineering",
+    "code-review",
+    "project-management"
   ],
   "compatibility": [
     {
@@ -29,29 +33,23 @@
       "status": "native",
       "verifiedAt": "2026-09-01",
       "note": "上游 README 将 Claude Code 标为 Stable primary，并提供 ecc@ecc 原生插件清单及安装路径。",
-      "installations": [
-        {
-          "type": "manual",
-          "label": "Claude Code 原生插件安装",
-          "content": "/plugin marketplace add https://github.com/affaan-m/ECC\n/plugin install ecc@ecc"
-        }
-      ]
+      "evidenceUrl": "https://github.com/affaan-m/ECC#readme"
     },
     {
       "platform": "codex",
       "status": "supported",
       "verifiedAt": "2026-09-01",
       "note": "上游 README 和 Codex 插件清单提供原生 Marketplace 插件；Skills、MCP 配置和经审查的 Hooks 子集可用，Hooks 需由用户显式信任。",
-      "installations": [
-        {
-          "type": "command",
-          "label": "Codex 原生插件安装",
-          "shell": "any",
-          "command": "codex plugin marketplace add affaan-m/ECC\ncodex plugin add ecc@ecc"
-        }
-      ]
+      "evidenceUrl": "https://github.com/affaan-m/ECC#readme"
     }
   ],
   "createdAt": "2026-01-18",
-  "visibility": "public"
+  "visibility": "public",
+  "sourceStats": {
+    "stars": 245472,
+    "forks": 37064,
+    "pushedAt": "2026-08-31T22:14:22Z",
+    "archived": false,
+    "fetchedAt": "2026-09-01"
+  }
 }

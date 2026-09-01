@@ -215,7 +215,21 @@ function validateTagRegistry(tagRegistry, tagRegistryPath, errors, projectRoot) 
     if (typeof tag.name !== "string" || !tag.name.trim()) {
       errors.push(validationMessage("catalog", tagRegistryPath, `$.tags.${index}.name`, "标签名称不能为空", projectRoot));
     }
-    const extraKeys = Object.keys(tag).filter((key) => !["id", "name"].includes(key));
+    for (const key of ["nameEn", "description", "group"]) {
+      if (typeof tag[key] !== "string" || !tag[key].trim()) {
+        errors.push(validationMessage("catalog", tagRegistryPath, `$.tags.${index}.${key}`, `${key} 不能为空`, projectRoot));
+      }
+    }
+    if (!["profession", "industry", "task", "capability"].includes(tag.group)) {
+      errors.push(validationMessage("catalog", tagRegistryPath, `$.tags.${index}.group`, "标签分组无效", projectRoot));
+    }
+    if (!Array.isArray(tag.aliases) || tag.aliases.some((alias) => typeof alias !== "string" || !alias.trim())) {
+      errors.push(validationMessage("catalog", tagRegistryPath, `$.tags.${index}.aliases`, "aliases 必须是非空字符串数组", projectRoot));
+    }
+    if (!Number.isInteger(tag.sortOrder) || tag.sortOrder < 0) {
+      errors.push(validationMessage("catalog", tagRegistryPath, `$.tags.${index}.sortOrder`, "sortOrder 必须是非负整数", projectRoot));
+    }
+    const extraKeys = Object.keys(tag).filter((key) => !["id", "name", "nameEn", "description", "aliases", "group", "sortOrder"].includes(key));
     if (extraKeys.length) errors.push(validationMessage("catalog", tagRegistryPath, `$.tags.${index}.${extraKeys[0]}`, "标签包含未定义字段", projectRoot));
   }
   return ids;
@@ -308,6 +322,7 @@ export async function validateCatalog(options = {}) {
 
     appendDateError(resource.createdAt, resourceId, resourceFile, "$.createdAt", errors, projectRoot);
     appendDateError(resource.updatedAt, resourceId, resourceFile, "$.updatedAt", errors, projectRoot);
+    appendDateError(resource.sourceStats?.fetchedAt, resourceId, resourceFile, "$.sourceStats.fetchedAt", errors, projectRoot);
     if (isRealDate(resource.createdAt) && isRealDate(resource.updatedAt) && resource.updatedAt < resource.createdAt) {
       errors.push(validationMessage(resourceId, resourceFile, "$.updatedAt", "不得早于 createdAt", projectRoot));
     }
@@ -325,6 +340,7 @@ export async function validateCatalog(options = {}) {
       if (compatibilityPlatforms.has(compatibility.platform)) {
         errors.push(validationMessage(resourceId, resourceFile, `${basePath}.platform`, `平台 ${compatibility.platform} 在资源内重复`, projectRoot));
       }
+      if (compatibility.evidenceUrl !== undefined) appendHttpsUrlError(compatibility.evidenceUrl, resourceId, resourceFile, `${basePath}.evidenceUrl`, errors, projectRoot);
       compatibilityPlatforms.add(compatibility.platform);
       appendDateError(compatibility.verifiedAt, resourceId, resourceFile, `${basePath}.verifiedAt`, errors, projectRoot);
       if (compatibility.status === "partial" && !(typeof compatibility.note === "string" && compatibility.note.trim())) {
@@ -354,7 +370,7 @@ export async function validateCatalog(options = {}) {
   return {
     resources,
     platforms: platforms.slice().sort((left, right) => left.sortOrder - right.sortOrder || lexicalCompare(left.id, right.id)),
-    tags: tagRegistry.tags.slice().sort((left, right) => lexicalCompare(left.id, right.id)),
+    tags: tagRegistry.tags.slice().sort((left, right) => left.sortOrder - right.sortOrder || lexicalCompare(left.id, right.id)),
     warnings,
   };
 }

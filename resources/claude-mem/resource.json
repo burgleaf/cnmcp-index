@@ -9,12 +9,41 @@
   "homepage": "https://claude-mem.ai",
   "documentation": "https://docs.claude-mem.ai/",
   "license": "Apache-2.0",
-  "author": { "name": "thedotmack", "url": "https://github.com/thedotmack" },
-  "tags": ["context", "productivity"],
+  "author": {
+    "name": "thedotmack",
+    "url": "https://github.com/thedotmack"
+  },
+  "tags": [
+    "context",
+    "productivity",
+    "developer",
+    "knowledge-management",
+    "memory",
+    "local-first"
+  ],
   "compatibility": [
-    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游将 Claude Code 插件作为主要安装方式，并提供 hooks 与记忆搜索能力；未执行安装命令。" },
-    { "platform": "codex", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游项目说明明确列出 Codex 为支持的 Agent，并提供通用 MCP 能力；未执行安装命令。" }
+    {
+      "platform": "claude-code",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游将 Claude Code 插件作为主要安装方式，并提供 hooks 与记忆搜索能力；未执行安装命令。",
+      "evidenceUrl": "https://docs.claude-mem.ai/"
+    },
+    {
+      "platform": "codex",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游项目说明明确列出 Codex 为支持的 Agent，并提供通用 MCP 能力；未执行安装命令。",
+      "evidenceUrl": "https://docs.claude-mem.ai/"
+    }
   ],
   "createdAt": "2026-09-01",
-  "visibility": "public"
+  "visibility": "public",
+  "sourceStats": {
+    "stars": 92803,
+    "forks": 8163,
+    "pushedAt": "2026-08-31T21:37:53Z",
+    "archived": false,
+    "fetchedAt": "2026-09-01"
+  }
 }

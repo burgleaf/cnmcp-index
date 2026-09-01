@@ -31,15 +31,15 @@ async function mutateResource(projectRoot, id, mutate) {
 test("生成完整 Catalog、反向索引和不含 README/安装命令的客户端 Catalog", async () => {
   await withFixture(async (projectRoot) => {
     const result = await generateCatalog({ projectRoot });
-    assert.deepEqual(result.fullCatalog.resources.map(({ id }) => id), ["gamma-plugin", "beta-skill", "alpha-mcp"]);
+    assert.deepEqual(result.fullCatalog.resources.map(({ id }) => id), ["alpha-mcp", "gamma-plugin", "beta-skill"]);
     assert.deepEqual(result.fullCatalog.indexes.kinds, {
       mcp: ["alpha-mcp"],
       plugin: ["gamma-plugin"],
       skill: ["beta-skill"],
     });
     assert.deepEqual(result.fullCatalog.indexes.platforms, {
-      "claude-code": ["gamma-plugin", "beta-skill", "alpha-mcp"],
-      codex: ["beta-skill", "alpha-mcp"],
+      "claude-code": ["alpha-mcp", "gamma-plugin", "beta-skill"],
+      codex: ["alpha-mcp", "beta-skill"],
     });
     assert.deepEqual(result.fullCatalog.indexes.tags.context, ["alpha-mcp"]);
 
@@ -94,7 +94,7 @@ test("非公开资源不会进入完整/客户端 Catalog 和任何反向索引"
       resource.visibility = "unlisted";
     });
     const result = await generateCatalog({ projectRoot });
-    assert.deepEqual(result.fullCatalog.resources.map(({ id }) => id), ["beta-skill", "alpha-mcp"]);
+    assert.deepEqual(result.fullCatalog.resources.map(({ id }) => id), ["alpha-mcp", "beta-skill"]);
     assert.ok(Object.values(result.fullCatalog.indexes).every((group) =>
       Object.values(group).every((ids) => !ids.includes("gamma-plugin")),
     ));

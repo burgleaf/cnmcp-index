@@ -5,7 +5,7 @@ import { detailFixturePlatforms, detailFixtureResource } from "@/test/fixtures/r
 import { ResourceDetail } from "./resource-detail";
 
 describe("ResourceDetail 隔离 fixture 静态 HTML", () => {
-  it("展示完整字段、核验日期、Markdown、安装说明和 Worker 离线边界", () => {
+  it("展示质量、上游支持证据、Markdown 和跨平台 AI 安装提示词", () => {
     const html = renderToStaticMarkup(
       <ResourceDetail platforms={detailFixturePlatforms} resource={detailFixtureResource} />,
     );
@@ -17,12 +17,17 @@ describe("ResourceDetail 隔离 fixture 静态 HTML", () => {
     expect(html).toContain("官方网站");
     expect(html).toContain("使用文档");
     expect(html).toContain("MIT");
-    expect(html).toContain("#context");
+    expect(html).toContain("上下文");
     expect(html).toContain("Codex：原生支持，最后核验日期 2026-02-01");
     expect(html).toContain("最后核验日期：2026-02-02");
     expect(html).toContain("安全说明");
-    expect(html).toContain("tool install --token {{TOKEN_VALUE}}");
-    expect(html).toContain("~/.claude/settings.json");
+    expect(html).toContain("质量评分");
+    expect(html).toContain("1,200");
+    expect(html).toContain("原作者支持的平台");
+    expect(html).toContain("查看上游证据");
+    expect(html).toContain("复制 AI 安装提示词");
+    expect(html).toContain("先阅读源码仓库和官方安装文档");
+    expect(html).not.toContain("tool install --token");
     expect(html).toContain("统计数据加载中");
     expect(html).not.toContain("安装成功次数");
   });
@@ -34,7 +39,7 @@ describe("ResourceDetail 隔离 fixture 静态 HTML", () => {
     const externalLinkCount = (html.match(/target="_blank"/g) ?? []).length;
     const isolatedLinkCount = (html.match(/rel="noopener noreferrer"/g) ?? []).length;
 
-    expect(externalLinkCount).toBeGreaterThanOrEqual(6);
+    expect(externalLinkCount).toBeGreaterThanOrEqual(7);
     expect(isolatedLinkCount).toBe(externalLinkCount);
   });
 });

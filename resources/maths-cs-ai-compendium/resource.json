@@ -6,12 +6,41 @@
   "summary": "把数学、计算机科学与人工智能教材作为本地知识库，通过 MCP 工具提供给 AI 助手查询和学习。",
   "repository": "https://github.com/HenryNdubuaku/maths-cs-ai-compendium",
   "license": "Apache-2.0",
-  "author": { "name": "HenryNdubuaku", "url": "https://github.com/HenryNdubuaku" },
-  "tags": ["context", "documentation"],
+  "author": {
+    "name": "HenryNdubuaku",
+    "url": "https://github.com/HenryNdubuaku"
+  },
+  "tags": [
+    "context",
+    "documentation",
+    "educator",
+    "researcher",
+    "education",
+    "learning",
+    "knowledge-management"
+  ],
   "compatibility": [
-    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游 README 明确声明内置 MCP Server 可供 Claude Code 使用；未执行安装命令。" },
-    { "platform": "codex", "status": "unknown", "verifiedAt": "2026-09-01", "note": "MCP Server 采用通用协议，但上游未单独提供 Codex 配置或核验结果。" }
+    {
+      "platform": "claude-code",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游 README 明确声明内置 MCP Server 可供 Claude Code 使用；未执行安装命令。",
+      "evidenceUrl": "https://github.com/HenryNdubuaku/maths-cs-ai-compendium"
+    },
+    {
+      "platform": "codex",
+      "status": "unknown",
+      "verifiedAt": "2026-09-01",
+      "note": "MCP Server 采用通用协议，但上游未单独提供 Codex 配置或核验结果。"
+    }
   ],
   "createdAt": "2026-09-01",
-  "visibility": "public"
+  "visibility": "public",
+  "sourceStats": {
+    "stars": 7394,
+    "forks": 905,
+    "pushedAt": "2026-07-18T22:19:35Z",
+    "archived": false,
+    "fetchedAt": "2026-09-01"
+  }
 }

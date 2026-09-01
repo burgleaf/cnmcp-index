@@ -6,12 +6,40 @@
   "summary": "为 AI 编程助手检索版本化 API 文档并附加本地注释，仓库同时提供指导助手使用 Chub CLI 的 Agent Skill。",
   "repository": "https://github.com/andrewyng/context-hub",
   "license": "MIT",
-  "author": { "name": "andrewyng", "url": "https://github.com/andrewyng" },
-  "tags": ["context", "documentation", "productivity"],
+  "author": {
+    "name": "andrewyng",
+    "url": "https://github.com/andrewyng"
+  },
+  "tags": [
+    "context",
+    "documentation",
+    "productivity",
+    "developer",
+    "researcher",
+    "research"
+  ],
   "compatibility": [
-    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游提供 get-api-docs/SKILL.md，并明确说明 Claude Code Skill 安装目录；未执行安装命令。" },
-    { "platform": "codex", "status": "unknown", "verifiedAt": "2026-09-01", "note": "Skill 使用通用 CLI，但上游未提供针对 Codex 的安装与核验说明。" }
+    {
+      "platform": "claude-code",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游提供 get-api-docs/SKILL.md，并明确说明 Claude Code Skill 安装目录；未执行安装命令。",
+      "evidenceUrl": "https://github.com/andrewyng/context-hub"
+    },
+    {
+      "platform": "codex",
+      "status": "unknown",
+      "verifiedAt": "2026-09-01",
+      "note": "Skill 使用通用 CLI，但上游未提供针对 Codex 的安装与核验说明。"
+    }
   ],
   "createdAt": "2026-09-01",
-  "visibility": "public"
+  "visibility": "public",
+  "sourceStats": {
+    "stars": 13957,
+    "forks": 1206,
+    "pushedAt": "2026-05-31T18:39:40Z",
+    "archived": false,
+    "fetchedAt": "2026-09-01"
+  }
 }

@@ -74,31 +74,22 @@ describe("9.1 本地跨层验收", () => {
     jest.restoreAllMocks();
   });
 
-  it("从静态目录搜索和多维筛选三类资源，并提供可到达的详情链接与五态标记", async () => {
+  it("从静态目录按关键词与类型浏览三类资源，卡片不展示平台标记", async () => {
     const fetchMock = jest.fn(normalWorkerFetch);
     global.fetch = fetchMock as unknown as typeof fetch;
-    render(<ResourceDirectoryClient platforms={fullAcceptancePlatforms} />);
+    render(<ResourceDirectoryClient />);
 
     await waitFor(() => expect(screen.getByText("找到 3 个资源")).toBeTruthy());
-    await waitFor(() => expect(screen.getAllByLabelText("统计数据可用")).toHaveLength(3));
-    const initialStatsGets = fetchMock.mock.calls.filter(([input]) => new URL(input.toString(), "https://www.cnmcp.com").pathname === "/v1/stats");
-    expect(initialStatsGets).toHaveLength(1);
-    expect(new URL(initialStatsGets[0][0].toString()).searchParams.get("ids")?.split(",").sort())
-      .toEqual(["acceptance-mcp", "acceptance-plugin", "acceptance-skill"]);
     expect(screen.getByRole("link", { name: "验收 MCP" }).getAttribute("href")).toBe("/resources/acceptance-mcp");
     expect(screen.getByRole("link", { name: "验收 Skill" }).getAttribute("href")).toBe("/resources/acceptance-skill");
     expect(screen.getByRole("link", { name: "验收 AI 编程插件" }).getAttribute("href")).toBe("/resources/acceptance-plugin");
-    for (const accessibleStatus of ["原生支持", "支持", "部分支持", "不支持", "兼容性未知"]) {
-      expect(screen.getAllByLabelText(new RegExp(`：${accessibleStatus}`)).length).toBeGreaterThan(0);
-    }
+    expect(screen.queryByLabelText(/Codex：/)).toBeNull();
+    expect(screen.queryByLabelText(/Claude Code：/)).toBeNull();
 
     fireEvent.change(screen.getByRole("searchbox", { name: "搜索资源" }), {
       target: { value: "ACCEPTANCE AI CODING" },
     });
-    fireEvent.change(screen.getByRole("combobox", { name: "资源类型" }), { target: { value: "plugin" } });
-    fireEvent.change(screen.getByRole("combobox", { name: "平台" }), { target: { value: "codex" } });
-    fireEvent.change(screen.getByRole("combobox", { name: "兼容状态" }), { target: { value: "unsupported" } });
-    fireEvent.change(screen.getByRole("combobox", { name: "标签" }), { target: { value: "productivity" } });
+    fireEvent.click(screen.getByRole("button", { name: "插件" }));
 
     expect(screen.getByText("找到 1 个资源")).toBeTruthy();
     expect(screen.getByRole("link", { name: "验收 AI 编程插件" }).getAttribute("href")).toBe("/resources/acceptance-plugin");
@@ -106,9 +97,8 @@ describe("9.1 本地跨层验收", () => {
 
     fireEvent.change(screen.getByRole("searchbox", { name: "搜索资源" }), { target: { value: "no-match" } });
     expect(screen.getByText("没有找到匹配资源")).toBeTruthy();
-    fireEvent.click(screen.getAllByRole("button", { name: "清除筛选" })[0]);
+    fireEvent.click(screen.getAllByRole("button", { name: "清除条件" })[0]);
     expect(screen.getByText("找到 3 个资源")).toBeTruthy();
-    await waitFor(() => expect(screen.getAllByLabelText("统计数据可用")).toHaveLength(3));
   });
 
   it("Worker/D1 正常模拟时复制成功并为源码、官网、文档统一发送 source_visit", async () => {
@@ -119,9 +109,10 @@ describe("9.1 本地跨层验收", () => {
     render(<ResourceDetail platforms={fullAcceptancePlatforms} resource={fullAcceptanceMcp} />);
 
     await waitFor(() => expect(screen.getByLabelText("统计数据可用")).toBeTruthy());
-    fireEvent.click(screen.getByRole("button", { name: "复制命令" }));
-    await waitFor(() => expect(screen.getByRole("status").textContent).toContain("站点不会执行该内容"));
-    expect(writeText).toHaveBeenCalledWith("acceptance-mcp install --token {{TOKEN_VALUE}}");
+    fireEvent.click(screen.getByRole("button", { name: "复制 AI 安装提示词" }));
+    await waitFor(() => expect(screen.getByRole("status").textContent).toContain("提示词已复制"));
+    expect(writeText.mock.calls[0][0]).toContain(fullAcceptanceMcp.repository);
+    expect(writeText.mock.calls[0][0]).toContain("先阅读源码仓库和官方安装文档");
 
     for (const name of ["源码仓库", "官方网站", "使用文档"]) {
       const link = screen.getByRole("link", { name });
@@ -144,10 +135,10 @@ describe("9.1 本地跨层验收", () => {
 
     await waitFor(() => expect(screen.getByText(/统计服务暂不可用/)).toBeTruthy());
     expect(screen.getByRole("heading", { name: "验收 MCP" })).toBeTruthy();
-    expect(screen.getByText("acceptance-mcp install --token {{TOKEN_VALUE}}"));
+    expect(screen.getByRole("button", { name: "复制 AI 安装提示词" }));
 
-    fireEvent.click(screen.getByRole("button", { name: "复制命令" }));
-    await waitFor(() => expect(screen.getByRole("status").textContent).toContain("已复制到剪贴板"));
+    fireEvent.click(screen.getByRole("button", { name: "复制 AI 安装提示词" }));
+    await waitFor(() => expect(screen.getByRole("status").textContent).toContain("提示词已复制"));
     expect(writeText).toHaveBeenCalledTimes(1);
 
     for (const [name, href] of [
@@ -170,10 +161,10 @@ describe("9.1 本地跨层验收", () => {
     render(<ResourceDetail platforms={fullAcceptancePlatforms} resource={fullAcceptanceMcp} />);
 
     await waitFor(() => expect(screen.getByLabelText("统计数据可用")).toBeTruthy());
-    fireEvent.click(screen.getByRole("button", { name: "复制命令" }));
-    await waitFor(() => expect(screen.getByRole("alert").textContent).toContain("未记录复制成功"));
-    expect((screen.getByLabelText("可手动选择的安装文本") as HTMLTextAreaElement).value)
-      .toBe("acceptance-mcp install --token {{TOKEN_VALUE}}");
+    fireEvent.click(screen.getByRole("button", { name: "复制 AI 安装提示词" }));
+    await waitFor(() => expect(screen.getByRole("alert").textContent).toContain("剪贴板不可用"));
+    expect((screen.getByLabelText("AI 安装提示词") as HTMLTextAreaElement).value)
+      .toContain(fullAcceptanceMcp.repository);
     expect(eventBodies(fetchMock).filter((event) => event.eventType === "command_copy")).toHaveLength(0);
   });
 });

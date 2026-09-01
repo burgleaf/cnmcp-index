@@ -2,6 +2,7 @@ import { copyFile, mkdir, readFile, rename, rm, writeFile } from "node:fs/promis
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { validateCatalog } from "./validate-resources.mjs";
+import { computeResourceQualityCore } from "../lib/resource-quality-core.mjs";
 
 const SCRIPT_DIRECTORY = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(SCRIPT_DIRECTORY, "..");
@@ -23,9 +24,20 @@ export function normalizeSearchText(parts) {
 
 function resourceCompare(left, right) {
   return (
-    lexicalCompare(right.createdAt, left.createdAt) ||
+    right.quality.score - left.quality.score ||
+    lexicalCompare(right.quality.pushedAt ?? "", left.quality.pushedAt ?? "") ||
     lexicalCompare(normalizeSearchText([left.name]), normalizeSearchText([right.name])) ||
     lexicalCompare(left.id, right.id)
+  );
+}
+
+function completenessScore(resource, readme) {
+  return Math.min(15,
+    (resource.documentation ? 4 : 0) +
+    (readme ? 4 : 0) +
+    (resource.license && resource.license !== "NOASSERTION" ? 2 : 0) +
+    (resource.logo || resource.preview ? 2 : 0) +
+    (resource.compatibility.some((entry) => entry.note) ? 3 : 0)
   );
 }
 
@@ -85,14 +97,14 @@ function normalizeCompatibility(compatibility, platformOrder) {
     );
 }
 
-async function normalizeResource(source, platformOrder, publicAssetsDirectory) {
+async function normalizeResource(source, platformOrder, tagOrder, publicAssetsDirectory) {
   const resource = { ...source };
   const { directory, readmePath } = resource;
   delete resource.directory;
   delete resource.resourceFile;
   delete resource.readmePath;
   const readme = await readOptional(readmePath);
-  const tags = resource.tags.slice().sort(lexicalCompare);
+  const tags = resource.tags.slice().sort((left, right) => (tagOrder.get(left) ?? Number.MAX_SAFE_INTEGER) - (tagOrder.get(right) ?? Number.MAX_SAFE_INTEGER) || lexicalCompare(left, right));
   const normalized = {
     ...resource,
     nameEn: resource.nameEn ?? resource.name,
@@ -101,6 +113,15 @@ async function normalizeResource(source, platformOrder, publicAssetsDirectory) {
     compatibility: normalizeCompatibility(resource.compatibility, platformOrder),
     visibility: resource.visibility ?? "public",
     featured: resource.featured ?? false,
+    quality: computeResourceQualityCore({
+      stars: resource.sourceStats?.stars ?? 0,
+      forks: resource.sourceStats?.forks ?? 0,
+      pushedAt: resource.sourceStats?.pushedAt ?? null,
+      fetchedAt: resource.sourceStats?.fetchedAt ?? resource.updatedAt ?? resource.createdAt,
+      archived: resource.sourceStats?.archived ?? false,
+      completeness: completenessScore(resource, readme),
+      featured: resource.featured ?? false,
+    }),
     ...(readme === undefined ? {} : { readme }),
   };
 
@@ -114,7 +135,7 @@ async function normalizeResource(source, platformOrder, publicAssetsDirectory) {
   return normalized;
 }
 
-function createClientResource(resource) {
+function createClientResource(resource, tagLookup) {
   return {
     id: resource.id,
     kind: resource.kind,
@@ -128,7 +149,9 @@ function createClientResource(resource) {
     platforms: resource.compatibility.map(({ platform, status }) => ({ id: platform, status })),
     ...(resource.logo ? { logo: resource.logo } : {}),
     createdAt: resource.createdAt,
+    ...(resource.updatedAt ? { updatedAt: resource.updatedAt } : {}),
     featured: resource.featured,
+    quality: resource.quality,
     normalizedSearchText: normalizeSearchText([
       resource.name,
       resource.nameEn,
@@ -136,6 +159,10 @@ function createClientResource(resource) {
       resource.summaryEn,
       resource.author.name,
       ...resource.tags,
+      ...resource.tags.flatMap((tagId) => {
+        const tag = tagLookup.get(tagId);
+        return tag ? [tag.name, tag.nameEn, ...tag.aliases] : [];
+      }),
     ]),
   };
 }
@@ -162,10 +189,12 @@ export async function generateCatalog(options = {}) {
   );
   const validation = await validateCatalog({ ...options, projectRoot });
   const platformOrder = new Map(validation.platforms.map((platform, index) => [platform.id, index]));
+  const tagOrder = new Map(validation.tags.map((tag) => [tag.id, tag.sortOrder]));
+  const tagLookup = new Map(validation.tags.map((tag) => [tag.id, tag]));
 
   await rm(publicAssetsDirectory, { recursive: true, force: true });
   const normalizedResources = await Promise.all(
-    validation.resources.map((resource) => normalizeResource(resource, platformOrder, publicAssetsDirectory)),
+    validation.resources.map((resource) => normalizeResource(resource, platformOrder, tagOrder, publicAssetsDirectory)),
   );
   const resources = normalizedResources
     .filter((resource) => resource.visibility === "public")
@@ -180,8 +209,9 @@ export async function generateCatalog(options = {}) {
   };
   const clientCatalog = {
     schemaVersion: 1,
-    resources: resources.map(createClientResource),
+    resources: resources.map((resource) => createClientResource(resource, tagLookup)),
     indexes,
+    tags: validation.tags,
   };
   const generatedBytes = serialize(fullCatalog);
   const publicBytes = serialize(clientCatalog);

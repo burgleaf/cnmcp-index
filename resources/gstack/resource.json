@@ -6,12 +6,43 @@
   "summary": "把产品、架构、设计、审查、QA、安全和发布等工程角色组合成一套可衔接的 AI 编程 Skills 工作流。",
   "repository": "https://github.com/garrytan/gstack",
   "license": "MIT",
-  "author": { "name": "garrytan", "url": "https://github.com/garrytan" },
-  "tags": ["code-quality", "productivity", "testing"],
+  "author": {
+    "name": "garrytan",
+    "url": "https://github.com/garrytan"
+  },
+  "tags": [
+    "code-quality",
+    "productivity",
+    "testing",
+    "developer",
+    "product-manager",
+    "software-engineering",
+    "planning",
+    "code-review"
+  ],
   "compatibility": [
-    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游以 Claude Code 为主要宿主，并提供完整 Skill 安装流程；未执行安装命令。" },
-    { "platform": "codex", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游安装器明确支持 Codex CLI，并生成对应 Skills；未执行安装命令。" }
+    {
+      "platform": "claude-code",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游以 Claude Code 为主要宿主，并提供完整 Skill 安装流程；未执行安装命令。",
+      "evidenceUrl": "https://github.com/garrytan/gstack"
+    },
+    {
+      "platform": "codex",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游安装器明确支持 Codex CLI，并生成对应 Skills；未执行安装命令。",
+      "evidenceUrl": "https://github.com/garrytan/gstack"
+    }
   ],
   "createdAt": "2026-09-01",
-  "visibility": "public"
+  "visibility": "public",
+  "sourceStats": {
+    "stars": 130695,
+    "forks": 19644,
+    "pushedAt": "2026-08-31T15:55:30Z",
+    "archived": false,
+    "fetchedAt": "2026-09-01"
+  }
 }

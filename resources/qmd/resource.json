@@ -6,12 +6,42 @@
   "summary": "在本地索引 Markdown 文档、知识库和会议记录，并通过关键词、向量与混合检索向 AI Agent 提供上下文。",
   "repository": "https://github.com/tobi/qmd",
   "license": "MIT",
-  "author": { "name": "tobi", "url": "https://github.com/tobi" },
-  "tags": ["context", "documentation", "productivity"],
+  "author": {
+    "name": "tobi",
+    "url": "https://github.com/tobi"
+  },
+  "tags": [
+    "context",
+    "documentation",
+    "productivity",
+    "researcher",
+    "content-creator",
+    "knowledge-management",
+    "research",
+    "local-first"
+  ],
   "compatibility": [
-    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游提供 Claude Code 插件安装和手动 MCP 配置两种方式；未执行安装命令。" },
-    { "platform": "codex", "status": "unknown", "verifiedAt": "2026-09-01", "note": "上游提供通用 stdio 与 HTTP MCP Server，但未单独给出 Codex 配置核验结果。" }
+    {
+      "platform": "claude-code",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游提供 Claude Code 插件安装和手动 MCP 配置两种方式；未执行安装命令。",
+      "evidenceUrl": "https://github.com/tobi/qmd"
+    },
+    {
+      "platform": "codex",
+      "status": "unknown",
+      "verifiedAt": "2026-09-01",
+      "note": "上游提供通用 stdio 与 HTTP MCP Server，但未单独给出 Codex 配置核验结果。"
+    }
   ],
   "createdAt": "2026-09-01",
-  "visibility": "public"
+  "visibility": "public",
+  "sourceStats": {
+    "stars": 29413,
+    "forks": 1838,
+    "pushedAt": "2026-08-18T14:26:31Z",
+    "archived": false,
+    "fetchedAt": "2026-09-01"
+  }
 }

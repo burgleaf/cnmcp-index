@@ -1,6 +1,6 @@
 # CNMCP AI 扩展社区
 
-发现、比较并安全使用 MCP、Skill 与 AI 编程工具插件。
+按职业和任务发现、比较并安全使用 MCP、Skill 与 AI 编程工具插件。
 
 生产站点：[https://www.cnmcp.com](https://www.cnmcp.com)
 
@@ -29,6 +29,7 @@ yarn dev
 ```sh
 yarn validate:resources   # 校验资源元数据
 yarn generate:catalog     # 生成 Catalog
+yarn sync:github-metadata # 维护者同步 GitHub 质量数据
 yarn test                 # 站点与内容测试
 yarn lint
 yarn typecheck
@@ -48,7 +49,7 @@ yarn discovery:dry-run
 
 ## 资源投稿
 
-收录类型仅限 `mcp`、`skill`、`plugin`。MVP 平台为 Codex 与 Claude Code。`plugin` 只收录面向 AI 编程工具的平台插件。
+收录类型仅限 `mcp`、`skill`、`plugin`。`plugin` 只收录面向 AI 编程工具的平台插件；平台不作为主导航、卡片或质量排序维度。
 
 推荐三种方式：
 
@@ -61,12 +62,13 @@ yarn discovery:dry-run
 约束：
 
 - 目录名必须与资源 `id` 一致
-- 标签来自 `catalog/tags.json`，平台来自 `catalog/platforms.json`
-- 兼容性必须包含状态和核验日期
-- 安装命令只作为文本展示和复制，站点不会执行
-- 投稿者不得自行设置 `featured`
+- 标签来自 `catalog/tags.json`，应覆盖职业、行业、任务和能力
+- 平台支持必须包含状态、核验日期，并尽量提供上游证据链接
+- 详情页复制 AI 安装提示词，站点不会执行第三方命令
+- 投稿者不得自行设置 `featured` 或 `sourceStats`
 
 审核与分支保护说明见 [`docs/content-review.md`](./docs/content-review.md)。
+质量评分规则见 [`docs/resource-ranking.md`](./docs/resource-ranking.md)。
 
 ## 仓库结构
 

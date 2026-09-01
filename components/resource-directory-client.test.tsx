@@ -10,7 +10,7 @@ describe("ResourceDirectoryClient 运行时降级", () => {
     global.fetch = jest.fn().mockRejectedValue(new Error("网络不可用"));
 
     try {
-      render(<ResourceDirectoryClient platforms={[]} />);
+      render(<ResourceDirectoryClient />);
       await waitFor(() => expect(screen.getByText("资源目录暂时无法加载")).toBeTruthy());
       expect(screen.getByText(/网络不可用。已打开的静态页面不受影响/)).toBeTruthy();
       expect(screen.getByRole("button", { name: "重新加载" })).toBeTruthy();

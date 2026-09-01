@@ -11,7 +11,7 @@
 
 检查只从受信任的 PR 基准分支检出审核脚本，不运行投稿分支中的代码或安装命令。只接受对**当前 PR 提交**的批准，批准者必须由 GitHub API 确认为仓库具有 `write`、`maintain` 或 `admin` 权限。脚本还会读取基准与投稿版本的 `resource.json`，在日志和 Job Summary 中明确列出每一项 `featured: false → true` 或 `true → false` 变化。
 
-未合并的投稿只存在于 PR 分支。正式 Catalog 的生成和生产发布必须只使用默认分支；PR 工作流不得获得 Cloudflare Pages、D1 或 Worker 的生产写权限。`featured` 仅在维护者审核合并后才能影响首页精选。
+未合并的投稿只存在于 PR 分支。正式 Catalog 的生成和生产发布必须只使用默认分支；PR 工作流不得获得 Cloudflare Pages、D1 或 Worker 的生产写权限。`featured` 仅在维护者审核合并后才能影响首页精选。`sourceStats` 是维护者从公开上游同步的质量事实，投稿者不得自行填写或修改；质量公式与数据边界见 [`resource-ranking.md`](./resource-ranking.md)。
 
 ## 必须在 GitHub 平台侧启用
 

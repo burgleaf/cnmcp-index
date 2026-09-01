@@ -7,12 +7,39 @@
   "summary": "在 Claude Code 输入区下方持续显示上下文占用、活动工具、子智能体和待办进度等运行状态。",
   "repository": "https://github.com/jarrodwatts/claude-hud",
   "license": "MIT",
-  "author": { "name": "jarrodwatts", "url": "https://github.com/jarrodwatts" },
-  "tags": ["context", "productivity"],
+  "author": {
+    "name": "jarrodwatts",
+    "url": "https://github.com/jarrodwatts"
+  },
+  "tags": [
+    "context",
+    "productivity",
+    "developer",
+    "software-engineering",
+    "project-management"
+  ],
   "compatibility": [
-    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游将其定义为 Claude Code 插件，并使用原生 statusline API；未执行安装命令。" },
-    { "platform": "codex", "status": "unknown", "verifiedAt": "2026-09-01", "note": "该插件依赖 Claude Code statusline API，上游未提供 Codex 兼容性说明。" }
+    {
+      "platform": "claude-code",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游将其定义为 Claude Code 插件，并使用原生 statusline API；未执行安装命令。",
+      "evidenceUrl": "https://github.com/jarrodwatts/claude-hud"
+    },
+    {
+      "platform": "codex",
+      "status": "unknown",
+      "verifiedAt": "2026-09-01",
+      "note": "该插件依赖 Claude Code statusline API，上游未提供 Codex 兼容性说明。"
+    }
   ],
   "createdAt": "2026-09-01",
-  "visibility": "public"
+  "visibility": "public",
+  "sourceStats": {
+    "stars": 27762,
+    "forks": 1284,
+    "pushedAt": "2026-08-28T14:25:29Z",
+    "archived": false,
+    "fetchedAt": "2026-09-01"
+  }
 }

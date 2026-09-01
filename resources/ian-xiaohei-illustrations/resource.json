@@ -7,12 +7,40 @@
   "repository": "https://github.com/helloianneo/ian-xiaohei-illustrations",
   "homepage": "https://www.ianneo.xyz",
   "license": "MIT",
-  "author": { "name": "helloianneo", "url": "https://github.com/helloianneo" },
-  "tags": ["automation", "productivity"],
+  "author": {
+    "name": "helloianneo",
+    "url": "https://github.com/helloianneo"
+  },
+  "tags": [
+    "automation",
+    "productivity",
+    "illustrator",
+    "content-creator",
+    "image-generation",
+    "writing"
+  ],
   "compatibility": [
-    { "platform": "codex", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游 README 明确提供 Codex Skill 目录与安装说明；未执行安装命令。" },
-    { "platform": "claude-code", "status": "unknown", "verifiedAt": "2026-09-01", "note": "上游主要面向 Codex，尚未发现针对 Claude Code 的明确兼容性说明。" }
+    {
+      "platform": "codex",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游 README 明确提供 Codex Skill 目录与安装说明；未执行安装命令。",
+      "evidenceUrl": "https://github.com/helloianneo/ian-xiaohei-illustrations"
+    },
+    {
+      "platform": "claude-code",
+      "status": "unknown",
+      "verifiedAt": "2026-09-01",
+      "note": "上游主要面向 Codex，尚未发现针对 Claude Code 的明确兼容性说明。"
+    }
   ],
   "createdAt": "2026-09-01",
-  "visibility": "public"
+  "visibility": "public",
+  "sourceStats": {
+    "stars": 10804,
+    "forks": 1302,
+    "pushedAt": "2026-06-03T11:35:41Z",
+    "archived": false,
+    "fetchedAt": "2026-09-01"
+  }
 }

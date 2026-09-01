@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     default: "CNMCP AI 扩展社区",
     template: "%s | CNMCP AI 扩展社区",
   },
-  description: "发现、比较并安全使用 MCP、Skill 与 AI 编程工具插件。",
+  description: "按职业和任务发现高质量 MCP、Skill 与 AI 插件，查看上游质量、支持证据并复制安全的 AI 安装提示词。",
   alternates: {
     canonical: "/",
   },
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     siteName: "CNMCP AI 扩展社区",
     url: "/",
     title: "CNMCP AI 扩展社区",
-    description: "发现、比较并安全使用 MCP、Skill 与 AI 编程工具插件。",
+    description: "按职业和任务发现高质量 MCP、Skill 与 AI 插件，查看上游质量与支持证据。",
   },
 };
 

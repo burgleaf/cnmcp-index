@@ -13,10 +13,10 @@ export default function DiscoverPage() {
   return (
     <main className="mx-auto min-h-[calc(100vh-145px)] max-w-6xl px-6 py-12">
       <header className="mb-8 max-w-3xl">
-        <p className="text-sm font-semibold tracking-[0.18em] text-brand">GitHub 热度发现</p>
+        <p className="text-sm font-semibold tracking-[0.18em] text-brand">开源趋势候选</p>
         <h1 className="mt-3 text-4xl font-bold tracking-tight">发现热门 AI 扩展</h1>
         <p className="mt-4 leading-7 text-slate-600">
-          列表来自公开 MCP Registry 与 GitHub Search 的定期抓取，按 star、近期活跃和来源加权排序。发现条目
+          列表来自公开 MCP Registry 与 GitHub Search 的定期抓取，综合 Stars、Forks、近期活跃和可信来源。发现条目
           <strong className="font-semibold"> 未核验安装命令与平台兼容性</strong>
           ，不能替代审核后的正式 Catalog。
         </p>

@@ -7,12 +7,39 @@
   "repository": "https://github.com/Nutlope/hallmark",
   "homepage": "https://www.usehallmark.com/",
   "license": "MIT",
-  "author": { "name": "Nutlope", "url": "https://github.com/Nutlope" },
-  "tags": ["code-quality", "web-development"],
+  "author": {
+    "name": "Nutlope",
+    "url": "https://github.com/Nutlope"
+  },
+  "tags": [
+    "code-quality",
+    "web-development",
+    "designer",
+    "visualization"
+  ],
   "compatibility": [
-    { "platform": "claude-code", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游 README 明确提供 Claude Code Skill 安装目录；未执行安装命令。" },
-    { "platform": "codex", "status": "supported", "verifiedAt": "2026-09-01", "note": "上游 README 明确提供 Codex Skill 安装目录；未执行安装命令。" }
+    {
+      "platform": "claude-code",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游 README 明确提供 Claude Code Skill 安装目录；未执行安装命令。",
+      "evidenceUrl": "https://github.com/Nutlope/hallmark"
+    },
+    {
+      "platform": "codex",
+      "status": "supported",
+      "verifiedAt": "2026-09-01",
+      "note": "上游 README 明确提供 Codex Skill 安装目录；未执行安装命令。",
+      "evidenceUrl": "https://github.com/Nutlope/hallmark"
+    }
   ],
   "createdAt": "2026-09-01",
-  "visibility": "public"
+  "visibility": "public",
+  "sourceStats": {
+    "stars": 27673,
+    "forks": 1417,
+    "pushedAt": "2026-08-06T16:19:18Z",
+    "archived": false,
+    "fetchedAt": "2026-09-01"
+  }
 }

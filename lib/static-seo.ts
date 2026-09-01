@@ -18,17 +18,12 @@ export function createSitemapEntries(input: Readonly<{
   platforms: ReadonlyArray<Platform>;
   tags: ReadonlyArray<Tag>;
 }>): MetadataRoute.Sitemap {
-  const fixedEntries: MetadataRoute.Sitemap = ["/", "/resources/", "/discover/", "/submit/"].map(
+  const fixedEntries: MetadataRoute.Sitemap = ["/", "/resources/", "/topics/", "/discover/", "/submit/"].map(
     (pathname) => ({ url: siteUrl(pathname) }),
   );
   const categoryEntries: MetadataRoute.Sitemap = RESOURCE_KINDS.map((kind) => ({
     url: siteUrl(`/category/${kind}/`),
   }));
-  const platformEntries: MetadataRoute.Sitemap = input.platforms
-    .filter((platform) => platform.enabled)
-    .slice()
-    .sort((left, right) => left.sortOrder - right.sortOrder || left.id.localeCompare(right.id))
-    .map((platform) => ({ url: siteUrl(`/platform/${encodeURIComponent(platform.id)}/`) }));
   const tagEntries: MetadataRoute.Sitemap = input.tags
     .filter((tag) => tag.id !== EMPTY_TAG_ROUTE_SENTINEL)
     .slice()
@@ -46,7 +41,6 @@ export function createSitemapEntries(input: Readonly<{
   return [
     ...fixedEntries,
     ...categoryEntries,
-    ...platformEntries,
     ...tagEntries,
     ...resourceEntries,
   ];
