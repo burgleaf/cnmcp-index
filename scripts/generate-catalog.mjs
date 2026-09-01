@@ -123,6 +123,7 @@ function createClientResource(resource) {
     summary: resource.summary,
     summaryEn: resource.summaryEn,
     authorName: resource.author.name,
+    repository: resource.repository,
     tags: resource.tags,
     platforms: resource.compatibility.map(({ platform, status }) => ({ id: platform, status })),
     ...(resource.logo ? { logo: resource.logo } : {}),

@@ -38,3 +38,18 @@ test("PR 模板明确禁止投稿者控制维护状态并声明未合并内容�
   assert.match(template, /合并到默认分支前不会进入正式 Catalog/);
   assert.match(template, /不会由站点或审核流程自动执行/);
 });
+
+test("投稿 Skill 要求 GitHub API 正式 PR，并禁止 featured 与执行安装命令", async () => {
+  const skill = await read(".agents/skills/submit-cnmcp-resource/SKILL.md");
+  const cursorSkill = await read(".cursor/skills/submit-cnmcp-resource/SKILL.md");
+  for (const document of [skill, cursorSkill]) {
+    assert.match(document, /Ready for review/);
+    assert.match(document, /featured/);
+    assert.match(document, /verified/);
+    assert.match(document, /reviewStatus/);
+    assert.match(document, /不执行第三方安装命令|不得执行第三方安装命令/);
+    assert.match(document, /pluginScope/);
+  }
+  assert.match(skill, /yarn validate:resources/);
+  assert.match(cursorSkill, /\.agents\/skills\/submit-cnmcp-resource\/SKILL\.md/);
+});

@@ -59,7 +59,9 @@ jobs:
           node scripts/check-cloudflare-prerequisites.mjs github-token "$RUNNER_TEMP/discovery-secrets.json"
 
       - name: Apply remote D1 migrations
-        run: node discovery/node_modules/wrangler/bin/wrangler.js d1 execute DB --remote --config discovery/wrangler.jsonc --file=discovery/migrations/0001_discovery.sql
+        run: |
+          node discovery/node_modules/wrangler/bin/wrangler.js d1 execute DB --remote --config discovery/wrangler.jsonc --file=discovery/migrations/0001_discovery.sql
+          node discovery/node_modules/wrangler/bin/wrangler.js d1 execute DB --remote --config discovery/wrangler.jsonc --file=discovery/migrations/0002_promotions.sql
 
       - name: Deploy Discovery Worker
         run: node discovery/node_modules/wrangler/bin/wrangler.js deploy --config discovery/wrangler.jsonc --strict

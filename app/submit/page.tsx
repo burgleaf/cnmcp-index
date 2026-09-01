@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 
+import { AgentSubmissionPrompt } from "@/components/agent-submission-prompt";
 import resourceExample from "@/examples/resource-submission/resource.json";
 import { PRODUCTION_SITE_URL, publicEnvironment } from "@/lib/env";
-import { createSubmissionLinks } from "@/lib/submission";
+import { createSubmissionLinks, resolveCatalogRepositoryUrl } from "@/lib/submission";
 
 export const metadata: Metadata = {
   title: "投稿资源",
-  description: "通过 GitHub Issue Form 或 Pull Request 向 CNMCP AI 扩展社区投稿资源。",
+  description: "复制 AI 提示词，或通过 GitHub Issue Form / Pull Request 向 CNMCP AI 扩展社区投稿资源。",
   alternates: { canonical: `${PRODUCTION_SITE_URL}/submit/` },
 };
 
@@ -27,6 +28,7 @@ function ExternalAction({ href, children }: Readonly<{ href: string; children: R
 
 export default function SubmitPage() {
   const links = createSubmissionLinks(publicEnvironment.githubRepositoryUrl);
+  const catalogRepositoryUrl = resolveCatalogRepositoryUrl(publicEnvironment.githubRepositoryUrl);
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-12">
@@ -34,17 +36,22 @@ export default function SubmitPage() {
         <p className="text-sm font-semibold text-brand">社区投稿</p>
         <h1 className="mt-2 text-4xl font-bold tracking-tight text-ink">投稿 AI 扩展资源</h1>
         <p className="mt-4 text-lg leading-8 text-slate-700">
-          请选择 GitHub Issue Form 或 Pull Request。投稿内容只有在维护者审核并合并到默认分支后，才会进入正式 Catalog 和生产站点。
+          推荐复制一段提示词，交给 Cursor、Codex 或其他 AI 助手完成校验并提交 Pull Request。
+          也可以继续使用 GitHub Issue Form 或手写 PR。投稿内容只有在维护者审核并合并到默认分支后，才会进入正式 Catalog 和生产站点。
         </p>
       </header>
+
+      <div className="mt-8">
+        <AgentSubmissionPrompt catalogRepositoryUrl={catalogRepositoryUrl} />
+      </div>
 
       {!links ? (
         <section className="mt-8 rounded-2xl border border-amber-300 bg-amber-50 p-6" aria-labelledby="repository-unconfigured">
           <h2 className="text-xl font-bold text-amber-950" id="repository-unconfigured">仓库入口尚未配置</h2>
           <p className="mt-2 leading-7 text-amber-900">
-            当前部署没有配置可验证的 GitHub 仓库地址，因此不会生成可能误导你的外链。维护者应设置
+            当前部署没有配置可验证的 GitHub 仓库地址，因此不会生成可能误导你的 Issue / PR 外链。维护者应设置
             <code className="mx-1 rounded bg-amber-100 px-1.5 py-0.5">NEXT_PUBLIC_GITHUB_REPOSITORY_URL</code>
-            后重新构建。仓库内投稿模板路径为
+            后重新构建。AI 提示词仍指向正式索引仓库。仓库内投稿模板路径为
             <code className="mx-1 rounded bg-amber-100 px-1.5 py-0.5">.github/ISSUE_TEMPLATE/resource-submission.yml</code>
             和 <code className="rounded bg-amber-100 px-1.5 py-0.5">.github/pull_request_template.md</code>。
           </p>
@@ -55,7 +62,7 @@ export default function SubmitPage() {
         <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="text-2xl font-bold text-ink">使用 Issue Form</h2>
           <p className="mt-3 leading-7 text-slate-700">
-            适合不想直接修改文件的投稿者。表单会收集资源类型、源码地址、中文摘要、许可证以及 Codex/Claude Code 兼容状态和核验日期。
+            适合不想直接修改文件、也不使用 AI 助手的投稿者。表单会收集资源类型、源码地址、中文摘要、许可证以及 Codex/Claude Code 兼容状态和核验日期。
           </p>
           <div className="mt-5">
             {links ? <ExternalAction href={links.issueForm}>打开资源投稿表单</ExternalAction> : <span className="text-sm text-slate-500">配置仓库地址后提供入口</span>}
@@ -72,6 +79,11 @@ export default function SubmitPage() {
             {links ? (
               <a className="inline-flex rounded-lg border border-slate-300 px-4 py-2.5 font-semibold text-slate-700 hover:border-brand hover:text-brand" href={links.example} rel="noopener noreferrer" target="_blank">
                 查看仓库示例
+              </a>
+            ) : null}
+            {links ? (
+              <a className="inline-flex rounded-lg border border-slate-300 px-4 py-2.5 font-semibold text-slate-700 hover:border-brand hover:text-brand" href={links.skill} rel="noopener noreferrer" target="_blank">
+                查看投稿 Skill
               </a>
             ) : null}
           </div>

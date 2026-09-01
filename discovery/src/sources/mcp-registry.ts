@@ -50,7 +50,7 @@ export async function fetchMcpRegistry(
       const name = asString(server.title) || asString(server.name) || parsed.repo;
       const topics = readStringArray(server.tags ?? server.topics);
       const sources = ["mcp-registry"];
-      const kind = classifyKind({ name, description, topics, sources, hint: "mcp" });
+      const kind = classifyKind({ name, description, topics, sources });
       collected.push({
         repoFullName: parsed.fullName,
         htmlUrl: parsed.htmlUrl,

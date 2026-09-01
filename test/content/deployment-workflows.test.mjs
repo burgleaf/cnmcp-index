@@ -97,6 +97,7 @@ test("Discovery 生产工作流使用仓库级 Secrets，远程步骤按检查�
   assert.match(source, /DISCOVERY_API_URL: https:\/\/cnmcp-discovery-api\.burgleaf\.workers\.dev/);
   assert.match(source, /d1 execute DB --remote/);
   assert.match(source, /--file=discovery\/migrations\/0001_discovery\.sql/);
+  assert.match(source, /--file=discovery\/migrations\/0002_promotions\.sql/);
   assert.doesNotMatch(source, /d1 migrations apply/);
   assert.doesNotMatch(source, /sync-stats-catalog/);
 });

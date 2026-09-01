@@ -1,6 +1,6 @@
-import type { DiscoveryKind } from "./classify";
+import { RESOURCE_KINDS, type ResourceKind } from "./classify";
 import type { DiscoveryItem, DiscoveryListQuery } from "./protocol";
-import type { CandidateRecord, StoredCandidate } from "./types";
+import type { CandidateRecord, CrawlStats, StoredCandidate } from "./types";
 
 type CandidateRow = {
   repo_full_name: string;
@@ -12,7 +12,7 @@ type CandidateRow = {
   language: string | null;
   license: string | null;
   topics: string;
-  kind: DiscoveryKind;
+  kind: ResourceKind;
   inferred_platforms: string;
   score: number;
   pushed_at: string | null;
@@ -23,6 +23,8 @@ type CandidateRow = {
   first_seen_at: number;
   last_crawled_at: number;
 };
+
+const INDEXED_KIND_LIST = RESOURCE_KINDS.map((kind) => `'${kind}'`).join(", ");
 
 function parseJsonArray(value: string): string[] {
   try {
@@ -82,9 +84,10 @@ const LIST_COLUMNS =
   "repo_full_name, html_url, name, description, stars, kind, inferred_platforms, score, pushed_at, catalog_id";
 
 export async function listDiscoveryItems(db: D1Database, query: DiscoveryListQuery): Promise<DiscoveryItem[]> {
-  const sql = query.kind
-    ? `SELECT ${LIST_COLUMNS} FROM candidates WHERE kind = ?1 AND stars >= 1 ORDER BY ${orderClause(query.sort)} LIMIT ?2 OFFSET ?3`
-    : `SELECT ${LIST_COLUMNS} FROM candidates WHERE stars >= 1 ORDER BY ${orderClause(query.sort)} LIMIT ?1 OFFSET ?2`;
+  const kindFilter = query.kind
+    ? `kind = ?1 AND kind IN (${INDEXED_KIND_LIST}) AND stars >= 1`
+    : `kind IN (${INDEXED_KIND_LIST}) AND stars >= 1`;
+  const sql = `SELECT ${LIST_COLUMNS} FROM candidates WHERE ${kindFilter} ORDER BY ${orderClause(query.sort)} LIMIT ?${query.kind ? 2 : 1} OFFSET ?${query.kind ? 3 : 2}`;
   const statement = query.kind
     ? db.prepare(sql).bind(query.kind, query.limit, query.offset)
     : db.prepare(sql).bind(query.limit, query.offset);
@@ -101,14 +104,13 @@ export async function upsertCandidates(
   if (candidates.length === 0) return 0;
   const statements = candidates.map((candidate) => {
     const catalogId = catalogByRepo.get(candidate.repoFullName) ?? null;
-    const promotionStatus = catalogId ? "skipped" : "none";
     return db
       .prepare(
         `INSERT INTO candidates (
            repo_full_name, html_url, name, description, stars, forks, language, license,
            topics, kind, inferred_platforms, score, pushed_at, sources, catalog_id,
            promotion_status, issue_number, first_seen_at, last_crawled_at
-         ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, NULL, ?17, ?17)
+         ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, 'none', NULL, ?16, ?16)
          ON CONFLICT(repo_full_name) DO UPDATE SET
            html_url = excluded.html_url,
            name = excluded.name,
@@ -124,10 +126,6 @@ export async function upsertCandidates(
            pushed_at = excluded.pushed_at,
            sources = excluded.sources,
            catalog_id = excluded.catalog_id,
-           promotion_status = CASE
-             WHEN candidates.promotion_status IN ('issued', 'skipped') THEN candidates.promotion_status
-             ELSE excluded.promotion_status
-           END,
            last_crawled_at = excluded.last_crawled_at`,
       )
       .bind(
@@ -146,12 +144,35 @@ export async function upsertCandidates(
         candidate.pushedAt,
         JSON.stringify(candidate.sources),
         catalogId,
-        promotionStatus,
         now,
       );
   });
   await db.batch(statements);
   return candidates.length;
+}
+
+export async function recordSkippedPromotions(
+  db: D1Database,
+  candidates: ReadonlyArray<CandidateRecord>,
+  catalogByRepo: ReadonlyMap<string, string>,
+  now: number,
+): Promise<void> {
+  const skipped = candidates.flatMap((candidate) => {
+    const catalogId = catalogByRepo.get(candidate.repoFullName);
+    return catalogId ? [{ repoFullName: candidate.repoFullName, catalogId }] : [];
+  });
+  if (skipped.length === 0) return;
+  await db.batch(
+    skipped.map((item) =>
+      db
+        .prepare(
+          `INSERT INTO promotions (repo_full_name, status, issue_number, catalog_id, updated_at)
+           VALUES (?1, 'skipped', NULL, ?2, ?3)
+           ON CONFLICT(repo_full_name) DO NOTHING`,
+        )
+        .bind(item.repoFullName, item.catalogId, now),
+    ),
+  );
 }
 
 export async function listPromotionCandidates(
@@ -161,15 +182,16 @@ export async function listPromotionCandidates(
 ): Promise<StoredCandidate[]> {
   const result = await db
     .prepare(
-      `SELECT repo_full_name, html_url, name, description, stars, forks, language, license,
-              topics, kind, inferred_platforms, score, pushed_at, sources, catalog_id,
-              promotion_status, issue_number, first_seen_at, last_crawled_at
-       FROM candidates
-       WHERE promotion_status = 'none'
-         AND catalog_id IS NULL
-         AND kind IN ('mcp', 'skill', 'plugin')
-         AND stars >= ?1
-       ORDER BY score DESC, repo_full_name DESC
+      `SELECT c.repo_full_name, c.html_url, c.name, c.description, c.stars, c.forks, c.language, c.license,
+              c.topics, c.kind, c.inferred_platforms, c.score, c.pushed_at, c.sources, c.catalog_id,
+              c.promotion_status, c.issue_number, c.first_seen_at, c.last_crawled_at
+       FROM candidates c
+       LEFT JOIN promotions p ON p.repo_full_name = c.repo_full_name
+       WHERE p.repo_full_name IS NULL
+         AND c.catalog_id IS NULL
+         AND c.kind IN (${INDEXED_KIND_LIST})
+         AND c.stars >= ?1
+       ORDER BY c.score DESC, c.repo_full_name DESC
        LIMIT ?2`,
     )
     .bind(minStars, limit)
@@ -177,17 +199,25 @@ export async function listPromotionCandidates(
   return result.results.map(toStored);
 }
 
-export async function markIssued(db: D1Database, repoFullName: string, issueNumber: number): Promise<void> {
+export async function markIssued(db: D1Database, repoFullName: string, issueNumber: number, now: number): Promise<void> {
   await db
     .prepare(
-      `UPDATE candidates SET promotion_status = 'issued', issue_number = ?2 WHERE repo_full_name = ?1 AND promotion_status = 'none'`,
+      `INSERT INTO promotions (repo_full_name, status, issue_number, catalog_id, updated_at)
+       VALUES (?1, 'issued', ?2, NULL, ?3)
+       ON CONFLICT(repo_full_name) DO UPDATE SET
+         status = 'issued',
+         issue_number = excluded.issue_number,
+         updated_at = excluded.updated_at`,
     )
-    .bind(repoFullName, issueNumber)
+    .bind(repoFullName, issueNumber, now)
     .run();
 }
 
 export async function pruneStaleCandidates(db: D1Database, now: number): Promise<void> {
-  await db.prepare("DELETE FROM candidates WHERE last_crawled_at < ?1 OR stars < 1").bind(now).run();
+  await db
+    .prepare(`DELETE FROM candidates WHERE last_crawled_at < ?1 OR stars < 1 OR kind NOT IN (${INDEXED_KIND_LIST})`)
+    .bind(now)
+    .run();
 }
 
 export async function startCrawlRun(db: D1Database, crawlDate: string, now: number): Promise<void> {
@@ -214,6 +244,36 @@ export async function finishCrawlRun(
     .run();
 }
 
+export async function latestSuccessfulCrawlFinishedAt(db: D1Database): Promise<number | null> {
+  const row = await db
+    .prepare(
+      `SELECT finished_at FROM crawl_runs
+       WHERE status = 'succeeded' AND finished_at IS NOT NULL
+       ORDER BY finished_at DESC LIMIT 1`,
+    )
+    .first<{ finished_at: number }>();
+  return typeof row?.finished_at === "number" ? row.finished_at : null;
+}
+
+export async function updateCrawlRunIssued(db: D1Database, crawlDate: string, issued: number): Promise<void> {
+  const row = await db.prepare(`SELECT stats FROM crawl_runs WHERE crawl_date = ?1`).bind(crawlDate).first<{ stats: string }>();
+  const stats = parseStats(row?.stats);
+  stats.issued = issued;
+  await db.prepare(`UPDATE crawl_runs SET stats = ?2 WHERE crawl_date = ?1`).bind(crawlDate, JSON.stringify(stats)).run();
+}
+
+function parseStats(value: string | undefined): Record<string, number> {
+  try {
+    const parsed = JSON.parse(value ?? "{}") as unknown;
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
+    return Object.fromEntries(
+      Object.entries(parsed).filter((entry): entry is [string, number] => typeof entry[1] === "number"),
+    );
+  } catch {
+    return {};
+  }
+}
+
 export function catalogMapFromMatches(
   matches: ReadonlyArray<{ resourceId: string; fullName: string | null }>,
 ): Map<string, string> {
@@ -222,4 +282,8 @@ export function catalogMapFromMatches(
     if (match.fullName) map.set(match.fullName, match.resourceId);
   }
   return map;
+}
+
+export function emptyCrawlStats(): CrawlStats {
+  return { registry: 0, github: 0, upserted: 0, catalogMatched: 0, issued: 0 };
 }

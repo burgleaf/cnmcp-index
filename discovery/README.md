@@ -11,6 +11,7 @@ npm ci
 npm run check
 npm run dry-run
 npx wrangler d1 execute DB --local --file=migrations/0001_discovery.sql
+npx wrangler d1 execute DB --local --file=migrations/0002_promotions.sql
 ```
 
 手动触发定时入口（需 `wrangler dev`）：
@@ -36,12 +37,14 @@ Token 需要：公开仓库只读，以及本仓库 `issues:write`（用于创�
 普通变量：
 
 - `ALLOWED_ORIGINS`：逗号分隔、完整 Origin；生产默认仅 `https://www.cnmcp.com`。
-- `CATALOG_REPOSITORY`：用于匹配已收录 `resource.json` 并开 Issue 的 `owner/repo`。
+- `CATALOG_REPOSITORY`：用于开 Issue 的 `owner/repo`。
+- `CATALOG_JSON_URL`：站点已发布的 `catalog.json`，一次拉取做已收录匹配。
 - `PROMOTION_MIN_STARS`：自动开 Issue 的最低 star 数。
 - `PROMOTION_MAX_ISSUES_PER_CRAWL`：每次爬取最多开 Issue 数。
-- `SOURCE_KIND_LIMIT`：每个来源保留的候选上限。
-- `SEARCH_PAGES_PER_QUERY`：每个 GitHub Search 查询最多翻页数。
+- `SOURCE_KIND_LIMIT`：每个来源的抓取上限（只进入内存，不直接等于 D1 行数）。
+- `PERSIST_PER_KIND_LIMIT`：mcp / skill / plugin 各自写入 D1 的上限。
+- `SEARCH_PAGES_PER_QUERY`：每个 GitHub Search 查询最多翻页数（1–2）。
 
 需要 Cloudflare **Workers Paid**：Cron 与 Workflow 的 CPU / 墙钟时间 Free 档不够。
 
-Cron 每日 16:00 UTC（北京时间 00:00）启动幂等 Workflow（instance id=`crawl-YYYY-MM-DD`，按 UTC 日期）。日志仅输出 path、status、errorCode、durationMs，不包含 token、Issue 正文或安装命令。
+Cron 每日 16:00 UTC（北京时间 00:00）启动幂等 Workflow（instance id=`crawl-YYYY-MM-DD`，按 UTC 日期）。同日实例若已失败，会用 `crawl-YYYY-MM-DD-retry-<timestamp>` 重跑。Workflow 拆成 ingest / persist / promote 三步。日志仅输出 path、status、errorCode、durationMs，不包含 token、Issue 正文或安装命令。D1 的 `candidates` 只保存当前快照（三类 kind、按 kind 截断）；`promotions` 单独保存已开 Issue / 已收录状态，避免快照淘汰后重复开 Issue。

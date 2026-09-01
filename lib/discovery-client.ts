@@ -1,7 +1,7 @@
 import { publicEnvironment } from "./env";
 
 export const DISCOVERY_REQUEST_TIMEOUT_MS = 8_000;
-export const DISCOVERY_KINDS = ["mcp", "skill", "plugin", "unknown"] as const;
+export const DISCOVERY_KINDS = ["mcp", "skill", "plugin"] as const;
 export const DISCOVERY_SORTS = ["score", "stars", "recent"] as const;
 
 export type DiscoveryKind = (typeof DISCOVERY_KINDS)[number];

@@ -1,5 +1,5 @@
 import { startDailyCrawl } from "./crawl";
-import { listDiscoveryItems } from "./db";
+import { latestSuccessfulCrawlFinishedAt, listDiscoveryItems } from "./db";
 import { encodeNextCursor, parseDiscoveryQuery } from "./protocol";
 import { DiscoveryCrawlWorkflow } from "./workflow";
 
@@ -88,7 +88,7 @@ function preflight(request: Request, env: WorkerEnv): RequestResult {
   };
 }
 
-async function readDiscovery(request: Request, env: WorkerEnv, now: number): Promise<RequestResult> {
+async function readDiscovery(request: Request, env: WorkerEnv): Promise<RequestResult> {
   const origin = validateOptionalOrigin(request, env);
   let query;
   try {
@@ -104,11 +104,12 @@ async function readDiscovery(request: Request, env: WorkerEnv, now: number): Pro
     throw new ApiError(400, code, messages[code] ?? "Request fields are invalid");
   }
   const items = await listDiscoveryItems(env.DB, query);
+  const generatedAt = (await latestSuccessfulCrawlFinishedAt(env.DB)) ?? 0;
   return {
     errorCode: "OK",
     response: jsonResponse(
       {
-        generatedAt: now,
+        generatedAt,
         items,
         nextCursor: encodeNextCursor(query.offset, query.limit, items.length),
       },
@@ -119,19 +120,19 @@ async function readDiscovery(request: Request, env: WorkerEnv, now: number): Pro
   };
 }
 
-async function dispatch(request: Request, env: WorkerEnv, now: number): Promise<RequestResult> {
+async function dispatch(request: Request, env: WorkerEnv): Promise<RequestResult> {
   const url = new URL(request.url);
   if (request.method === "OPTIONS") return preflight(request, env);
-  if (request.method === "GET" && url.pathname === "/v1/discovery") return await readDiscovery(request, env, now);
+  if (request.method === "GET" && url.pathname === "/v1/discovery") return await readDiscovery(request, env);
   throw new ApiError(404, "NOT_FOUND", "Route was not found");
 }
 
-export async function handleRequest(request: Request, env: WorkerEnv, now = Date.now()): Promise<Response> {
+export async function handleRequest(request: Request, env: WorkerEnv): Promise<Response> {
   const startedAt = Date.now();
   const path = new URL(request.url).pathname;
   const origin = request.headers.get("Origin");
   try {
-    const result = await dispatch(request, env, now);
+    const result = await dispatch(request, env);
     logRequest(path, result.response.status, result.errorCode, startedAt);
     return result.response;
   } catch (error) {

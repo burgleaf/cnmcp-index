@@ -1,4 +1,4 @@
-import { classifyKind, inferPlatforms, type DiscoveryKind } from "../classify";
+import { classifyKind, inferPlatforms, isIndexedKind, type DiscoveryKind } from "../classify";
 import {
   asNonNegativeInteger,
   asString,
@@ -21,10 +21,11 @@ export type SearchQuery = Readonly<{
 export const GITHUB_SEARCH_QUERIES: ReadonlyArray<SearchQuery> = [
   { id: "mcp-server", q: "topic:mcp-server stars:>=30", hint: "mcp" },
   { id: "mcp-topic", q: "topic:mcp stars:>=50", hint: "mcp" },
-  { id: "claude-code", q: "topic:claude-code stars:>=10", hint: "plugin" },
-  { id: "openai-codex", q: "topic:openai-codex stars:>=5", hint: "plugin" },
-  { id: "codex-plugin", q: "codex plugin stars:>=10", hint: "plugin" },
   { id: "claude-skill", q: "topic:claude-skill stars:>=5", hint: "skill" },
+  { id: "agent-skills", q: "topic:agent-skills stars:>=5", hint: "skill" },
+  { id: "claude-code-plugin", q: "topic:claude-code-plugin stars:>=5", hint: "plugin" },
+  { id: "cursor-plugin", q: "topic:cursor-plugin stars:>=5", hint: "plugin" },
+  { id: "openai-codex-plugin", q: "topic:openai-codex topic:plugin stars:>=5", hint: "plugin" },
 ];
 
 export type GithubSleep = (ms: number) => Promise<void>;
@@ -38,7 +39,6 @@ function licenseFromRepo(record: Record<string, unknown>): string | null {
 
 export function candidateFromGithubRepo(
   raw: unknown,
-  hint: DiscoveryKind,
   extraSources: ReadonlyArray<string>,
   now: number,
 ): CandidateRecord | null {
@@ -50,7 +50,8 @@ export function candidateFromGithubRepo(
   const description = asString(record.description).slice(0, 500);
   const topics = readStringArray(record.topics);
   const sources = [...new Set(["github-search", ...extraSources])];
-  const kind = classifyKind({ name, description, topics, sources, hint });
+  const kind = classifyKind({ name, description, topics, sources });
+  if (!isIndexedKind(kind)) return null;
   const stars = asNonNegativeInteger(record.stargazers_count);
   const forks = asNonNegativeInteger(record.forks_count);
   const pushedAt = asString(record.pushed_at) || null;
@@ -89,7 +90,7 @@ export async function searchGithubRepositories(
     url.searchParams.set("q", query.q);
     url.searchParams.set("sort", "stars");
     url.searchParams.set("order", "desc");
-    url.searchParams.set("per_page", "50");
+    url.searchParams.set("per_page", "30");
     url.searchParams.set("page", String(page));
     const response = await fetchImpl(url.toString(), { headers: githubHeaders(token) });
     if (response.status === 403 || response.status === 429) throw new Error(`GitHub Search rate limited HTTP ${response.status}`);
@@ -97,7 +98,7 @@ export async function searchGithubRepositories(
     const payload = readRecord(await response.json());
     const items = Array.isArray(payload?.items) ? payload.items : [];
     for (const item of items) {
-      const candidate = candidateFromGithubRepo(item, query.hint, [], now);
+      const candidate = candidateFromGithubRepo(item, [], now);
       if (!candidate) continue;
       if (collected.some((entry) => entry.repoFullName === candidate.repoFullName)) continue;
       collected.push(candidate);
@@ -120,5 +121,5 @@ export async function enrichGithubRepo(
     headers: githubHeaders(token),
   });
   if (!response.ok) return null;
-  return candidateFromGithubRepo(await response.json(), "unknown", ["mcp-registry"], now);
+  return candidateFromGithubRepo(await response.json(), ["mcp-registry"], now);
 }

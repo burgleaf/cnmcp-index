@@ -84,6 +84,7 @@ export type ResourceSummary = Readonly<{
   summary: string;
   summaryEn?: string;
   authorName: string;
+  repository?: string;
   tags: ReadonlyArray<string>;
   platforms: ReadonlyArray<ResourceSummaryPlatform>;
   logo?: string;

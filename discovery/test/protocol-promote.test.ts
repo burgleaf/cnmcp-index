@@ -19,6 +19,7 @@ describe("parseDiscoveryQuery", () => {
       offset: 20,
     });
     expect(() => parseDiscoveryQuery(new URL("https://discovery.cnmcp.com/v1/discovery?kind=tool"))).toThrow("INVALID_KIND");
+    expect(() => parseDiscoveryQuery(new URL("https://discovery.cnmcp.com/v1/discovery?kind=unknown"))).toThrow("INVALID_KIND");
     expect(() => parseDiscoveryQuery(new URL("https://discovery.cnmcp.com/v1/discovery?sort=hot"))).toThrow("INVALID_SORT");
     expect(() => parseDiscoveryQuery(new URL("https://discovery.cnmcp.com/v1/discovery?limit=0"))).toThrow("INVALID_LIMIT");
     expect(() => parseDiscoveryQuery(new URL("https://discovery.cnmcp.com/v1/discovery?cursor=-1"))).toThrow("INVALID_CURSOR");

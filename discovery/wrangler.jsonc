@@ -11,10 +11,12 @@
   "vars": {
     "ALLOWED_ORIGINS": "https://www.cnmcp.com",
     "CATALOG_REPOSITORY": "burgleaf/cnmcp-index",
+    "CATALOG_JSON_URL": "https://www.cnmcp.com/catalog.json",
     "PROMOTION_MIN_STARS": "50",
     "PROMOTION_MAX_ISSUES_PER_CRAWL": "5",
     "SOURCE_KIND_LIMIT": "80",
-    "SEARCH_PAGES_PER_QUERY": "2"
+    "PERSIST_PER_KIND_LIMIT": "40",
+    "SEARCH_PAGES_PER_QUERY": "1"
   },
   "d1_databases": [
     {

@@ -69,7 +69,6 @@ describe("mergeCandidates", () => {
           topics: ["mcp-server"],
           license: { spdx_id: "MIT" },
         },
-        "mcp",
         [],
         NOW,
       ),
@@ -108,8 +107,21 @@ describe("selectPersistedCandidates", () => {
         candidate({ repoFullName: "acme/hot", stars: 80, score: 40 }),
         candidate({ repoFullName: "acme/mid", stars: 20, score: 20 }),
       ],
-      { minStars: 1, limit: 2 },
+      { minStars: 1, perKindLimit: 2 },
     );
     expect(selected.map((item) => item.repoFullName)).toEqual(["acme/hot", "acme/mid"]);
+  });
+
+  it("丢弃 unknown，并按 kind 分别截断", () => {
+    const selected = selectPersistedCandidates(
+      [
+        candidate({ repoFullName: "acme/mcp-a", stars: 10, score: 30, kind: "mcp" }),
+        candidate({ repoFullName: "acme/mcp-b", stars: 10, score: 20, kind: "mcp" }),
+        candidate({ repoFullName: "acme/skill-a", stars: 10, score: 40, kind: "skill" }),
+        candidate({ repoFullName: "acme/noise", stars: 99, score: 99, kind: "unknown" }),
+      ],
+      { minStars: 1, perKindLimit: 1 },
+    );
+    expect(selected.map((item) => item.repoFullName)).toEqual(["acme/skill-a", "acme/mcp-a"]);
   });
 });

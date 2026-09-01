@@ -26,6 +26,7 @@ function toSummary(resource: Resource): ResourceSummary {
     summary: resource.summary,
     summaryEn: resource.summaryEn ?? resource.summary,
     authorName: resource.author.name,
+    repository: resource.repository,
     tags: resource.tags,
     platforms: resource.compatibility.map((entry) => ({ id: entry.platform, status: entry.status })),
     createdAt: resource.createdAt,

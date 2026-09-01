@@ -11,7 +11,7 @@
 - 匿名统计：独立的 Cloudflare Worker + D1，记录命令复制量和外链访问量
 - 热度发现：独立的 Discovery Worker + D1，定期从官方 MCP Registry 与 GitHub Search 拉取候选，不写入正式 Catalog
 
-站点不提供注册、登录、评论或站内投稿后台。投稿通过 GitHub Issue / Pull Request，经维护者审核并合并到默认分支后才会进入正式 Catalog。
+站点不提供注册、登录、评论或站内投稿后台。推荐在[投稿页](https://www.cnmcp.com/submit/)输入源码 GitHub 仓库地址、复制提示词，交给 Cursor / Codex 通过 GitHub API 提交 Pull Request。也可以继续使用 GitHub Issue / 手写 PR。内容经维护者审核并合并到默认分支后才会进入正式 Catalog。
 
 ## 本地开发
 
@@ -50,10 +50,11 @@ yarn discovery:dry-run
 
 收录类型仅限 `mcp`、`skill`、`plugin`。MVP 平台为 Codex 与 Claude Code。`plugin` 只收录面向 AI 编程工具的平台插件。
 
-推荐两种方式：
+推荐三种方式：
 
-1. 使用仓库中的 GitHub Issue Form
-2. 在 `resources/<resource-id>/` 新增 `resource.json`，按需附带安全的 `README.md` 和本地图片，再发起 Pull Request
+1. 在投稿页输入源码 GitHub 仓库地址，复制提示词，交给 Cursor、Codex 或其他能调用 GitHub 的 AI 助手。助手应读取 [`.agents/skills/submit-cnmcp-resource`](./.agents/skills/submit-cnmcp-resource)（Cursor 项目内对应 [`.cursor/skills/submit-cnmcp-resource`](./.cursor/skills/submit-cnmcp-resource)），生成 `resource.json` 并开出可审查 PR，不需要完整克隆本仓库
+2. 使用仓库中的 GitHub Issue Form
+3. 在 `resources/<resource-id>/` 新增 `resource.json`，按需附带安全的 `README.md` 和本地图片，再发起 Pull Request
 
 可参考 [`examples/resource-submission/`](./examples/resource-submission/)。投稿检查清单见 Pull Request 模板。
 

@@ -1,16 +1,16 @@
-import type { DiscoveryKind } from "./classify";
+import type { ResourceKind } from "./classify";
 import { GITHUB_API, githubHeaders, parseGithubRepo } from "./github";
 import type { StoredCandidate } from "./types";
 import type { FetchLike } from "./sources/mcp-registry";
 
-const KIND_LABELS: Readonly<Record<Exclude<DiscoveryKind, "unknown">, string>> = {
+const KIND_LABELS: Readonly<Record<ResourceKind, string>> = {
   mcp: "MCP",
   skill: "Skill",
   plugin: "AI 编程工具插件",
 };
 
 export function buildPromotionIssue(candidate: StoredCandidate): { title: string; body: string; labels: string[] } {
-  const kindLabel = candidate.kind === "unknown" ? "未知" : KIND_LABELS[candidate.kind];
+  const kindLabel = KIND_LABELS[candidate.kind] ?? candidate.kind;
   const platforms = candidate.inferredPlatforms.length > 0 ? candidate.inferredPlatforms.join("、") : "待人工确认";
   const license = candidate.license ?? "未知，需人工核验 SPDX";
   const summary = candidate.description.trim() || "（GitHub 无 description，需维护者补写中文摘要）";

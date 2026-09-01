@@ -1,6 +1,6 @@
-import type { DiscoveryKind } from "./classify";
+import { RESOURCE_KINDS, type ResourceKind } from "./classify";
 
-export const DISCOVERY_KINDS = ["mcp", "skill", "plugin", "unknown"] as const;
+export const DISCOVERY_KINDS = RESOURCE_KINDS;
 export const DISCOVERY_SORTS = ["score", "stars", "recent"] as const;
 export type DiscoverySort = (typeof DISCOVERY_SORTS)[number];
 
@@ -10,7 +10,7 @@ export type DiscoveryItem = Readonly<{
   name: string;
   description: string;
   stars: number;
-  kind: DiscoveryKind;
+  kind: ResourceKind;
   inferredPlatforms: ReadonlyArray<string>;
   score: number;
   pushedAt: string | null;
@@ -18,7 +18,7 @@ export type DiscoveryItem = Readonly<{
 }>;
 
 export type DiscoveryListQuery = Readonly<{
-  kind: DiscoveryKind | null;
+  kind: ResourceKind | null;
   sort: DiscoverySort;
   limit: number;
   offset: number;
@@ -43,7 +43,7 @@ export function parseDiscoveryQuery(url: URL): DiscoveryListQuery {
   const limitRaw = url.searchParams.get("limit");
   const cursorRaw = url.searchParams.get("cursor");
 
-  if (kindRaw && !DISCOVERY_KINDS.includes(kindRaw as DiscoveryKind)) {
+  if (kindRaw && !DISCOVERY_KINDS.includes(kindRaw as ResourceKind)) {
     throw new Error("INVALID_KIND");
   }
   if (!DISCOVERY_SORTS.includes(sortRaw as DiscoverySort)) {
@@ -65,7 +65,7 @@ export function parseDiscoveryQuery(url: URL): DiscoveryListQuery {
   }
 
   return {
-    kind: kindRaw ? (kindRaw as DiscoveryKind) : null,
+    kind: kindRaw ? (kindRaw as ResourceKind) : null,
     sort: sortRaw as DiscoverySort,
     limit,
     offset,
@@ -134,7 +134,7 @@ function parseDiscoveryItem(value: unknown): DiscoveryItem {
     !Number.isSafeInteger(value.stars) ||
     value.stars < 0 ||
     typeof value.kind !== "string" ||
-    !DISCOVERY_KINDS.includes(value.kind as DiscoveryKind) ||
+    !DISCOVERY_KINDS.includes(value.kind as ResourceKind) ||
     !Array.isArray(value.inferredPlatforms) ||
     value.inferredPlatforms.some((platform) => typeof platform !== "string") ||
     typeof value.score !== "number" ||
@@ -153,7 +153,7 @@ function parseDiscoveryItem(value: unknown): DiscoveryItem {
     name: value.name,
     description: value.description,
     stars: value.stars,
-    kind: value.kind as DiscoveryKind,
+    kind: value.kind as ResourceKind,
     inferredPlatforms: value.inferredPlatforms as string[],
     score: value.score,
     pushedAt: value.pushedAt,

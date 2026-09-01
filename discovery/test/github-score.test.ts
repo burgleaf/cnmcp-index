@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { parseGithubRepo, normalizeSourceUrl } from "../src/github";
 import { computeScore, recencyBonus } from "../src/score";
+import { GITHUB_SEARCH_QUERIES } from "../src/sources/github-search";
 
 describe("parseGithubRepo", () => {
   it("规范化常见 GitHub URL", () => {
@@ -34,5 +35,12 @@ describe("computeScore", () => {
       now,
     });
     expect(score).toBeCloseTo(Math.log(100) * 4 + 15 + 5, 8);
+  });
+});
+
+describe("GitHub Search 查询", () => {
+  it("只用 topic 约束 mcp / skill / plugin，不含宽泛关键词", () => {
+    expect(GITHUB_SEARCH_QUERIES.every((query) => query.q.includes("topic:"))).toBe(true);
+    expect(GITHUB_SEARCH_QUERIES.some((query) => query.q === "codex plugin stars:>=10")).toBe(false);
   });
 });

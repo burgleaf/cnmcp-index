@@ -21,7 +21,6 @@ describe("classifyKind", () => {
         description: "A SKILL.md for Claude Code",
         topics: [],
         sources: ["github-search"],
-        hint: "skill",
       }),
     ).toBe("skill");
     expect(
@@ -41,7 +40,17 @@ describe("classifyKind", () => {
         description: "VS Code extension",
         topics: ["vscode-extension"],
         sources: ["github-search"],
-        hint: "plugin",
+      }),
+    ).toBe("unknown");
+  });
+
+  it("不把仅有 claude-code topic、无插件证据的仓库收成 plugin", () => {
+    expect(
+      classifyKind({
+        name: "awesome-claude",
+        description: "Notes about Claude Code",
+        topics: ["claude-code"],
+        sources: ["github-search"],
       }),
     ).toBe("unknown");
   });
@@ -53,7 +62,6 @@ describe("classifyKind", () => {
         description: "OpenAI Codex plugin",
         topics: ["openai-codex"],
         sources: ["github-search"],
-        hint: "plugin",
       }),
     ).toBe("plugin");
   });

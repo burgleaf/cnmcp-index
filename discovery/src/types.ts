@@ -1,4 +1,4 @@
-import type { DiscoveryKind } from "./classify";
+import type { DiscoveryKind, ResourceKind } from "./classify";
 
 export type CandidateRecord = {
   repoFullName: string;
@@ -17,7 +17,8 @@ export type CandidateRecord = {
   sources: string[];
 };
 
-export type StoredCandidate = CandidateRecord & {
+export type StoredCandidate = Omit<CandidateRecord, "kind"> & {
+  kind: ResourceKind;
   catalogId: string | null;
   promotionStatus: "none" | "issued" | "skipped";
   issueNumber: number | null;

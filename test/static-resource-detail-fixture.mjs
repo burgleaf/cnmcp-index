@@ -206,7 +206,7 @@ async function main() {
     );
 
     const submit = await readFile(path.join(targetRoot, "out", "submit", "index.html"), "utf8");
-    for (const expected of ["投稿 AI 扩展资源", "GitHub Issue", "Pull Request"]) {
+    for (const expected of ["投稿 AI 扩展资源", "用 AI 助手投稿", "复制提示词", "GitHub Issue", "Pull Request"]) {
       assertContains(submit, expected, "投稿入口");
     }
 
