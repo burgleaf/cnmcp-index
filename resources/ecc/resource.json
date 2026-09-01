@@ -45,6 +45,7 @@
   ],
   "createdAt": "2026-01-18",
   "visibility": "public",
+  "featured": true,
   "sourceStats": {
     "stars": 245472,
     "forks": 37064,

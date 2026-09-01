@@ -5,7 +5,7 @@ import { detailFixturePlatforms, detailFixtureResource } from "@/test/fixtures/r
 import { ResourceDetail } from "./resource-detail";
 
 describe("ResourceDetail 隔离 fixture 静态 HTML", () => {
-  it("展示质量、上游支持证据、Markdown 和跨平台 AI 安装提示词", () => {
+  it("展示资源用途、入口、结构化说明和快速安装", () => {
     const html = renderToStaticMarkup(
       <ResourceDetail platforms={detailFixturePlatforms} resource={detailFixtureResource} />,
     );
@@ -13,21 +13,25 @@ describe("ResourceDetail 隔离 fixture 静态 HTML", () => {
     expect(html).toContain("隔离详情 Fixture");
     expect(html).toContain("Isolated Detail Fixture");
     expect(html).toContain("Fixture 作者");
-    expect(html).toContain("源码仓库");
-    expect(html).toContain("官方网站");
-    expect(html).toContain("使用文档");
+    expect(html).toContain("访问资源");
+    expect(html).toContain("快速安装");
+    expect(html).toContain("查看源代码");
+    expect(html).toContain("访问官网");
+    expect(html).toContain("阅读使用文档");
     expect(html).toContain("MIT");
     expect(html).toContain("上下文");
-    expect(html).toContain("Codex：原生支持，最后核验日期 2026-02-01");
-    expect(html).toContain("最后核验日期：2026-02-02");
+    expect(html).toContain("资源信息");
+    expect(html).toContain("解决什么问题");
+    expect(html).toContain("适合谁");
+    expect(html).toContain("包含内容");
+    expect(html).toContain("核心能力");
     expect(html).toContain("安全说明");
-    expect(html).toContain("质量评分");
+    expect(html).toContain("质量与活跃度");
     expect(html).toContain("1,200");
-    expect(html).toContain("原作者支持的平台");
-    expect(html).toContain("查看上游证据");
-    expect(html).toContain("复制 AI 安装提示词");
-    expect(html).toContain("先阅读源码仓库和官方安装文档");
-    expect(html).not.toContain("tool install --token");
+    expect(html).not.toContain("原作者支持的平台");
+    expect(html).not.toContain("查看上游证据");
+    expect(html).toContain("复制安装命令");
+    expect(html).toContain("tool install --token");
     expect(html).toContain("统计数据加载中");
     expect(html).not.toContain("安装成功次数");
   });
