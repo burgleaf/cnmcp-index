@@ -55,12 +55,20 @@ describe("classifyKind", () => {
     ).toBe("unknown");
   });
 
-  it("识别 Codex / Claude Code 插件", () => {
+  it("识别编程与非编程 AI 工具 Plugin", () => {
     expect(
       classifyKind({
         name: "codex-browser",
         description: "OpenAI Codex plugin",
         topics: ["openai-codex"],
+        sources: ["github-search"],
+      }),
+    ).toBe("plugin");
+    expect(
+      classifyKind({
+        name: "creative-workflow",
+        description: "A Dify plugin for image generation workflows",
+        topics: ["dify"],
         sources: ["github-search"],
       }),
     ).toBe("plugin");

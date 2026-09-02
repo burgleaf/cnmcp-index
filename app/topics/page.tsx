@@ -7,7 +7,7 @@ import { PRODUCTION_SITE_URL } from "@/lib/env";
 
 export const metadata: Metadata = {
   title: "AI 使用场景与主题",
-  description: "按职业、行业、目标任务和能力浏览 MCP、Skill 与 AI 插件。",
+  description: "按职业、行业、目标任务和能力浏览 Skill、MCP 与 Plugin。",
   alternates: { canonical: `${PRODUCTION_SITE_URL}/topics/` },
 };
 

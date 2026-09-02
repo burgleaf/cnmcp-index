@@ -107,7 +107,7 @@ export function buildAgentSubmissionPrompt(input: {
   const skillUrl = catalog ? catalogFileRawUrl(catalog.url, SUBMIT_RESOURCE_SKILL_PATH) : null;
   if (!source || !catalog || !skillUrl) return null;
 
-  return `请全程使用中文，帮我把下面这个公开 GitHub 仓库投稿到 CNMCP AI 扩展社区。
+  return `请全程使用中文，帮我把下面这个公开 GitHub 仓库投稿到 CNMCP AI扩展社区。
 
 索引仓库：${catalog.url}
 源码仓库：${source.url}
@@ -119,7 +119,7 @@ ${skillUrl}
 
 执行要求：
 1. 按规范化后的源码地址和资源 id 查重。同一仓库不得重复收录；已有条目应更新而不是另开目录。发现 Issue 只是候选队列，不能当成已经收录，也不要信任它的类型标签。
-2. 阅读源仓库 README、许可证、安装说明、Skill/MCP/插件清单，自行判断类型只能是 mcp、skill 或 plugin。plugin 必须设置 pluginScope: "ai-coding-tool"。类型无法判断时先问我，不要猜测成 unknown 资源类型。
+2. 阅读源仓库 README、许可证、安装说明、Skill/MCP/插件清单，自行判断类型只能是 mcp、skill 或 plugin。plugin 可以面向任何 AI 工具，不限于编程工具；类型无法判断时先问我，不要猜测成 unknown 资源类型。
 3. 最终目录必须是 resources/<resource-id>/，目录名与 resource.json 的 id 一致，必须包含 resource.json 和安全的 README.md，可选本地图片。README 要说明它解决什么问题、核心能力、适合谁、使用前要知道和官方资源。不要提交 catalog.json、临时文件、密钥或站点生成物。
 4. 标签必须来自 catalog/tags.json。兼容平台与收录日期都可省略；只有上游明确声明平台支持时，才填写 compatibility，并附真实核验日期与证据。不要根据协议或目录结构推断支持关系。partial 必须 note；unsupported 不得有 installations。安装命令只作为文本提交，禁止在投稿过程中执行第三方安装命令。只有上游明确提供平台专属资产时，才把它简短摘录到 README。
 5. 投稿者不得设置或修改 featured，也不得新增 Schema 不存在的 verified 或 reviewStatus。选择中英双语时同时填写 name/nameEn 与 summary/summaryEn。许可证填写 SPDX；作者和来源必须如实记录。

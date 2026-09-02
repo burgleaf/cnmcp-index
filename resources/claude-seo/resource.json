@@ -2,7 +2,6 @@
   "schemaVersion": 1,
   "id": "claude-seo",
   "kind": "plugin",
-  "pluginScope": "ai-coding-tool",
   "name": "Claude SEO",
   "summary": "为 Claude Code 提供技术 SEO、内容质量、结构化数据、GEO、本地与国际化 SEO 分析工作流。",
   "repository": "https://github.com/AgriciDaniel/claude-seo",

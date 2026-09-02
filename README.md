@@ -1,6 +1,6 @@
-# CNMCP AI 扩展社区
+# CNMCP AI扩展社区
 
-按职业和任务发现、比较并安全使用 MCP、Skill 与 AI 编程工具插件。
+按职业和任务发现、比较并安全使用 Skill、MCP 与 Plugin。
 
 生产站点：[https://www.cnmcp.com](https://www.cnmcp.com)
 
@@ -9,9 +9,9 @@
 - 静态站点：Next.js 静态导出，发布到 Cloudflare Pages
 - 内容目录：Git 中的 `resources/`、`catalog/` 与 Schema
 - 匿名统计：独立的 Cloudflare Worker + D1，记录命令复制量和外链访问量
-- 热度发现：独立的 Discovery Worker + D1，定期从官方 MCP Registry 与 GitHub Search 拉取候选，不写入正式 Catalog
+- 项目动态：独立的 Discovery Worker + D1 定期追踪公开仓库的 Stars、Forks 与维护活跃度；候选数据不直接写入正式 Catalog
 
-站点不提供注册、登录、评论或站内投稿后台。推荐在[投稿页](https://www.cnmcp.com/submit/)输入源码 GitHub 仓库地址、复制提示词，交给 Cursor / Codex 通过 GitHub API 提交 Pull Request。也可以继续使用 GitHub Issue / 手写 PR。内容经维护者审核并合并到默认分支后才会进入正式 Catalog。
+站点不提供注册、登录、评论或站内投稿后台。推荐在[投稿页](https://www.cnmcp.com/submit/)输入源码 GitHub 仓库地址、复制提示词，交给 AI 助手通过 GitHub API 提交 Pull Request；也可以手写 PR。内容经维护者审核并合并到默认分支后才会进入正式 Catalog。
 
 ## 本地开发
 
@@ -49,7 +49,7 @@ yarn discovery:dry-run
 
 ## 资源投稿
 
-收录类型仅限 `mcp`、`skill`、`plugin`。`plugin` 只收录面向 AI 编程工具的平台插件；平台不作为主导航、卡片或质量排序维度。
+收录类型仅限 `mcp`、`skill`、`plugin`。`plugin` 收录为任意 AI 工具增加功能、工作流或界面能力的扩展，不限于编程工具；平台不作为主导航、卡片或质量排序维度。
 
 推荐两种方式：
 

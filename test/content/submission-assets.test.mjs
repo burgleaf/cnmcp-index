@@ -38,7 +38,7 @@ test("投稿 Skill 要求 GitHub API 正式 PR，并禁止 featured 与执行安
   assert.match(skill, /verified/);
   assert.match(skill, /reviewStatus/);
   assert.match(skill, /不执行第三方安装命令|不得执行第三方安装命令/);
-  assert.match(skill, /pluginScope/);
+  assert.match(skill, /不限于编程工具/);
   assert.match(skill, /README\.md/);
   assert.match(skill, /compatibility.*可省略/);
   assert.match(skill, /yarn validate:resources/);

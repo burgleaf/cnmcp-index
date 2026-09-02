@@ -7,7 +7,7 @@ import { TagLink } from "./tag-link";
 const KIND_LABELS: Readonly<Record<ResourceKind, string>> = {
   mcp: "MCP",
   skill: "Skill",
-  plugin: "AI 编程插件",
+  plugin: "Plugin",
 };
 
 type CardResource = Readonly<{

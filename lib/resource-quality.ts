@@ -5,7 +5,8 @@ export type ResourceQualityInput = Readonly<{
   stars: number;
   forks: number;
   pushedAt: string | null;
-  fetchedAt: string;
+  fetchedAt?: string;
+  dataUpdatedAt?: string | null;
   archived: boolean;
   completeness: number;
   featured: boolean;

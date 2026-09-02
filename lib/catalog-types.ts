@@ -25,6 +25,8 @@ export type ResourceQuality = Readonly<{
   forks: number;
   pushedAt: string | null;
   archived: boolean;
+  maintenanceStatus?: "active" | "low-activity" | "archived";
+  dataUpdatedAt?: string | null;
   breakdown: Readonly<{
     stars: number;
     activity: number;
@@ -62,7 +64,6 @@ export type Resource = Readonly<{
   schemaVersion: 1;
   id: string;
   kind: ResourceKind;
-  pluginScope?: "ai-coding-tool";
   name: string;
   nameEn?: string;
   summary: string;

@@ -81,17 +81,17 @@ describe("9.1 本地跨层验收", () => {
     await waitFor(() => expect(screen.getByText("找到 3 个资源")).toBeTruthy());
     expect(screen.getByRole("link", { name: "验收 MCP" }).getAttribute("href")).toBe("/resources/acceptance-mcp");
     expect(screen.getByRole("link", { name: "验收 Skill" }).getAttribute("href")).toBe("/resources/acceptance-skill");
-    expect(screen.getByRole("link", { name: "验收 AI 编程插件" }).getAttribute("href")).toBe("/resources/acceptance-plugin");
+    expect(screen.getByRole("link", { name: "验收 AI 工具 Plugin" }).getAttribute("href")).toBe("/resources/acceptance-plugin");
     expect(screen.queryByLabelText(/Codex：/)).toBeNull();
     expect(screen.queryByLabelText(/Claude Code：/)).toBeNull();
 
     fireEvent.change(screen.getByRole("searchbox", { name: "搜索资源" }), {
-      target: { value: "ACCEPTANCE AI CODING" },
+      target: { value: "ACCEPTANCE AI TOOL" },
     });
     fireEvent.click(screen.getByRole("button", { name: "插件" }));
 
     expect(screen.getByText("找到 1 个资源")).toBeTruthy();
-    expect(screen.getByRole("link", { name: "验收 AI 编程插件" }).getAttribute("href")).toBe("/resources/acceptance-plugin");
+    expect(screen.getByRole("link", { name: "验收 AI 工具 Plugin" }).getAttribute("href")).toBe("/resources/acceptance-plugin");
     expect(screen.queryByRole("link", { name: "验收 MCP" })).toBeNull();
 
     fireEvent.change(screen.getByRole("searchbox", { name: "搜索资源" }), { target: { value: "no-match" } });

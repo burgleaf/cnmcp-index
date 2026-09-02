@@ -2,7 +2,6 @@
   "schemaVersion": 1,
   "id": "claude-hud",
   "kind": "plugin",
-  "pluginScope": "ai-coding-tool",
   "name": "Claude HUD",
   "summary": "在 Claude Code 输入区下方持续显示上下文占用、活动工具、子智能体和待办进度等运行状态。",
   "repository": "https://github.com/jarrodwatts/claude-hud",

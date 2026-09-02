@@ -16,9 +16,9 @@ export default function HomePage() {
       <section className="border-b border-slate-200 bg-white">
         <div className="mx-auto grid max-w-6xl gap-10 px-6 py-16 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:py-20">
           <div>
-            <p className="text-sm font-semibold tracking-[0.2em] text-brand">中文 AI 能力目录</p>
+            <p className="text-sm font-semibold tracking-[0.2em] text-brand">CNMCP AI扩展社区</p>
             <h1 className="mt-4 max-w-3xl text-balance text-4xl font-bold tracking-tight sm:text-6xl">从你要完成的工作出发，发现可靠的 AI 扩展</h1>
-            <p className="mt-6 max-w-2xl text-pretty text-lg leading-8 text-slate-600">收录 MCP、Skill 和 AI 编程工具插件。按职业、任务和上游项目质量组织，不用先理解平台差异。</p>
+            <p className="mt-6 max-w-2xl text-pretty text-lg leading-8 text-slate-600">收录 Skill、MCP 和 Plugin。按职业、任务和上游项目质量组织，不用先理解平台差异。</p>
             <form action="/resources" className="mt-8 flex max-w-2xl gap-2">
               <label className="sr-only" htmlFor="home-search">搜索资源</label>
               <input className="min-w-0 flex-1 rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 outline-none focus:border-brand focus:ring-4 focus:ring-blue-100" id="home-search" name="q" placeholder="例如：导演分镜、绘图、长期记忆" type="search" />
@@ -27,7 +27,7 @@ export default function HomePage() {
           </div>
           <aside className="rounded-2xl border border-slate-200 bg-slate-50 p-6" aria-label="目录原则">
             <p className="text-sm font-semibold text-brand">质量优先</p><p className="mt-3 text-3xl font-bold">{resources.length} 个审核条目</p>
-            <ul className="mt-5 space-y-3 text-sm leading-6 text-slate-600"><li>综合 Stars、Forks、活跃度、资料完整度和编辑审核</li><li>卡片不以平台数量或本站收录时间决定排序</li><li>安装交给你的 AI 助手分析，上游支持证据在详情页说明</li></ul>
+            <ul className="mt-5 space-y-3 text-sm leading-6 text-slate-600"><li>每条资源都链接到原作者公开仓库</li><li>综合 Stars、Forks、活跃度、资料完整度和编辑审核</li><li>站点不执行第三方安装命令，信息可回到上游核对</li></ul>
           </aside>
         </div>
       </section>

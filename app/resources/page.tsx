@@ -4,7 +4,7 @@ import { ResourceDirectoryClient } from "@/components/resource-directory-client"
 
 export const metadata: Metadata = {
   title: "资源目录",
-  description: "按用途、职业和任务搜索经过整理的 MCP、Skill 与 AI 工具插件，并按可解释质量排序。",
+  description: "按用途、职业和任务搜索经过整理的 Skill、MCP 与 Plugin，并按可解释质量排序。",
 };
 
 export default function ResourcesPage() {

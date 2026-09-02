@@ -7,7 +7,6 @@
     "schemaVersion": { "const": 1 },
     "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "minLength": 3, "maxLength": 80 },
     "kind": { "enum": ["mcp", "skill", "plugin"] },
-    "pluginScope": { "const": "ai-coding-tool" },
     "name": { "type": "string", "minLength": 1, "maxLength": 120 },
     "nameEn": { "type": "string", "minLength": 1, "maxLength": 120 },
     "summary": { "type": "string", "minLength": 10, "maxLength": 300 },
@@ -35,13 +34,6 @@
     "logo": { "$ref": "#/$defs/localImage" },
     "preview": { "$ref": "#/$defs/localImage" }
   },
-  "allOf": [
-    {
-      "if": { "properties": { "kind": { "const": "plugin" } }, "required": ["kind"] },
-      "then": { "required": ["pluginScope"] },
-      "else": { "not": { "required": ["pluginScope"] } }
-    }
-  ],
   "$defs": {
     "registryId": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "minLength": 2, "maxLength": 64 },
     "httpsUrl": { "type": "string", "pattern": "^https://[^\\s]+$", "maxLength": 2048 },

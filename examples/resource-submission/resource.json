@@ -14,20 +14,5 @@
   "tags": [
     "productivity"
   ],
-  "compatibility": [
-    {
-      "platform": "codex",
-      "status": "unknown",
-      "verifiedAt": "2026-01-01",
-      "note": "尚未完成兼容性核验。"
-    },
-    {
-      "platform": "claude-code",
-      "status": "unknown",
-      "verifiedAt": "2026-01-01",
-      "note": "尚未完成兼容性核验。"
-    }
-  ],
-  "createdAt": "2026-01-01",
   "visibility": "public"
 }

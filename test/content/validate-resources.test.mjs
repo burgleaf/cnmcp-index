@@ -52,7 +52,7 @@ async function expectInvalid(mutate, expectedFragments) {
   });
 }
 
-test("合法 MCP、Skill、AI 编程插件及五种兼容状态均通过", async () => {
+test("合法 MCP、Skill、Plugin 及五种兼容状态均通过", async () => {
   await withFixture(async (projectRoot) => {
     const result = await validateCatalog({ projectRoot });
     assert.deepEqual(
@@ -189,15 +189,23 @@ test("重复资源 ID、规范化源码和资源内平台声明被拒绝", async
     }, [/\[gamma-plugin\].*\$\.compatibility\.1\.platform:/, /在资源内重复/]));
 });
 
-test("插件边界拒绝浏览器通用插件和非编程场景插件", async (t) => {
-  for (const scope of ["browser-general", "non-coding-tool"]) {
-    await t.test(scope, () =>
-      expectInvalid(async (root) => {
-        const resource = await readResource(root, "gamma-plugin");
-        resource.value.pluginScope = scope;
-        await writeJson(resource.filePath, resource.value);
-      }, [/\[gamma-plugin\].*\$\.pluginScope:/]));
-  }
+test("Plugin 可以面向非编程 AI 工具，且不接受已废弃的范围字段", async (t) => {
+  await t.test("非编程 AI 工具 Plugin", async () => {
+    await withFixture(async (root) => {
+      const resource = await readResource(root, "gamma-plugin");
+      resource.value.name = "伽马绘图插件";
+      resource.value.summary = "为 AI 绘图工具提供提示词模板、图层工作流和素材管理能力。";
+      await writeJson(resource.filePath, resource.value);
+      await validateCatalog({ projectRoot: root });
+    });
+  });
+
+  await t.test("废弃范围字段", () =>
+    expectInvalid(async (root) => {
+      const resource = await readResource(root, "gamma-plugin");
+      resource.value.pluginScope = "ai-coding-tool";
+      await writeJson(resource.filePath, resource.value);
+    }, [/\[gamma-plugin\].*\$\.pluginScope:/]));
 });
 
 test("partial、unsupported 与安装占位符约束被执行", async (t) => {

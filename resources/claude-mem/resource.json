@@ -2,7 +2,6 @@
   "schemaVersion": 1,
   "id": "claude-mem",
   "kind": "plugin",
-  "pluginScope": "ai-coding-tool",
   "name": "Claude Mem",
   "summary": "自动捕获和压缩 AI 编程会话，在后续任务中注入相关上下文，并提供本地记忆检索与 MCP 搜索工具。",
   "repository": "https://github.com/thedotmack/claude-mem",

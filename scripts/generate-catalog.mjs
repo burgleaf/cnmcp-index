@@ -118,6 +118,7 @@ async function normalizeResource(source, platformOrder, tagOrder, publicAssetsDi
       forks: resource.sourceStats?.forks ?? 0,
       pushedAt: resource.sourceStats?.pushedAt ?? null,
       fetchedAt: resource.sourceStats?.fetchedAt ?? resource.updatedAt ?? resource.createdAt,
+      dataUpdatedAt: resource.sourceStats?.fetchedAt ?? null,
       archived: resource.sourceStats?.archived ?? false,
       completeness: completenessScore(resource, readme),
       featured: resource.featured ?? false,

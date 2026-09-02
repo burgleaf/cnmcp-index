@@ -27,6 +27,14 @@ describe("ResourceDetail 隔离 fixture 静态 HTML", () => {
     expect(html).toContain("核心能力");
     expect(html).toContain("安全说明");
     expect(html).toContain("质量与活跃度");
+    expect(html).toContain("维护状态");
+    expect(html).toContain("数据更新时间");
+    expect(html).toContain("资源类型说明");
+    expect(html).toContain("这是一个 MCP");
+    expect(html).toContain("把一套可复用的任务方法交给 AI 按需执行");
+    expect(html).toContain("让 AI 安全连接外部工具、数据和服务");
+    expect(html).toContain("为 AI 工具增加打包的功能、工作流或界面");
+    expect(html).toContain("来源可核验");
     expect(html).toContain("1,200");
     expect(html).not.toContain("原作者支持的平台");
     expect(html).not.toContain("查看上游证据");

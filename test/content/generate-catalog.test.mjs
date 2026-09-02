@@ -46,6 +46,8 @@ test("生成完整 Catalog、反向索引和不含 README/安装命令的客户�
     const alphaFull = result.fullCatalog.resources.find(({ id }) => id === "alpha-mcp");
     assert.match(alphaFull.readme, /安全的测试夹具/);
     assert.match(alphaFull.compatibility[0].installations[0].command, /codex mcp add/);
+    assert.equal(alphaFull.quality.maintenanceStatus, "low-activity");
+    assert.equal(alphaFull.quality.dataUpdatedAt, null);
 
     const clientText = result.publicBytes;
     assert.doesNotMatch(clientText, /"readme"/);

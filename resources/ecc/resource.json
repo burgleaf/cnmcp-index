@@ -2,7 +2,6 @@
   "schemaVersion": 1,
   "id": "ecc",
   "kind": "plugin",
-  "pluginScope": "ai-coding-tool",
   "name": "ECC 智能体工程系统",
   "nameEn": "ECC Agent Harness Operating System",
   "summary": "面向 AI 编程助手的智能体工程插件，整合 286 个 Skill、68 个专业智能体、工作流、Hooks、MCP 配置，以及测试、安全、代码审查和上下文管理能力。",

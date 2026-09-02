@@ -2,7 +2,6 @@
   "schemaVersion": 1,
   "id": "plannotator",
   "kind": "plugin",
-  "pluginScope": "ai-coding-tool",
   "name": "Plannotator",
   "summary": "在本地浏览器中批注 AI 编程助手生成的计划、文档和代码差异，并把结构化反馈直接送回助手。",
   "repository": "https://github.com/backnotprop/plannotator",

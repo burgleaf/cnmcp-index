@@ -8,7 +8,7 @@ export const DEFAULT_SOCIAL_IMAGE_PATH = "/images/resource-placeholder.svg";
 const KIND_LABELS = {
   mcp: "MCP",
   skill: "Skill",
-  plugin: "AI 编程工具插件",
+  plugin: "Plugin",
 } as const;
 
 function isPublicResource(resource: Resource): boolean {
@@ -62,7 +62,7 @@ export function createResourceMetadata(resource: Resource): Metadata {
     openGraph: {
       type: "article",
       locale: "zh_CN",
-      siteName: "CNMCP AI 扩展社区",
+      siteName: "CNMCP AI扩展社区",
       url: canonical,
       title,
       description,

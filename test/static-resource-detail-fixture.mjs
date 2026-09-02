@@ -12,7 +12,7 @@ const EXCLUDED_RESOURCE_IDS = ["acceptance-unlisted", "acceptance-removed"];
 const EXPECTED_KINDS = new Map([
   ["acceptance-mcp", "MCP"],
   ["acceptance-skill", "Skill"],
-  ["acceptance-plugin", "AI 编程工具插件"],
+  ["acceptance-plugin", "Plugin"],
 ]);
 
 function runNode(scriptPath, cwd) {
@@ -65,7 +65,7 @@ async function verifyResourceHtml(targetRoot, resource) {
     : "https://www.cnmcp.com/images/resource-placeholder.svg";
 
   for (const [expected, label] of [
-    [`<title>${resource.name}（${kindLabel} · ${resource.id}） | CNMCP AI 扩展社区</title>`, "title"],
+    [`<title>${resource.name}（${kindLabel} · ${resource.id}） | CNMCP AI扩展社区</title>`, "title"],
     [`name="description" content="${description}"`, "description"],
     [`rel="canonical" href="${canonical}"`, "canonical"],
     ['property="og:type" content="article"', "Open Graph 类型"],
@@ -84,7 +84,7 @@ async function verifyResourceHtml(targetRoot, resource) {
     resource.summary,
     resource.author.name,
     resource.license,
-    "可信来源",
+    "来源可核验",
     "质量与活跃度",
     "统计数据加载中",
     'rel="noopener noreferrer"',
@@ -204,7 +204,7 @@ async function main() {
     );
 
     const submit = await readFile(path.join(targetRoot, "out", "submit", "index.html"), "utf8");
-    for (const expected of ["投稿 AI 扩展资源", "用 AI 助手投稿", "复制提示词", "GitHub Issue", "Pull Request"]) {
+    for (const expected of ["投稿 AI 扩展资源", "用 AI 助手投稿", "复制提示词", "Pull Request", "不限于编程工具"]) {
       assertContains(submit, expected, "投稿入口");
     }
 

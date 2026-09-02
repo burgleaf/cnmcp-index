@@ -6,7 +6,7 @@ import type { FetchLike } from "./sources/mcp-registry";
 const KIND_LABELS: Readonly<Record<ResourceKind, string>> = {
   mcp: "MCP",
   skill: "Skill",
-  plugin: "AI 编程工具插件",
+  plugin: "AI 工具 Plugin",
 };
 
 export function buildPromotionIssue(candidate: StoredCandidate): { title: string; body: string; labels: string[] } {

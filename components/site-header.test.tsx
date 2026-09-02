@@ -7,9 +7,9 @@ describe("SiteHeader", () => {
     const html = renderToStaticMarkup(<SiteHeader />);
 
     expect(html).toContain("CNMCP");
-    expect(html).toContain("AI 能力目录");
+    expect(html).toContain("AI扩展社区");
     expect(html).toContain('aria-label="主导航"');
-    expect(html).toContain('href="/discover"');
+    expect(html).not.toContain('href="/discover"');
     expect(html).toContain('href="/resources"');
     expect(html).toContain('href="/topics"');
     expect(html).toContain('href="/submit"');

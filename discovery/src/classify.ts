@@ -64,8 +64,20 @@ function isPlugin(text: string, topics: ReadonlyArray<string>): boolean {
       ".cursor-plugin",
       ".claude-plugin",
       "claude-plugin",
+      "chatgpt plugin",
+      "chatgpt-plugin",
+      "gpt plugin",
+      "gpt action",
+      "gemini extension",
+      "gemini-extension",
+      "dify plugin",
+      "dify-plugin",
+      "comfyui custom node",
+      "comfyui node",
+      "open webui tool",
+      "openwebui tool",
     ]) ||
-    ((topics.includes("openai-codex") || topics.includes("claude-code")) && hasAny(text, ["plugin"]))
+    ((topics.some((topic) => ["openai-codex", "claude-code", "chatgpt", "gemini", "dify", "comfyui", "open-webui"].includes(topic)) && hasAny(text, ["plugin", "extension", "node"])))
   );
 }
 

@@ -16,7 +16,7 @@ import { EmptyState } from "./empty-state";
 const KIND_LABELS: Readonly<Record<DiscoveryKind, string>> = {
   mcp: "MCP",
   skill: "Skill",
-  plugin: "AI 编程插件",
+  plugin: "Plugin",
 };
 
 const SORT_LABELS: Readonly<Record<DiscoverySort, string>> = {

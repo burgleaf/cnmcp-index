@@ -12,7 +12,8 @@ describe("HomePage", () => {
     const featured = resources.find((resource) => resource.featured);
 
     expect(html).toContain("发现可靠的 AI 扩展");
-    expect(html).toContain("MCP、Skill 和 AI 编程工具插件");
+    expect(html).toContain("收录 Skill、MCP 和 Plugin");
+    expect(html).toContain("每条资源都链接到原作者公开仓库");
     expect(html).toContain("质量优先");
     expect(html).toContain('action="/resources"');
     expect(html).toContain('href="/topics"');

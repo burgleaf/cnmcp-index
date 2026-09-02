@@ -7,6 +7,7 @@ describe("资源综合质量评分", () => {
       forks: 1_000,
       pushedAt: "2026-08-20T00:00:00Z",
       fetchedAt: "2026-09-01",
+      dataUpdatedAt: "2026-09-01",
       archived: false,
       completeness: 10,
       featured: false,
@@ -15,11 +16,19 @@ describe("资源综合质量评分", () => {
     expect(quality.score).toBeGreaterThanOrEqual(70);
     expect(quality.breakdown.stars).toBeLessThanOrEqual(40);
     expect(quality.breakdown.activity).toBe(25);
+    expect(quality.maintenanceStatus).toBe("active");
+    expect(quality.dataUpdatedAt).toBe("2026-09-01");
   });
 
   it("归档项目显著降权，异常数字被安全归一化", () => {
     const active = computeResourceQuality({ stars: 500, forks: 50, pushedAt: "2026-08-01T00:00:00Z", fetchedAt: "2026-09-01", archived: false, completeness: 8, featured: false });
     const archived = computeResourceQuality({ stars: -1, forks: Number.NaN, pushedAt: null, fetchedAt: "2026-09-01", archived: true, completeness: 8, featured: true });
     expect(archived.score).toBeLessThan(active.score / 2);
+    expect(archived.maintenanceStatus).toBe("archived");
+  });
+
+  it("长期未更新或缺少推送记录时标为低活跃", () => {
+    expect(computeResourceQuality({ stars: 0, forks: 0, pushedAt: "2025-01-01T00:00:00Z", fetchedAt: "2026-09-01", archived: false, completeness: 0, featured: false }).maintenanceStatus).toBe("low-activity");
+    expect(computeResourceQuality({ stars: 0, forks: 0, pushedAt: null, fetchedAt: "2026-09-01", archived: false, completeness: 0, featured: false }).maintenanceStatus).toBe("low-activity");
   });
 });

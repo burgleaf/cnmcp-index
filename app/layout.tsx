@@ -11,20 +11,20 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL(PRODUCTION_SITE_URL),
   title: {
-    default: "CNMCP AI 扩展社区",
-    template: "%s | CNMCP AI 扩展社区",
+    default: "CNMCP AI扩展社区",
+    template: "%s | CNMCP AI扩展社区",
   },
-  description: "按职业和任务发现高质量 MCP、Skill 与 AI 插件，查看上游质量，并按 AI 工具复制简明安装内容。",
+  description: "按职业和任务发现高质量 Skill、MCP 与 Plugin，查看可验证的上游质量信息并快速开始使用。",
   alternates: {
     canonical: "/",
   },
   openGraph: {
     type: "website",
     locale: "zh_CN",
-    siteName: "CNMCP AI 扩展社区",
+    siteName: "CNMCP AI扩展社区",
     url: "/",
-    title: "CNMCP AI 扩展社区",
-    description: "按职业和任务发现高质量 MCP、Skill 与 AI 插件，查看上游质量并快速开始使用。",
+    title: "CNMCP AI扩展社区",
+    description: "按职业和任务发现高质量 Skill、MCP 与 Plugin，查看可验证的上游质量信息并快速开始使用。",
   },
 };
 

@@ -2,7 +2,6 @@
   "schemaVersion": 1,
   "id": "agentmemory",
   "kind": "plugin",
-  "pluginScope": "ai-coding-tool",
   "name": "AgentMemory",
   "summary": "为 AI 编程助手提供跨会话持久记忆、检索、自动捕获 hooks、MCP 工具和可按需加载的记忆 Skills。",
   "repository": "https://github.com/rohitg00/agentmemory",

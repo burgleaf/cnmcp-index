@@ -7,7 +7,7 @@ import { createSubmissionLinks, resolveCatalogRepositoryUrl } from "@/lib/submis
 
 export const metadata: Metadata = {
   title: "投稿资源",
-  description: "复制 AI 提示词或直接发起 Pull Request，向 CNMCP AI 扩展社区投稿资源。",
+  description: "复制 AI 提示词或直接发起 Pull Request，向 CNMCP AI扩展社区投稿资源。",
   alternates: { canonical: `${PRODUCTION_SITE_URL}/submit/` },
 };
 
@@ -80,7 +80,7 @@ export default function SubmitPage() {
       <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8" aria-labelledby="required-fields">
         <h2 className="text-2xl font-bold text-ink" id="required-fields">必填信息与审核边界</h2>
         <ul className="mt-4 list-disc space-y-2 pl-6 leading-7 text-slate-700">
-          <li>类型只能是 MCP、Skill 或面向已注册 AI 编程工具的插件。</li>
+          <li>类型只能是 Skill、MCP 或 Plugin；Plugin 是为任意 AI 工具增加功能、工作流或界面能力的扩展，不限于编程工具。</li>
           <li>必须提供公开 HTTPS 源码地址、许可证、作者，以及面向职业、任务和能力的受控标签。</li>
           <li>每个资源必须提供面向详情页的 README，说明解决的问题、核心能力、适用人群、使用注意事项和官方资源。</li>
           <li>平台支持和收录日期都是可选信息；如填写平台支持，只记录原作者明确声明并附核验日期与证据链接，它不会影响质量排序。</li>

@@ -1,6 +1,6 @@
 ---
 name: submit-cnmcp-resource
-description: Submits an MCP, Skill, or AI coding-tool plugin to the CNMCP catalog as a focused GitHub pull request without cloning the full index. Use when the user pastes a GitHub repository URL, asks to 投稿 or 提交资源, wants a catalog PR, or needs a Cursor/Codex submission prompt.
+description: Submits an MCP, Skill, or AI-tool plugin to the CNMCP catalog as a focused GitHub pull request without cloning the full index. Use when the user pastes a GitHub repository URL, asks to 投稿 or 提交资源, wants a catalog PR, or needs an AI submission prompt.
 ---
 
 # 向 CNMCP 投稿资源
@@ -25,7 +25,7 @@ description: Submits an MCP, Skill, or AI coding-tool plugin to the CNMCP catalo
 3. 阅读源仓库 README、许可证、安装说明、Skill / MCP / 插件清单，自行判断 `kind`：
    - `mcp`：MCP 服务器或 MCP 工具包
    - `skill`：Agent Skill（如 `SKILL.md`）
-   - `plugin`：面向 AI 编程工具的插件，且必须 `pluginScope: "ai-coding-tool"`
+   - `plugin`：为任意 AI 工具增加功能、工作流或界面能力的插件，不限于编程工具
    - 不是这三类就停止，不要编造类型
 4. 查重：
    - 用 HTTPS 规范化后的 `repository` 比较（去 `.git`、尾斜杠、GitHub 路径大小写）
