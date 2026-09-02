@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import yaml from "js-yaml";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-const workflowNames = ["pr-validation.yml", "deploy-worker.yml", "deploy-pages.yml", "deploy-discovery.yml"];
+const workflowNames = ["pr-validation.yml", "deploy-worker.yml", "deploy-pages.yml", "deploy-discovery.yml", "ai-review-candidate.yml"];
 
 async function workflow(name) {
   const source = await readFile(path.join(ROOT, ".github", "workflows", name), "utf8");
@@ -104,4 +104,17 @@ test("Discovery 生产工作流使用仓库级 Secrets，远程步骤按检查�
   assert.match(source, /--file=discovery\/migrations\/0002_promotions\.sql/);
   assert.doesNotMatch(source, /d1 migrations apply/);
   assert.doesNotMatch(source, /sync-stats-catalog/);
+});
+
+test("AI 审核只由标签或手动入口触发，并使用最小 Issue 权限与 DeepSeek Secret", async () => {
+  const { source, value } = await workflow("ai-review-candidate.yml");
+  assert.deepEqual(value.permissions, { contents: "read", issues: "write" });
+  assert.ok(value.on.issues);
+  assert.deepEqual(value.on.issues.types, ["labeled"]);
+  assert.ok(value.on.workflow_dispatch);
+  assert.match(source, /github\.event\.label\.name == 'ai-review'/);
+  assert.match(source, /secrets\.DEEPSEEK_API_KEY/);
+  assert.match(source, /DEEPSEEK_MODEL: deepseek-v4-pro/);
+  assert.match(source, /DEEPSEEK_BASE_URL: https:\/\/api\.deepseek\.com/);
+  assert.doesNotMatch(source, /pull-requests:\s*write|contents:\s*write|DEEPSEEK_API_KEY:\s*deepseek/);
 });

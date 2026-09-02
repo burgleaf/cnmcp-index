@@ -56,7 +56,10 @@ describe("buildPromotionIssue", () => {
     };
     const issue = buildPromotionIssue(candidate);
     expect(issue.title).toContain("[自动发现]");
+    expect(issue.body).toContain("### 候选 ID\ngithub:acme/files-mcp");
     expect(issue.body).toContain("https://github.com/acme/files-mcp");
+    expect(issue.body).toContain("### 发现来源\nmcp-registry");
+    expect(issue.body).toContain("### 抓取时间\n1970-01-01T00:00:00.001Z");
     expect(issue.body).toContain("compatibility.status: unknown");
     expect(issue.body).not.toContain("sk-");
     expect(issue.labels).toEqual(["auto-discovery"]);

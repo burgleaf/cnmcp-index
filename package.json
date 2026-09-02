@@ -19,7 +19,7 @@
     "lint": "eslint app components lib scripts test --ext .js,.mjs,.ts,.tsx --max-warnings=0",
     "typecheck": "tsc --noEmit --incremental false",
     "test": "jest --runInBand && yarn test:content",
-    "test:content": "node --test --test-concurrency=1 test/content/validate-resources.test.mjs test/content/generate-catalog.test.mjs test/content/build-static.test.mjs test/content/submission-assets.test.mjs test/content/sync-stats-catalog.test.mjs test/content/sync-github-metadata.test.mjs test/content/deployment-tooling.test.mjs test/content/deployment-workflows.test.mjs test/content/audit-static-runtime.test.mjs",
+    "test:content": "node --test --test-concurrency=1 test/content/validate-resources.test.mjs test/content/generate-catalog.test.mjs test/content/build-static.test.mjs test/content/submission-assets.test.mjs test/content/sync-stats-catalog.test.mjs test/content/sync-github-metadata.test.mjs test/content/deployment-tooling.test.mjs test/content/deployment-workflows.test.mjs test/content/ai-review.test.mjs test/content/audit-static-runtime.test.mjs",
     "test:static-fixture": "node test/static-resource-detail-fixture.mjs",
     "test:watch": "jest --watch"
   },
