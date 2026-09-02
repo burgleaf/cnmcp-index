@@ -22,14 +22,6 @@ test("资源目录示例严格符合 Resource Schema 且不包含投稿者禁用
     assert.equal(Object.hasOwn(example, field), false, field);
 });
 
-test("Issue Form 收集 Schema 核心字段且不提供精选、可信或审核状态控件", async () => {
-  const issueForm = await read(".github/ISSUE_TEMPLATE/resource-submission.yml");
-  for (const id of ["resource-kind", "repository-url", "resource-summary", "license", "platform-compatibility"])
-    assert.match(issueForm, new RegExp(`id: ${id}`));
-  assert.doesNotMatch(issueForm, /id:\s*(?:featured|verified|reviewStatus)\b/i);
-  assert.match(issueForm, /不会自动执行/);
-});
-
 test("PR 模板明确禁止投稿者控制维护状态并声明未合并内容不进正式 Catalog", async () => {
   const template = await read(".github/pull_request_template.md");
   assert.match(template, /没有设置或修改 `featured`/);
@@ -41,17 +33,14 @@ test("PR 模板明确禁止投稿者控制维护状态并声明未合并内容�
 
 test("投稿 Skill 要求 GitHub API 正式 PR，并禁止 featured 与执行安装命令", async () => {
   const skill = await read(".agents/skills/submit-cnmcp-resource/SKILL.md");
-  const cursorSkill = await read(".cursor/skills/submit-cnmcp-resource/SKILL.md");
-  for (const document of [skill, cursorSkill]) {
-    assert.match(document, /Ready for review/);
-    assert.match(document, /featured/);
-    assert.match(document, /verified/);
-    assert.match(document, /reviewStatus/);
-    assert.match(document, /不执行第三方安装命令|不得执行第三方安装命令/);
-    assert.match(document, /pluginScope/);
-    assert.match(document, /README\.md/);
-    assert.match(document, /unknown/);
-  }
+  assert.match(skill, /Ready for review/);
+  assert.match(skill, /featured/);
+  assert.match(skill, /verified/);
+  assert.match(skill, /reviewStatus/);
+  assert.match(skill, /不执行第三方安装命令|不得执行第三方安装命令/);
+  assert.match(skill, /pluginScope/);
+  assert.match(skill, /README\.md/);
+  assert.match(skill, /compatibility.*可省略/);
   assert.match(skill, /yarn validate:resources/);
-  assert.match(cursorSkill, /\.agents\/skills\/submit-cnmcp-resource\/SKILL\.md/);
+  await assert.rejects(() => read(".cursor/skills/submit-cnmcp-resource/SKILL.md"));
 });

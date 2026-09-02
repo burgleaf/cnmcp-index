@@ -2,7 +2,7 @@
   "title": "CNMCP Resource Schema v1",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "id", "kind", "name", "summary", "repository", "license", "author", "tags", "compatibility", "createdAt"],
+  "required": ["schemaVersion", "id", "kind", "name", "summary", "repository", "license", "author", "tags"],
   "properties": {
     "schemaVersion": { "const": 1 },
     "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "minLength": 3, "maxLength": 80 },

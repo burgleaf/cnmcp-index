@@ -73,8 +73,8 @@ export type Resource = Readonly<{
   license: string;
   author: Readonly<{ name: string; url?: string }>;
   tags: ReadonlyArray<string>;
-  compatibility: ReadonlyArray<PlatformCompatibility>;
-  createdAt: string;
+  compatibility?: ReadonlyArray<PlatformCompatibility>;
+  createdAt?: string;
   updatedAt?: string;
   sourceStats?: SourceStats;
   quality?: ResourceQuality;
@@ -124,7 +124,7 @@ export type ResourceSummary = Readonly<{
   tags: ReadonlyArray<string>;
   platforms: ReadonlyArray<ResourceSummaryPlatform>;
   logo?: string;
-  createdAt: string;
+  createdAt?: string;
   updatedAt?: string;
   featured: boolean;
   quality?: ResourceQuality;

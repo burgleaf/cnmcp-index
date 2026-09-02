@@ -72,6 +72,16 @@ test("每个资源都必须提供 README.md", () =>
     await rm(path.join(root, "resources", "beta-skill", "README.md"));
   }, [/\[beta-skill\].*README\.md \$:/, /每个资源都必须提供 README\.md/]));
 
+test("平台兼容性和收录日期可以省略", async () => {
+  await withFixture(async (root) => {
+    const resource = await readResource(root, "beta-skill");
+    delete resource.value.compatibility;
+    delete resource.value.createdAt;
+    await writeJson(resource.filePath, resource.value);
+    await validateCatalog({ projectRoot: root });
+  });
+});
+
 test("规范化源码地址移除大小写、.git、查询、片段和尾斜杠差异", () => {
   assert.equal(
     normalizeSourceUrl("https://GitHub.com/CNMCP-Fixtures/Alpha-MCP.git/?ref=main#readme"),

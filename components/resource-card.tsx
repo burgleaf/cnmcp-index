@@ -16,7 +16,7 @@ type CardResource = Readonly<{
   name: string;
   summary: string;
   tags: ReadonlyArray<string>;
-  createdAt: string;
+  createdAt?: string;
   featured: boolean;
   quality?: ResourceQuality;
 }>;

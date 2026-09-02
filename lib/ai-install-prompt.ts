@@ -64,7 +64,7 @@ function installationText(installation: Installation): string | null {
 }
 
 function upstreamGuide(resource: Resource, platformId: InstallPlatformId): InstallGuide | null {
-  const compatibility = resource.compatibility.find((entry) => entry.platform === platformId);
+  const compatibility = (resource.compatibility ?? []).find((entry) => entry.platform === platformId);
   const installation = compatibility?.installations?.find((entry) => installationText(entry));
   if (!installation) return null;
   const name = PLATFORM_NAMES[platformId];

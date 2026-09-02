@@ -37,7 +37,7 @@ function completenessScore(resource, readme) {
     (readme ? 4 : 0) +
     (resource.license && resource.license !== "NOASSERTION" ? 2 : 0) +
     (resource.logo || resource.preview ? 2 : 0) +
-    (resource.compatibility.some((entry) => entry.note) ? 3 : 0)
+    ((resource.compatibility ?? []).some((entry) => entry.note) ? 3 : 0)
   );
 }
 
@@ -55,7 +55,7 @@ function createIndexes(resources, platforms, tags) {
 
   for (const resource of resources) {
     kinds[resource.kind].push(resource.id);
-    for (const compatibility of resource.compatibility) platformIndex[compatibility.platform]?.push(resource.id);
+    for (const compatibility of resource.compatibility ?? []) platformIndex[compatibility.platform]?.push(resource.id);
     for (const tag of resource.tags) tagIndex[tag]?.push(resource.id);
   }
 
@@ -110,7 +110,7 @@ async function normalizeResource(source, platformOrder, tagOrder, publicAssetsDi
     nameEn: resource.nameEn ?? resource.name,
     summaryEn: resource.summaryEn ?? resource.summary,
     tags,
-    compatibility: normalizeCompatibility(resource.compatibility, platformOrder),
+    compatibility: normalizeCompatibility(resource.compatibility ?? [], platformOrder),
     visibility: resource.visibility ?? "public",
     featured: resource.featured ?? false,
     quality: computeResourceQualityCore({
@@ -146,7 +146,7 @@ function createClientResource(resource, tagLookup) {
     authorName: resource.author.name,
     repository: resource.repository,
     tags: resource.tags,
-    platforms: resource.compatibility.map(({ platform, status }) => ({ id: platform, status })),
+    platforms: (resource.compatibility ?? []).map(({ platform, status }) => ({ id: platform, status })),
     ...(resource.logo ? { logo: resource.logo } : {}),
     createdAt: resource.createdAt,
     ...(resource.updatedAt ? { updatedAt: resource.updatedAt } : {}),

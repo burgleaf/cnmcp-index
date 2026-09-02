@@ -44,7 +44,7 @@ export function buildPromotionIssue(candidate: StoredCandidate): { title: string
     `- score: ${candidate.score.toFixed(2)}`,
     `- kind: ${candidate.kind}`,
     "",
-    "请勿直接合并进 `resources/`。确认后使用投稿 Issue Form 或 Pull Request。",
+    "请勿直接合并进 `resources/`。确认后请按投稿规范发起 Pull Request。",
   ].join("\n");
   return { title, body, labels: ["auto-discovery"] };
 }

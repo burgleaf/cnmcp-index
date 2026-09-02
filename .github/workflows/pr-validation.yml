@@ -76,14 +76,37 @@ jobs:
       - name: Generate deterministic catalogs
         run: node .yarn/releases/yarn-1.22.19.cjs generate:catalog
 
+      - name: Detect resource-only changes
+        id: change-scope
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ]; then
+            echo "resource_only=false" >> "$GITHUB_OUTPUT"
+          else
+            changed_files="$(git diff --name-only "$BASE_SHA" "$GITHUB_SHA")"
+            if [ -n "$changed_files" ] && ! printf '%s\n' "$changed_files" | grep -qv '^resources/'; then
+              echo "resource_only=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "resource_only=false" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
       - name: Lint root application and scripts
+        if: steps.change-scope.outputs.resource_only != 'true'
         run: node .yarn/releases/yarn-1.22.19.cjs lint
 
       - name: Typecheck root application
+        if: steps.change-scope.outputs.resource_only != 'true'
         run: node .yarn/releases/yarn-1.22.19.cjs typecheck
 
       - name: Run all root tests
+        if: steps.change-scope.outputs.resource_only != 'true'
         run: node .yarn/releases/yarn-1.22.19.cjs test
+
+      - name: Run resource content tests
+        if: steps.change-scope.outputs.resource_only == 'true'
+        run: node .yarn/releases/yarn-1.22.19.cjs test:content
 
       - name: Build static export
         run: node .yarn/releases/yarn-1.22.19.cjs build

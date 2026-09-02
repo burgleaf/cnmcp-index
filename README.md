@@ -51,11 +51,10 @@ yarn discovery:dry-run
 
 收录类型仅限 `mcp`、`skill`、`plugin`。`plugin` 只收录面向 AI 编程工具的平台插件；平台不作为主导航、卡片或质量排序维度。
 
-推荐三种方式：
+推荐两种方式：
 
-1. 在投稿页输入源码 GitHub 仓库地址，复制提示词，交给 Cursor、Codex 或其他能调用 GitHub 的 AI 助手。助手应读取 [`.agents/skills/submit-cnmcp-resource`](./.agents/skills/submit-cnmcp-resource)（Cursor 项目内对应 [`.cursor/skills/submit-cnmcp-resource`](./.cursor/skills/submit-cnmcp-resource)），生成 `resource.json` 并开出可审查 PR，不需要完整克隆本仓库
-2. 使用仓库中的 GitHub Issue Form
-3. 在 `resources/<resource-id>/` 新增 `resource.json` 和面向详情页的安全 `README.md`，可选附带本地图片，再发起 Pull Request
+1. 在投稿页输入源码 GitHub 仓库地址，复制提示词，交给能调用 GitHub 的 AI 助手。助手应读取 [`.agents/skills/submit-cnmcp-resource`](./.agents/skills/submit-cnmcp-resource)，生成 `resource.json` 和 `README.md` 并开出可审查 PR，不需要完整克隆本仓库
+2. 在 `resources/<resource-id>/` 新增 `resource.json` 和面向详情页的安全 `README.md`，可选附带本地图片，再发起 Pull Request
 
 可参考 [`examples/resource-submission/`](./examples/resource-submission/)。投稿检查清单见 Pull Request 模板。
 
@@ -63,7 +62,7 @@ yarn discovery:dry-run
 
 - 目录名必须与资源 `id` 一致
 - 标签来自 `catalog/tags.json`，应覆盖职业、行业、任务和能力
-- 平台支持必须包含状态、核验日期，并尽量提供上游证据链接
+- 平台支持和收录日期均可省略；如填写平台支持，必须来自上游明确声明并包含状态、核验日期，尽量提供证据链接
 - 详情页按 AI 工具提供简明安装内容，站点不会执行第三方命令
 - 投稿者不得自行设置 `featured` 或 `sourceStats`
 

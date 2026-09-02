@@ -27,17 +27,19 @@ test("所有任务 4 个工作流 YAML 可解析且第三方 actions 固定到�
   }
 });
 
-test("PR 工作流只有只读权限，无 Cloudflare secret，并按要求执行完整根检查与 Worker 条件检查", async () => {
+test("PR 工作流只有只读权限，无 Cloudflare secret，并为纯资源投稿保留快速安全检查", async () => {
   const { source, value } = await workflow("pr-validation.yml");
   assert.deepEqual(value.permissions, { contents: "read" });
   assert.doesNotMatch(source, /CLOUDFLARE_API_TOKEN|HASH_SALT|environment:\s*production/);
   const names = value.jobs.validate.steps.map((step) => step.name);
-  for (const required of ["Validate resource content", "Generate deterministic catalogs", "Lint root application and scripts", "Typecheck root application", "Run all root tests", "Build static export", "Run Worker lint, typecheck and tests", "Build Worker deployment bundle without upload", "Run Discovery lint, typecheck and tests", "Build Discovery deployment bundle without upload"]) {
+  for (const required of ["Validate resource content", "Generate deterministic catalogs", "Detect resource-only changes", "Lint root application and scripts", "Typecheck root application", "Run all root tests", "Run resource content tests", "Build static export", "Run Worker lint, typecheck and tests", "Build Worker deployment bundle without upload", "Run Discovery lint, typecheck and tests", "Build Discovery deployment bundle without upload"]) {
     assert.ok(names.includes(required), required);
   }
   assert.match(source, /yarn-1\.22\.19\.cjs install --frozen-lockfile/);
   assert.match(source, /npm ci --prefix worker/);
   assert.match(source, /npm ci --prefix discovery/);
+  assert.equal(value.jobs.validate.steps.find((step) => step.name === "Run all root tests").if, "steps.change-scope.outputs.resource_only != 'true'");
+  assert.equal(value.jobs.validate.steps.find((step) => step.name === "Run resource content tests").if, "steps.change-scope.outputs.resource_only == 'true'");
 });
 
 test("Worker 生产工作流使用仓库级 Secrets，远程步骤严格按迁移、同步、部署、烟测排序", async () => {

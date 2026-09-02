@@ -69,6 +69,22 @@ test("英文缺失时仅回退中文，搜索字段执行 Unicode、小写与空
   assert.equal(normalizeSearchText(["  ＡLPHA\tSkill  ", "作者"]), "alpha skill 作者");
 });
 
+test("省略平台兼容性和收录日期的资源仍可生成 Catalog", async () => {
+  await withFixture(async (projectRoot) => {
+    await mutateResource(projectRoot, "beta-skill", (resource) => {
+      delete resource.compatibility;
+      delete resource.createdAt;
+    });
+    const result = await generateCatalog({ projectRoot });
+    const beta = result.fullCatalog.resources.find(({ id }) => id === "beta-skill");
+    const betaSummary = result.clientCatalog.resources.find(({ id }) => id === "beta-skill");
+    assert.deepEqual(beta.compatibility, []);
+    assert.deepEqual(betaSummary.platforms, []);
+    assert.equal(betaSummary.createdAt, undefined);
+    assert.ok(Object.values(result.fullCatalog.indexes.platforms).every((ids) => !ids.includes("beta-skill")));
+  });
+});
+
 test("相同语义输入在数组顺序变化和重复生成后保持字节确定", async () => {
   await withFixture(async (projectRoot) => {
     const first = await generateCatalog({ projectRoot });

@@ -58,7 +58,7 @@ export function AgentSubmissionPrompt({
       </h2>
       <p className="mt-3 leading-7 text-slate-700">
         输入源码的公开 GitHub 仓库地址，复制提示词，粘贴到 Cursor、Codex 或其他能调用 GitHub 的 AI 助手。
-        助手会读取仓库投稿 Skill，生成 <code>resource.json</code>，并通过 GitHub API 发起可审查、可合并的 PR。
+        助手会读取仓库投稿 Skill，生成 <code>resource.json</code> 和 <code>README.md</code>，并通过 GitHub API 发起可审查、可合并的 PR。
         不需要完整克隆索引仓库。本站只生成文本，不会执行安装命令。
       </p>
 
@@ -110,7 +110,7 @@ export function AgentSubmissionPrompt({
         )}
         {copyState?.kind === "success" ? (
           <p aria-live="polite" className="text-sm font-medium text-emerald-700" role="status">
-            已复制到剪贴板。请粘贴到 Cursor 或 Codex，并在助手中连接 GitHub 后再发起 PR。
+            已复制到剪贴板。请粘贴到你常用的 AI 助手，并在助手中连接 GitHub 后再发起 PR。
           </p>
         ) : null}
         {copyState?.kind === "failed" ? (
