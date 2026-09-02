@@ -22,7 +22,8 @@ describe("ResourceDirectoryClient 运行时降级", () => {
   it("搜索停顿后上报结果缺口，统计失败不影响目录", async () => {
     jest.useFakeTimers();
     const originalFetch = global.fetch;
-    const fetchImplementation = jest.fn((input: RequestInfo | URL, _init?: RequestInit) => {
+    const fetchImplementation = jest.fn((...args: [RequestInfo | URL, RequestInit?]) => {
+      const [input] = args;
       const url = input.toString();
       if (url.endsWith("/catalog.json")) {
         return Promise.resolve({

@@ -17,7 +17,7 @@ function stepIndex(value, jobName, stepName) {
   return value.jobs[jobName].steps.findIndex((step) => step.name === stepName);
 }
 
-test("所有任务 4 个工作流 YAML 可解析且第三方 actions 固定到完整 commit", async () => {
+test("所有任务工作流 YAML 可解析且第三方 actions 固定到完整 commit", async () => {
   for (const name of workflowNames) {
     const { source, value } = await workflow(name);
     assert.equal(typeof value, "object", name);

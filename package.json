@@ -8,6 +8,7 @@
     "generate:catalog": "node scripts/generate-catalog.mjs",
     "sync:stats:local": "node scripts/sync-stats-catalog.mjs --local",
     "sync:github-metadata": "node scripts/sync-github-metadata.mjs --apply",
+    "ai:review": "node scripts/ai-review-candidate.mjs",
     "worker:check": "npm --prefix worker run check",
     "worker:dry-run": "npm --prefix worker run dry-run",
     "discovery:check": "npm --prefix discovery run check",

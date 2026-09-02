@@ -98,6 +98,14 @@ test("审核协议要求事实证据并拒绝额外字段", () => {
     () =>
       validateReviewReport({
         ...VALID_REPORT,
+        useCases: [{ value: "伪造用途", basis: "upstream", evidenceUrl: "https://evil.example/evidence" }],
+      }),
+    /invalid review report/i,
+  );
+  assert.throws(
+    () =>
+      validateReviewReport({
+        ...VALID_REPORT,
         compatibility: [
           {
             platform: "codex",
@@ -166,6 +174,45 @@ test("DeepSeek 错误不泄露密钥或上游响应正文", async () => {
     assert.doesNotMatch(error.message, /ds-top-secret|server says/);
     return true;
   });
+});
+
+test("DeepSeek 将超时和非法 JSON 归类为安全错误", async () => {
+  const timeoutClient = createDeepSeekClient({
+    apiKey: "ds-secret",
+    fetchImpl: async () => {
+      const error = new Error("socket exposed ds-secret");
+      error.name = "AbortError";
+      throw error;
+    },
+  });
+  await assert.rejects(timeoutClient.complete([{ role: "user", content: "json" }]), /failed: timeout/);
+
+  const invalidJsonClient = createDeepSeekClient({
+    apiKey: "ds-secret",
+    fetchImpl: async () => Response.json({ choices: [{ finish_reason: "stop", message: { content: "not json" } }] }),
+  });
+  await assert.rejects(invalidJsonClient.complete([{ role: "user", content: "json" }]), /invalid JSON output/);
+});
+
+test("DeepSeek 对限流执行有上限的重试", async () => {
+  let calls = 0;
+  const sleeps = [];
+  const client = createDeepSeekClient({
+    apiKey: "ds-secret",
+    maxAttempts: 3,
+    sleep: async (milliseconds) => sleeps.push(milliseconds),
+    fetchImpl: async () => {
+      calls += 1;
+      if (calls < 3) return new Response("rate limited", { status: 429 });
+      return Response.json({
+        choices: [{ finish_reason: "stop", message: { content: JSON.stringify(VALID_REPORT) } }],
+        usage: {},
+      });
+    },
+  });
+  await client.complete([{ role: "user", content: "json" }]);
+  assert.equal(calls, 3);
+  assert.deepEqual(sleeps, [500, 1000]);
 });
 
 test("审核评论通过固定标记更新，不重复刷屏", async () => {
