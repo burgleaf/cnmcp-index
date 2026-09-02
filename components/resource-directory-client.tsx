@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { RESOURCE_KINDS, type ClientCatalog, type ResourceKind } from "@/lib/catalog-types";
 import {
@@ -11,6 +11,7 @@ import {
   hasActiveFilters,
   type CatalogFilters,
 } from "@/lib/catalog-search";
+import { recordSearchGapEvent, sanitizeTaskQuery } from "@/lib/search-gap-client";
 
 import { EmptyState } from "./empty-state";
 import { ResourceGallery } from "./resource-gallery";
@@ -28,6 +29,7 @@ export function ResourceDirectoryClient() {
   const [error, setError] = useState<string | null>(null);
   const [retry, setRetry] = useState(0);
   const [filters, setFilters] = useState<CatalogFilters>(DEFAULT_CATALOG_FILTERS);
+  const trackedSearches = useRef(new Set<string>());
 
   useEffect(() => {
     const keyword = new URLSearchParams(window.location.search).get("q")?.trim();
@@ -51,6 +53,25 @@ export function ResourceDirectoryClient() {
       .sort((left, right) => (catalog.indexes.tags[right.id]?.length ?? 0) - (catalog.indexes.tags[left.id]?.length ?? 0) || left.sortOrder - right.sortOrder)
       .slice(0, 10);
   }, [catalog]);
+
+  useEffect(() => {
+    if (!catalog) return;
+    const query = sanitizeTaskQuery(filters.keyword);
+    if (!query) return;
+    const fingerprint = JSON.stringify([query, filters.kind, filters.tag, resources.length]);
+    const timeout = setTimeout(() => {
+      if (trackedSearches.current.has(fingerprint)) return;
+      trackedSearches.current.add(fingerprint);
+      void recordSearchGapEvent({
+        query,
+        resultCount: resources.length,
+        kind: filters.kind,
+        tag: filters.tag,
+      }).catch(() => undefined);
+    }, 800);
+    return () => clearTimeout(timeout);
+  }, [catalog, filters.keyword, filters.kind, filters.tag, resources.length]);
+
   const updateFilter = <Key extends keyof CatalogFilters>(key: Key, value: CatalogFilters[Key]) => setFilters((current) => ({ ...current, [key]: value }));
   const clearFilters = () => setFilters(DEFAULT_CATALOG_FILTERS);
 

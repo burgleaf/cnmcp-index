@@ -1,3 +1,10 @@
+import {
+  computeGapPriorityScore,
+  refreshTaskGaps,
+  resultBucket,
+  sanitizeTaskQuery,
+} from "./task-gaps";
+
 const JSON_HEADERS = {
   "Cache-Control": "no-store",
   "Content-Type": "application/json; charset=utf-8",
@@ -8,8 +15,11 @@ const MAX_BODY_BYTES = 16_384;
 const RESOURCE_ID_PATTERN = /^[a-z0-9](?:[a-z0-9-]{1,78}[a-z0-9])$/;
 const EVENT_ID_PATTERN = /^[A-Za-z0-9._~-]{16,128}$/;
 const EVENT_TYPES = ["command_copy", "source_visit"] as const;
+const RESOURCE_KINDS = ["mcp", "skill", "plugin"] as const;
+const TAG_ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 type EventType = (typeof EVENT_TYPES)[number];
+type ResourceKind = (typeof RESOURCE_KINDS)[number];
 type StatsRow = {
   resource_id: string;
   command_copies: number;
@@ -17,6 +27,13 @@ type StatsRow = {
   updated_at: number;
 };
 type EventInput = { resourceId: string; eventType: EventType; eventId: string };
+type SearchEventInput = {
+  query: string;
+  resultCount: number;
+  eventId: string;
+  kind: ResourceKind | null;
+  tag: string | null;
+};
 type RequestResult = { response: Response; errorCode: string };
 
 class ApiError extends Error {
@@ -155,6 +172,37 @@ function parseEventInput(input: unknown): EventInput {
   return record as EventInput;
 }
 
+function parseSearchEventInput(input: unknown): SearchEventInput {
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    throw new ApiError(400, "INVALID_REQUEST", "Request fields are invalid");
+  }
+  const record = input as Record<string, unknown>;
+  const query = typeof record.query === "string" ? sanitizeTaskQuery(record.query) : null;
+  if (
+    Object.keys(record).some((key) => !["query", "resultCount", "eventId", "kind", "tag"].includes(key)) ||
+    !query ||
+    typeof record.resultCount !== "number" ||
+    !Number.isSafeInteger(record.resultCount) ||
+    record.resultCount < 0 ||
+    record.resultCount > 10_000 ||
+    typeof record.eventId !== "string" ||
+    !EVENT_ID_PATTERN.test(record.eventId) ||
+    (record.kind !== undefined &&
+      (typeof record.kind !== "string" || !RESOURCE_KINDS.includes(record.kind as ResourceKind))) ||
+    (record.tag !== undefined &&
+      (typeof record.tag !== "string" || record.tag.length > 64 || !TAG_ID_PATTERN.test(record.tag)))
+  ) {
+    throw new ApiError(400, "INVALID_REQUEST", "Request fields are invalid");
+  }
+  return {
+    query,
+    resultCount: record.resultCount,
+    eventId: record.eventId,
+    kind: (record.kind as ResourceKind | undefined) ?? null,
+    tag: (record.tag as string | undefined) ?? null,
+  };
+}
+
 function statsPayload(row: StatsRow) {
   return {
     commandCopies: row.command_copies,
@@ -163,25 +211,12 @@ function statsPayload(row: StatsRow) {
   };
 }
 
-async function recordEvent(request: Request, env: WorkerEnv, now: number): Promise<RequestResult> {
-  const origin = requireAllowedOrigin(request, env);
-  const input = parseEventInput(await readJsonBody(request));
-  const catalog = await env.DB.prepare("SELECT active FROM resource_catalog WHERE resource_id = ?1")
-    .bind(input.resourceId)
-    .first<{ active: number }>();
-  if (!catalog || catalog.active !== 1) throw new ApiError(404, "RESOURCE_NOT_FOUND", "Resource was not found");
-
-  const salt = decodeHashSalt(env.HASH_SALT);
+async function consumeRateLimit(request: Request, env: WorkerEnv, now: number, salt: Uint8Array): Promise<void> {
   const limit = parseIntegerSetting(env.EVENT_RATE_LIMIT_PER_HOUR, "EVENT_RATE_LIMIT_PER_HOUR", 1, 100_000);
-  const receiptRetention = parseIntegerSetting(env.RECEIPT_RETENTION_SECONDS, "RECEIPT_RETENTION_SECONDS", 60, 31_536_000);
   const rateRetention = parseIntegerSetting(env.RATE_LIMIT_RETENTION_SECONDS, "RATE_LIMIT_RETENTION_SECONDS", 60, 86_400);
   const bucketStart = Math.floor(now / 3_600_000) * 3_600_000;
   const clientAddress = request.headers.get("CF-Connecting-IP") ?? "unavailable";
-  const [eventKey, rateKey] = await Promise.all([
-    hmacHex(salt, `event|${input.resourceId}|${input.eventType}|${input.eventId}`),
-    hmacHex(salt, `rate|${clientAddress}|${bucketStart}`),
-  ]);
-
+  const rateKey = await hmacHex(salt, `rate|${clientAddress}|${bucketStart}`);
   const rate = await env.DB.prepare(
     `INSERT INTO metric_rate_limits (rate_key, bucket_start, event_count, expires_at)
      VALUES (?1, ?2, 1, ?3)
@@ -194,6 +229,20 @@ async function recordEvent(request: Request, env: WorkerEnv, now: number): Promi
     .first<{ event_count: number }>();
   if (!rate) throw new Error("rate limit update returned no row");
   if (rate.event_count > limit) throw new ApiError(429, "RATE_LIMITED", "Too many events");
+}
+
+async function recordEvent(request: Request, env: WorkerEnv, now: number): Promise<RequestResult> {
+  const origin = requireAllowedOrigin(request, env);
+  const input = parseEventInput(await readJsonBody(request));
+  const catalog = await env.DB.prepare("SELECT active FROM resource_catalog WHERE resource_id = ?1")
+    .bind(input.resourceId)
+    .first<{ active: number }>();
+  if (!catalog || catalog.active !== 1) throw new ApiError(404, "RESOURCE_NOT_FOUND", "Resource was not found");
+
+  const salt = decodeHashSalt(env.HASH_SALT);
+  const receiptRetention = parseIntegerSetting(env.RECEIPT_RETENTION_SECONDS, "RECEIPT_RETENTION_SECONDS", 60, 31_536_000);
+  const eventKey = await hmacHex(salt, `event|${input.resourceId}|${input.eventType}|${input.eventId}`);
+  await consumeRateLimit(request, env, now, salt);
 
   const receipt = await env.DB.prepare(
     `INSERT OR IGNORE INTO metric_receipts (event_key, resource_id, event_type, created_at, expires_at)
@@ -219,6 +268,49 @@ async function recordEvent(request: Request, env: WorkerEnv, now: number): Promi
         counted: Boolean(receipt),
         stats: statsPayload(stats),
       },
+      200,
+      origin,
+      env,
+    ),
+  };
+}
+
+async function recordSearchEvent(request: Request, env: WorkerEnv, now: number): Promise<RequestResult> {
+  const origin = requireAllowedOrigin(request, env);
+  const input = parseSearchEventInput(await readJsonBody(request));
+  const salt = decodeHashSalt(env.HASH_SALT);
+  const retention = parseIntegerSetting(
+    env.TASK_QUERY_RETENTION_SECONDS,
+    "TASK_QUERY_RETENTION_SECONDS",
+    86_400,
+    31_536_000,
+  );
+  const identity = JSON.stringify([input.query, input.kind ?? "", input.tag ?? ""]);
+  const digest = await hmacHex(salt, `gap|${identity}`);
+  const gapId = `gap-${digest.slice(0, 24)}`;
+  const eventKey = await hmacHex(salt, `search-event|${gapId}|${input.eventId}`);
+  await consumeRateLimit(request, env, now, salt);
+
+  const receipt = await env.DB.prepare(
+    `INSERT OR IGNORE INTO search_event_receipts (
+       event_key, gap_id, normalized_query, resource_kind, tag_id, result_count, created_at, expires_at
+     ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)
+     RETURNING event_key`,
+  ).bind(
+    eventKey,
+    gapId,
+    input.query,
+    input.kind,
+    input.tag,
+    input.resultCount,
+    now,
+    now + retention * 1000,
+  ).first<{ event_key: string }>();
+
+  return {
+    errorCode: "OK",
+    response: jsonResponse(
+      { gapId, counted: Boolean(receipt), bucket: resultBucket(input.resultCount) },
       200,
       origin,
       env,
@@ -264,7 +356,7 @@ async function readStats(request: Request, env: WorkerEnv, now: number): Promise
 
 function preflight(request: Request, env: WorkerEnv): RequestResult {
   const url = new URL(request.url);
-  if (!["/v1/events", "/v1/stats"].includes(url.pathname)) {
+  if (!["/v1/events", "/v1/search-events", "/v1/stats"].includes(url.pathname)) {
     throw new ApiError(404, "NOT_FOUND", "Route was not found");
   }
   const origin = requireAllowedOrigin(request, env);
@@ -288,6 +380,7 @@ async function dispatch(request: Request, env: WorkerEnv, now: number): Promise<
   const url = new URL(request.url);
   if (request.method === "OPTIONS") return preflight(request, env);
   if (request.method === "POST" && url.pathname === "/v1/events") return await recordEvent(request, env, now);
+  if (request.method === "POST" && url.pathname === "/v1/search-events") return await recordSearchEvent(request, env, now);
   if (request.method === "GET" && url.pathname === "/v1/stats") return await readStats(request, env, now);
   throw new ApiError(404, "NOT_FOUND", "Route was not found");
 }
@@ -319,9 +412,22 @@ export async function handleRequest(request: Request, env: WorkerEnv, now = Date
 }
 
 export async function cleanupExpired(env: WorkerEnv, now = Date.now()): Promise<void> {
+  const retention = parseIntegerSetting(
+    env.TASK_QUERY_RETENTION_SECONDS,
+    "TASK_QUERY_RETENTION_SECONDS",
+    86_400,
+    31_536_000,
+  );
+  const staleBefore = now - retention * 1000;
   await env.DB.batch([
     env.DB.prepare("DELETE FROM metric_receipts WHERE expires_at <= ?1").bind(now),
+    env.DB.prepare("DELETE FROM search_event_receipts WHERE expires_at <= ?1").bind(now),
     env.DB.prepare("DELETE FROM metric_rate_limits WHERE expires_at <= ?1").bind(now),
+    env.DB.prepare(
+      `DELETE FROM task_gap_ledger
+       WHERE gap_id IN (SELECT gap_id FROM task_gaps WHERE status = 'observed' AND last_seen <= ?1)`,
+    ).bind(staleBefore),
+    env.DB.prepare("DELETE FROM task_gaps WHERE status = 'observed' AND last_seen <= ?1").bind(staleBefore),
   ]);
 }
 
@@ -333,6 +439,7 @@ export default {
     const startedAt = Date.now();
     try {
       await cleanupExpired(env);
+      await refreshTaskGaps(env);
       logRequest("scheduled", 200, "OK", startedAt);
     } catch {
       logRequest("scheduled", 500, "INTERNAL_ERROR", startedAt);
@@ -340,3 +447,5 @@ export default {
     }
   },
 } satisfies ExportedHandler<WorkerEnv>;
+
+export { computeGapPriorityScore, refreshTaskGaps };

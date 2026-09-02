@@ -71,10 +71,10 @@ Pull Request 工作流只有 `contents: read`，不会引用这些凭据。
 
 ## 失败与发布顺序
 
-Worker 工作流固定执行：本地检查与 dry-run → 检查仓库级凭据与已提交的 D1 ID → 用 `d1 execute --file` 导入远程 schema → remote Catalog sync → Worker deploy → 协议烟测。任一步非零退出都会阻止后续步骤。
+Worker 工作流固定执行：本地检查与 dry-run → 检查仓库级凭据与已提交的 D1 ID → 依次用 `d1 execute --file` 导入 `0001_initial_stats.sql` 与 `0002_task_gaps.sql` → remote Catalog sync → Worker deploy → 协议烟测。任一步非零退出都会阻止后续步骤。
 
 Discovery 工作流固定执行：本地检查与 dry-run → 检查仓库级凭据与已提交的非占位 D1 ID → 确认 `GITHUB_TOKEN` secret 存在 → 用 `d1 execute --file` 导入远程 schema → Worker deploy → 协议烟测。不写入 `resources/`，也不做 Catalog 同步。
 
-Pages 工作流固定执行：内容校验/生成 → 同提交 Worker 成功门（仅 Worker 生产依赖路径变化时）→ 用 `d1 execute --file` 导入远程 schema → remote Catalog sync → 静态构建 → 候选 Pages deployment → 完整静态路由烟测 → 将同一 `out/` 发布到生产分支。候选烟测或最终生产上传失败时，原生产 deployment 保持不变；生产上传由 Pages 原子创建新 deployment。远程 schema 不用 `d1 migrations apply`：D1 `/query` 会按分号拆开 `CREATE TRIGGER` 体，导致 `incomplete input`。
+Pages 工作流固定执行：内容校验/生成 → 同提交 Worker 成功门（仅 Worker 生产依赖路径变化时）→ 依次导入两份统计 D1 schema → remote Catalog sync → 静态构建 → 候选 Pages deployment → 完整静态路由烟测 → 将同一 `out/` 发布到生产分支。候选烟测或最终生产上传失败时，原生产 deployment 保持不变；生产上传由 Pages 原子创建新 deployment。远程 schema 不用 `d1 migrations apply`：D1 `/query` 会按分号拆开 `CREATE TRIGGER` 体，导致 `incomplete input`。
 
 统计 Worker 的 Wrangler 命令来自 `worker/package-lock.json` 锁定的 `wrangler@4.127.1`。Discovery Worker 使用 `discovery/package-lock.json` 中的同一 Wrangler 版本。远程步骤只会在默认分支 push，或 GitHub Actions 页面对 `Deploy Worker Production` / `Deploy Pages Production` / `Deploy Discovery Production` 的手动 `workflow_dispatch` 中执行。手动发布 Pages 时不要求同一提交的 Worker 或 Discovery 工作流已成功。

@@ -1,6 +1,7 @@
 import { env } from "cloudflare:workers";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  cleanupExpired,
   computeGapPriorityScore,
   handleRequest,
   refreshTaskGaps,
@@ -157,6 +158,16 @@ describe("缺口优先级与状态台账", () => {
       { event_type: "observed", count: 1 },
       { event_type: "qualified", count: 1 },
     ]);
+  });
+
+  it("保留窗口结束后清理仍未升级的查询、缺口和台账", async () => {
+    const thirtyOneDays = 31 * 24 * 60 * 60 * 1000;
+    await handleRequest(searchRequest("过期观察任务", 0), env, NOW - thirtyOneDays);
+    await cleanupExpired(env, NOW);
+
+    expect(await env.DB.prepare("SELECT COUNT(*) AS count FROM search_event_receipts").first()).toEqual({ count: 0 });
+    expect(await env.DB.prepare("SELECT COUNT(*) AS count FROM task_gaps").first()).toEqual({ count: 0 });
+    expect(await env.DB.prepare("SELECT COUNT(*) AS count FROM task_gap_ledger").first()).toEqual({ count: 0 });
   });
 
   it("迁移创建缺口、事件回执、台账、索引和聚合触发器", async () => {

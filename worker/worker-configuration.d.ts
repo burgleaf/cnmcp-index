@@ -4,6 +4,9 @@ interface WorkerEnv {
   EVENT_RATE_LIMIT_PER_HOUR: string;
   RECEIPT_RETENTION_SECONDS: string;
   RATE_LIMIT_RETENTION_SECONDS: string;
+  TASK_QUERY_RETENTION_SECONDS: string;
+  GAP_QUALIFY_MIN_SEARCHES: string;
+  GAP_QUALIFY_MIN_SCORE: string;
   HASH_SALT?: string;
 }
 

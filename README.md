@@ -8,7 +8,7 @@
 
 - 静态站点：Next.js 静态导出，发布到 Cloudflare Pages
 - 内容目录：Git 中的 `resources/`、`catalog/` 与 Schema
-- 匿名统计：独立的 Cloudflare Worker + D1，记录命令复制量和外链访问量
+- 匿名统计：独立的 Cloudflare Worker + D1，记录命令复制量、外链访问量和经清洗聚合的搜索缺口
 - 项目动态：独立的 Discovery Worker + D1 定期追踪公开仓库的 Stars、Forks 与维护活跃度；候选数据不直接写入正式 Catalog
 
 站点不提供注册、登录、评论或站内投稿后台。推荐在[投稿页](https://www.cnmcp.com/submit/)输入源码 GitHub 仓库地址、复制提示词，交给 AI 助手通过 GitHub API 提交 Pull Request；也可以手写 PR。内容经维护者审核并合并到默认分支后才会进入正式 Catalog。

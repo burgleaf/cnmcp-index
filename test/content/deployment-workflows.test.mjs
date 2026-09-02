@@ -57,6 +57,7 @@ test("Worker 生产工作流使用仓库级 Secrets，远程步骤严格按迁�
   assert.match(source, /WORKER_API_URL: https:\/\/cnmcp-stats-api\.burgleaf\.workers\.dev/);
   assert.match(source, /d1 execute DB --remote/);
   assert.match(source, /--file=worker\/migrations\/0001_initial_stats\.sql/);
+  assert.match(source, /--file=worker\/migrations\/0002_task_gaps\.sql/);
   assert.doesNotMatch(source, /d1 migrations apply/);
 });
 
@@ -81,6 +82,7 @@ test("Pages 生产工作流在 Worker 安全门和 D1 同步后构建，先烟�
   assert.match(source, /worker\/node_modules\/wrangler\/bin\/wrangler\.js pages deploy/);
   assert.match(source, /d1 execute DB --remote/);
   assert.match(source, /--file=worker\/migrations\/0001_initial_stats\.sql/);
+  assert.match(source, /--file=worker\/migrations\/0002_task_gaps\.sql/);
   assert.doesNotMatch(source, /d1 migrations apply/);
 });
 

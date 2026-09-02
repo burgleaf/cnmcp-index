@@ -69,7 +69,9 @@ jobs:
           node scripts/check-cloudflare-prerequisites.mjs hash-salt "$RUNNER_TEMP/worker-secrets.json"
 
       - name: Apply remote D1 migrations
-        run: node worker/node_modules/wrangler/bin/wrangler.js d1 execute DB --remote --config worker/wrangler.jsonc --file=worker/migrations/0001_initial_stats.sql
+        run: |
+          node worker/node_modules/wrangler/bin/wrangler.js d1 execute DB --remote --config worker/wrangler.jsonc --file=worker/migrations/0001_initial_stats.sql
+          node worker/node_modules/wrangler/bin/wrangler.js d1 execute DB --remote --config worker/wrangler.jsonc --file=worker/migrations/0002_task_gaps.sql
 
       - name: Synchronize remote D1 resource catalog
         run: node scripts/sync-stats-catalog.mjs --remote --database cnmcp-stats --config worker/wrangler.jsonc
