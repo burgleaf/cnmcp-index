@@ -36,6 +36,7 @@ export function MarkdownContent({ markdown }: Readonly<{ markdown: string }>) {
         skipHtml
         urlTransform={sanitizeMarkdownUrl}
         components={{
+          h1: ({ children }) => <h2>{children}</h2>,
           a: ({ href, children, title }) => {
             const external = isExternalLink(href);
             return (

@@ -122,8 +122,8 @@ ${skillUrl}
 执行要求：
 1. 按规范化后的源码地址和资源 id 查重。同一仓库不得重复收录；已有条目应更新而不是另开目录。发现 Issue 只是候选队列，不能当成已经收录，也不要信任它的类型标签。
 2. 阅读源仓库 README、许可证、安装说明、Skill/MCP/插件清单，自行判断类型只能是 mcp、skill 或 plugin。plugin 必须设置 pluginScope: "ai-coding-tool"。类型无法判断时先问我，不要猜测成 unknown 资源类型。
-3. 最终目录必须是 resources/<resource-id>/，目录名与 resource.json 的 id 一致，至少包含 resource.json。可选安全 README.md 和本地图片。不要提交 catalog.json、临时文件、密钥或站点生成物。
-4. 标签必须来自 catalog/tags.json，平台必须来自 catalog/platforms.json。兼容性要有 status 和真实核验日期；partial 必须 note；unsupported 不得有 installations。安装命令只作为文本提交，禁止在投稿过程中执行第三方安装命令。
+3. 最终目录必须是 resources/<resource-id>/，目录名与 resource.json 的 id 一致，必须包含 resource.json 和安全的 README.md，可选本地图片。README 要说明它解决什么问题、核心能力、适合谁、使用前要知道和官方资源。不要提交 catalog.json、临时文件、密钥或站点生成物。
+4. 标签必须来自 catalog/tags.json，平台必须来自 catalog/platforms.json。兼容性只记录上游明确声明并附真实核验日期；上游未声明时使用 unknown，不要根据协议或目录结构推断。partial 必须 note；unsupported 不得有 installations。安装命令只作为文本提交，禁止在投稿过程中执行第三方安装命令。只有上游明确提供平台专属资产时，才把它简短摘录到 README。
 5. 投稿者不得设置或修改 featured，也不得新增 Schema 不存在的 verified 或 reviewStatus。选择中英双语时同时填写 name/nameEn 与 summary/summaryEn。许可证填写 SPDX；作者和来源必须如实记录。
 6. 在临时目录或等价环境运行 yarn validate:resources；能跑 yarn lint 时一并跑。修复确定的结构或格式错误。
 7. GitHub 未授权时先请我连接后重试。有写权限就在索引仓库开分支；否则在我的 fork 中创建或复用投稿分支，只上传这一条资源，并向主仓库发起 Ready for review 的正式 PR，不要默认 Draft。只有我明确要求草稿或材料确实未完成时才用 Draft，并写清剩余工作。

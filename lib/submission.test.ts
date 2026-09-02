@@ -83,6 +83,8 @@ describe("源码仓库地址与 AI 投稿提示词", () => {
     expect(prompt).toContain("不要默认 Draft");
     expect(prompt).toContain("featured");
     expect(prompt).toContain("禁止在投稿过程中执行第三方安装命令");
+    expect(prompt).toContain("README 要说明它解决什么问题");
+    expect(prompt).toContain("上游未声明时使用 unknown");
     expect(prompt).toContain("<!-- cnmcp-flow: submission -->");
     expect(buildAgentSubmissionPrompt({
       sourceRepositoryUrl: "https://gitlab.com/example/cool-mcp",

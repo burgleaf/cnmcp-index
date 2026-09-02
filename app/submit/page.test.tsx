@@ -16,7 +16,8 @@ describe("中文投稿页", () => {
     expect(html).toContain("使用 Issue Form");
     expect(html).toContain("直接提交 Pull Request");
     expect(html).toContain("resource.json 示例");
-    expect(html).toContain("原作者支持平台的证据");
+    expect(html).toContain("只有上游明确说明时才补充平台接入证据");
+    expect(html).toContain("每个资源必须提供面向详情页的 README");
     expect(html).toContain("featured");
     expect(html).toContain("verified");
     expect(html).toContain("reviewStatus");

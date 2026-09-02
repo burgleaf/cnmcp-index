@@ -62,7 +62,7 @@ export default function SubmitPage() {
         <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="text-2xl font-bold text-ink">使用 Issue Form</h2>
           <p className="mt-3 leading-7 text-slate-700">
-            适合不想直接修改文件、也不使用 AI 助手的投稿者。表单会收集资源类型、源码地址、中文摘要、许可证以及原作者支持平台的证据和核验日期。
+            适合不想直接修改文件、也不使用 AI 助手的投稿者。表单会收集资源类型、源码地址、中文摘要和许可证；只有上游明确说明时才补充平台接入证据。
           </p>
           <div className="mt-5">
             {links ? <ExternalAction href={links.issueForm}>打开资源投稿表单</ExternalAction> : <span className="text-sm text-slate-500">配置仓库地址后提供入口</span>}
@@ -72,7 +72,7 @@ export default function SubmitPage() {
         <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="text-2xl font-bold text-ink">直接提交 Pull Request</h2>
           <p className="mt-3 leading-7 text-slate-700">
-            在 <code>resources/&lt;resource-id&gt;/</code> 新增 <code>resource.json</code>，可选提交安全 Markdown 和本地图片，并使用 PR 模板逐项自检。
+            在 <code>resources/&lt;resource-id&gt;/</code> 新增 <code>resource.json</code> 和安全的 <code>README.md</code>，可选提交本地图片，并使用 PR 模板逐项自检。
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             {links ? <ExternalAction href={links.pullRequest}>发起 Pull Request</ExternalAction> : <span className="text-sm text-slate-500">配置仓库地址后提供入口</span>}
@@ -95,8 +95,9 @@ export default function SubmitPage() {
         <ul className="mt-4 list-disc space-y-2 pl-6 leading-7 text-slate-700">
           <li>类型只能是 MCP、Skill 或面向已注册 AI 编程工具的插件。</li>
           <li>必须提供公开 HTTPS 源码地址、许可证、作者，以及面向职业、任务和能力的受控标签。</li>
+          <li>每个资源必须提供面向详情页的 README，说明解决的问题、核心能力、适用人群、使用注意事项和官方资源。</li>
           <li>平台支持只记录原作者声明，附核验日期与证据链接；它不会影响质量排序。</li>
-          <li>详情页统一生成 AI 安装提示词；站点、CI 和审核流程都不会执行第三方命令。</li>
+          <li>详情页按 AI 工具提供简明安装命令或提示词；站点、CI 和审核流程都不会执行第三方命令。</li>
           <li>投稿者不得控制 <code>featured</code>，也不得添加不存在的 <code>verified</code> 或 <code>reviewStatus</code>。精选不代表安全审计。</li>
         </ul>
       </section>

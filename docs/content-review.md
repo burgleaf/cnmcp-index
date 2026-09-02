@@ -1,26 +1,21 @@
-# 内容审核与 GitHub 保护设置
+# PR 审核与 GitHub 保护设置
 
-## 仓库内已实现边界
+## 仓库内自动校验
 
-`.github/workflows/content-review.yml` 对以下路径执行等价于 CODEOWNERS 的动态维护者审核门禁：
+所有相关 Pull Request 只运行一个工作流：`.github/workflows/pr-validation.yml` 的 `Content, Web and Worker validation`。它在 PR 合并结果上执行资源校验、Catalog 生成、Lint、类型检查、全量测试和静态构建；涉及 Worker 或 Discovery 时，再执行对应工程的检查和干运行构建。
 
-- `resources/**`
-- `catalog/platforms.json`
-- `catalog/tags.json`
-- `schemas/**`
+工作流仅有 `contents: read` 权限，不读取 Cloudflare 生产凭据，也不会执行投稿资源的第三方安装命令。未合并的投稿不会进入正式 Catalog；生产部署仅从默认分支触发。
 
-检查只从受信任的 PR 基准分支检出审核脚本，不运行投稿分支中的代码或安装命令。只接受对**当前 PR 提交**的批准，批准者必须由 GitHub API 确认为仓库具有 `write`、`maintain` 或 `admin` 权限。脚本还会读取基准与投稿版本的 `resource.json`，在日志和 Job Summary 中明确列出每一项 `featured: false → true` 或 `true → false` 变化。
-
-未合并的投稿只存在于 PR 分支。正式 Catalog 的生成和生产发布必须只使用默认分支；PR 工作流不得获得 Cloudflare Pages、D1 或 Worker 的生产写权限。`featured` 仅在维护者审核合并后才能影响首页精选。`sourceStats` 是维护者从公开上游同步的质量事实，投稿者不得自行填写或修改；质量公式与数据边界见 [`resource-ranking.md`](./resource-ranking.md)。
+资源内容要求由 Schema、资源校验和 PR 模板共同约束：每个条目都要有 `resource.json` 与安全的 `README.md`，平台信息只能基于上游明确声明，投稿者不得修改 `featured`、`sourceStats` 或伪造审核字段。质量评分与维护者负责的数据边界见 [`resource-ranking.md`](./resource-ranking.md)。
 
 ## 必须在 GitHub 平台侧启用
 
-仓库文件无法自行强制分支规则。管理员必须在默认分支的 Ruleset 或 Branch protection rule 中完成以下设置：
+仓库文件不能自行阻止合并。仓库管理员必须为默认分支 `main` 创建 Ruleset（或等价的 Branch protection rule），并启用以下最小规则：
 
-1. 启用“Require a pull request before merging”。
-2. 将 `Content Maintainer Review / Protected Content Review` 设为 required status check。
-3. 启用新提交后撤销旧批准（dismiss stale approvals），并禁止未通过 required checks 的绕过；是否允许管理员绕过应由仓库治理策略明确决定。
-4. 将后续内容校验/静态构建工作流也设为 required status checks。
-5. 生产部署工作流只允许默认分支触发。Cloudflare 凭据使用仓库级 Actions secrets（`CLOUDFLARE_API_TOKEN`、`CLOUDFLARE_ACCOUNT_ID`），不经过 Pull Request 工作流。
+1. 必须通过 Pull Request 合并，并禁止直接推送到 `main`。
+2. 至少需要 1 个批准；新提交后撤销旧批准。
+3. 要求解决所有 review conversation。
+4. 将 `Content, Web and Worker validation` 设为 required status check。
+5. 不允许绕过未通过的 required checks；管理员绕过权限应按仓库治理策略单独决定。
 
-即使将来增加 `.github/CODEOWNERS`，CODEOWNERS 文件本身也不能强制审核；仍需在平台侧启用“Require review from Code Owners”和默认分支保护。当前仓库未配置可验证的 Git remote/维护者账号，因此没有猜测不存在的用户名或团队，而使用仓库权限动态判定维护者。
+如果维护者名单固定，可额外配置 `.github/CODEOWNERS` 并在 Ruleset 中要求 Code Owner 批准；否则，一个具备合并权限的维护者批准即可。生产部署工作流继续只允许默认分支触发，并使用仓库级 Actions secrets。

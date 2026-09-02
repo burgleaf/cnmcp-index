@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import type { Platform, Resource } from "./catalog-types";
+import type { Resource } from "./catalog-types";
 import { PRODUCTION_SITE_URL } from "./env";
 
 export const DEFAULT_SOCIAL_IMAGE_PATH = "/images/resource-placeholder.svg";
@@ -77,17 +77,8 @@ export function createResourceMetadata(resource: Resource): Metadata {
   };
 }
 
-export function createResourceJsonLd(
-  resource: Resource,
-  platforms: ReadonlyArray<Platform>,
-): Readonly<Record<string, unknown>> {
+export function createResourceJsonLd(resource: Resource): Readonly<Record<string, unknown>> {
   assertPublicResource(resource);
-  const platformNames = new Map(platforms.map((platform) => [platform.id, platform.name]));
-  const compatiblePlatforms = resource.compatibility.map((compatibility) => ({
-    "@type": "PropertyValue",
-    name: platformNames.get(compatibility.platform) ?? compatibility.platform,
-    value: compatibility.status,
-  }));
   const isSoftware = resource.kind === "mcp" || resource.kind === "plugin";
 
   return {
@@ -113,16 +104,12 @@ export function createResourceJsonLd(
     ...(isSoftware
       ? {
           applicationCategory: "DeveloperApplication",
-          runtimePlatform: resource.compatibility.map(
-            (entry) => platformNames.get(entry.platform) ?? entry.platform,
-          ),
         }
       : {}),
     additionalProperty: [
       { "@type": "PropertyValue", name: "资源类型", value: resource.kind },
       { "@type": "PropertyValue", name: "综合质量", value: resource.quality?.score ?? "未评分" },
       { "@type": "PropertyValue", name: "GitHub Stars", value: resource.quality?.stars ?? 0 },
-      ...compatiblePlatforms,
     ],
   };
 }

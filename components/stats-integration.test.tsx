@@ -3,7 +3,7 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 
 import type { ResourceSummary } from "@/lib/catalog-types";
-import { detailFixturePlatforms, detailFixtureResource } from "@/test/fixtures/resource-detail";
+import { detailFixtureResource } from "@/test/fixtures/resource-detail";
 
 import { ResourceDetail } from "./resource-detail";
 import { ResourceGallery } from "./resource-gallery";
@@ -107,7 +107,7 @@ describe("Web 统计集成", () => {
     })));
     global.fetch = fetchMock;
 
-    render(<ResourceDetail platforms={detailFixturePlatforms} resource={detailFixtureResource} />);
+    render(<ResourceDetail resource={detailFixtureResource} />);
 
     await waitFor(() => expect(screen.getByText("7")).toBeTruthy());
     expect(screen.getByText("命令/配置复制次数")).toBeTruthy();
@@ -123,12 +123,12 @@ describe("Web 统计集成", () => {
     ["网络错误", () => Promise.reject(new Error("offline"))],
   ])("Worker %s 时统计降级且静态详情与 AI 安装入口仍完整", async (_label, implementation) => {
     global.fetch = jest.fn(implementation) as unknown as typeof fetch;
-    render(<ResourceDetail platforms={detailFixturePlatforms} resource={detailFixtureResource} />);
+    render(<ResourceDetail resource={detailFixtureResource} />);
 
     await waitFor(() => expect(screen.getByText(/统计服务暂不可用/)).toBeTruthy());
     expect(screen.getByRole("heading", { name: detailFixtureResource.name })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "复制 AI 安装提示词" })).toBeTruthy();
-    expect(screen.getByRole("link", { name: "源码仓库" }).getAttribute("href")).toBe(detailFixtureResource.repository);
+    expect(screen.getByRole("button", { name: "复制安装内容" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "查看源代码 ↗" }).getAttribute("href")).toBe(detailFixtureResource.repository);
     expect(screen.queryByText("命令/配置复制次数")).toBeNull();
   });
 
@@ -137,14 +137,14 @@ describe("Web 统计集成", () => {
     global.fetch = jest.fn((_input: RequestInfo | URL, init?: RequestInit) => new Promise<Response>((_resolve, reject) => {
       init?.signal?.addEventListener("abort", () => reject(new DOMException("Aborted", "AbortError")));
     })) as unknown as typeof fetch;
-    render(<ResourceDetail platforms={detailFixturePlatforms} resource={detailFixtureResource} />);
+    render(<ResourceDetail resource={detailFixtureResource} />);
 
     await act(async () => {
       await jest.advanceTimersByTimeAsync(8_000);
     });
     expect(screen.getByText(/统计服务暂不可用/)).toBeTruthy();
     expect(screen.getByRole("heading", { name: detailFixtureResource.name })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "复制 AI 安装提示词" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "复制安装内容" })).toBeTruthy();
     jest.useRealTimers();
   });
 
@@ -159,10 +159,10 @@ describe("Web 统计集成", () => {
       }));
     });
     global.fetch = fetchMock as unknown as typeof fetch;
-    render(<ResourceDetail platforms={detailFixturePlatforms} resource={detailFixtureResource} />);
+    render(<ResourceDetail resource={detailFixtureResource} />);
     await waitFor(() => expect(screen.getByLabelText("统计数据可用")).toBeTruthy());
 
-    for (const name of ["源码仓库", "官方网站", "使用文档"]) {
+    for (const name of ["查看源代码 ↗", "访问官网 ↗", "阅读使用文档 ↗"]) {
       const link = screen.getByRole("link", { name });
       const click = new MouseEvent("click", { bubbles: true, cancelable: true });
       expect(link.dispatchEvent(click)).toBe(true);

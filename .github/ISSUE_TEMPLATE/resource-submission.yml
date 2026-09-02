@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        感谢投稿。请提供可核验的源码、许可证、使用场景和上游支持证据。详情页会生成 AI 安装提示词，维护者和站点不会自动执行第三方命令。
+        感谢投稿。请提供可核验的源码、许可证和使用场景。详情页会按 AI 工具提供简明安装内容，维护者和站点不会自动执行第三方命令。
   - type: dropdown
     id: resource-kind
     attributes:
@@ -41,8 +41,8 @@ body:
   - type: textarea
     id: platform-compatibility
     attributes:
-      label: 原作者支持的平台
-      description: 只记录上游明确声明；填写状态、最后核验日期、必要说明和证据链接。未知时请写 unknown，不要猜测。
+      label: 上游平台接入说明
+      description: 只记录上游明确声明；有则填写状态、核验日期和证据链接，未声明则写 unknown，不要根据协议或目录结构猜测。
       placeholder: |
         Codex: supported，2026-01-01，证据 https://...
         Claude Code: unknown，2026-01-01，尚未核验。

@@ -17,9 +17,10 @@ description: Submits an MCP, Skill, or AI coding-tool plugin to the CNMCP catalo
 
 - 用 GitHub API 开 **Ready for review** 的正式 PR，不要默认 Draft
 - 不要完整克隆索引仓库
-- 只写 `resources/<id>/`，至少包含 `resource.json`
+- 只写 `resources/<id>/`，必须包含 `resource.json` 和面向详情页的 `README.md`
 - 类型仅限 `mcp` / `skill` / `plugin`；plugin 必须 `pluginScope: "ai-coding-tool"`
 - 不得设置 `featured`，不得新增 `verified` 或 `reviewStatus`
 - 不得执行第三方安装命令
+- 平台信息只摘录上游明确说明；未声明时使用 `unknown`，不推断支持关系
 - 一个 PR 只包含一条资源
 - GitHub 未授权时先请用户连接后重试

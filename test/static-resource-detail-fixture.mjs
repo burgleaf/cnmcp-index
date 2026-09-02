@@ -84,7 +84,8 @@ async function verifyResourceHtml(targetRoot, resource) {
     resource.summary,
     resource.author.name,
     resource.license,
-    "最后核验日期",
+    "可信来源",
+    "质量与活跃度",
     "统计数据加载中",
     'rel="noopener noreferrer"',
     'target="_blank"',
@@ -100,10 +101,11 @@ async function verifyResourceHtml(targetRoot, resource) {
   assert.equal(jsonLd.codeRepository, resource.repository, `${resource.id} JSON-LD repository`);
   assert.equal(jsonLd.license, resource.license, `${resource.id} JSON-LD license`);
   assert.equal(jsonLd.author.name, resource.author.name, `${resource.id} JSON-LD author`);
+  assert.equal(jsonLd.runtimePlatform, undefined, `${resource.id} JSON-LD 不应暴露平台兼容性`);
   assert.deepEqual(
-    jsonLd.additionalProperty.slice(3).map((entry) => entry.name),
-    ["Codex", "Claude Code"],
-    `${resource.id} JSON-LD 兼容平台`,
+    jsonLd.additionalProperty.map((entry) => entry.name),
+    ["资源类型", "综合质量", "GitHub Stars"],
+    `${resource.id} JSON-LD 仅保留资源与质量信息`,
   );
   if (resource.kind === "skill") assert.equal(jsonLd["@type"], "CreativeWork");
   else assert.deepEqual(jsonLd["@type"], ["CreativeWork", "SoftwareSourceCode"]);
@@ -163,19 +165,15 @@ async function main() {
 
     const mcpHtml = await readFile(path.join(targetRoot, "out", "resources", "acceptance-mcp", "index.html"), "utf8");
     for (const expected of [
-      "复制 AI 安装提示词",
-      "先阅读源码仓库和官方安装文档",
-      "检查我的操作系统",
-      "完整卸载",
+      "复制安装内容",
+      "acceptance-mcp install --token",
+      "Cursor",
+      "Gemini CLI",
       "仅支持本地项目，远程工作区需手动配置",
       "隔离验收说明",
     ]) assertContains(mcpHtml, expected, "MCP AI 安装与 Markdown");
     const pluginHtml = await readFile(path.join(targetRoot, "out", "resources", "acceptance-plugin", "index.html"), "utf8");
-    assertContains(pluginHtml, "原作者支持的平台", "plugin 上游支持边界");
-    for (const label of ["原生支持", "支持", "部分支持", "不支持", "兼容性未知"]) {
-      const allHtml = await Promise.all(PUBLIC_RESOURCE_IDS.map((id) => readFile(path.join(targetRoot, "out", "resources", id, "index.html"), "utf8")));
-      assert.ok(allHtml.some((html) => html.includes(label)), `静态详情缺少兼容五态：${label}`);
-    }
+    assert.ok(!pluginHtml.includes("原作者支持的平台"), "详情页不应继续展示平台兼容卡片");
 
     const sitemap = await readFile(path.join(targetRoot, "out", "sitemap.xml"), "utf8");
     for (const expected of [

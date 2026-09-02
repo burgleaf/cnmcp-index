@@ -67,6 +67,11 @@ test("合法 MCP、Skill、AI 编程插件及五种兼容状态均通过", async
   });
 });
 
+test("每个资源都必须提供 README.md", () =>
+  expectInvalid(async (root) => {
+    await rm(path.join(root, "resources", "beta-skill", "README.md"));
+  }, [/\[beta-skill\].*README\.md \$:/, /每个资源都必须提供 README\.md/]));
+
 test("规范化源码地址移除大小写、.git、查询、片段和尾斜杠差异", () => {
   assert.equal(
     normalizeSourceUrl("https://GitHub.com/CNMCP-Fixtures/Alpha-MCP.git/?ref=main#readme"),

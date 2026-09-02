@@ -49,6 +49,8 @@ test("投稿 Skill 要求 GitHub API 正式 PR，并禁止 featured 与执行安
     assert.match(document, /reviewStatus/);
     assert.match(document, /不执行第三方安装命令|不得执行第三方安装命令/);
     assert.match(document, /pluginScope/);
+    assert.match(document, /README\.md/);
+    assert.match(document, /unknown/);
   }
   assert.match(skill, /yarn validate:resources/);
   assert.match(cursorSkill, /\.agents\/skills\/submit-cnmcp-resource\/SKILL\.md/);

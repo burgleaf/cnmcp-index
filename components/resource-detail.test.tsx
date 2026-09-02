@@ -1,13 +1,13 @@
 import { renderToStaticMarkup } from "react-dom/server";
 
-import { detailFixturePlatforms, detailFixtureResource } from "@/test/fixtures/resource-detail";
+import { detailFixtureResource } from "@/test/fixtures/resource-detail";
 
 import { ResourceDetail } from "./resource-detail";
 
 describe("ResourceDetail 隔离 fixture 静态 HTML", () => {
   it("展示资源用途、入口、结构化说明和快速安装", () => {
     const html = renderToStaticMarkup(
-      <ResourceDetail platforms={detailFixturePlatforms} resource={detailFixtureResource} />,
+      <ResourceDetail resource={detailFixtureResource} />,
     );
 
     expect(html).toContain("隔离详情 Fixture");
@@ -30,7 +30,7 @@ describe("ResourceDetail 隔离 fixture 静态 HTML", () => {
     expect(html).toContain("1,200");
     expect(html).not.toContain("原作者支持的平台");
     expect(html).not.toContain("查看上游证据");
-    expect(html).toContain("复制安装命令");
+    expect(html).toContain("复制安装内容");
     expect(html).toContain("tool install --token");
     expect(html).toContain("统计数据加载中");
     expect(html).not.toContain("安装成功次数");
@@ -38,7 +38,7 @@ describe("ResourceDetail 隔离 fixture 静态 HTML", () => {
 
   it("所有详情外链使用新窗口隔离属性", () => {
     const html = renderToStaticMarkup(
-      <ResourceDetail platforms={detailFixturePlatforms} resource={detailFixtureResource} />,
+      <ResourceDetail resource={detailFixtureResource} />,
     );
     const externalLinkCount = (html.match(/target="_blank"/g) ?? []).length;
     const isolatedLinkCount = (html.match(/rel="noopener noreferrer"/g) ?? []).length;

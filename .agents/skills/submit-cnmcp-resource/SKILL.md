@@ -27,7 +27,7 @@ description: Submits an MCP, Skill, or AI coding-tool plugin to the CNMCP catalo
    - `docs/content-review.md`
    - `.github/pull_request_template.md`
    - 现有 `resources/*/resource.json`
-2. 把缺少的信息集中一次问完：中文名称与摘要、许可证 SPDX、作者、Codex / Claude Code 兼容状态与核验依据。能从源仓库 README 确定的不要再问。
+2. 把缺少的信息集中一次问完：中文名称与摘要、许可证 SPDX、作者、适用人群和核心使用场景。平台信息只从源仓库 README 或官方文档提取；上游未声明时填写 `unknown`，不要为了补齐平台字段要求用户猜测。
 3. 阅读源仓库 README、许可证、安装说明、Skill / MCP / 插件清单，自行判断 `kind`：
    - `mcp`：MCP 服务器或 MCP 工具包
    - `skill`：Agent Skill（如 `SKILL.md`）
@@ -58,10 +58,11 @@ description: Submits an MCP, Skill, or AI coding-tool plugin to the CNMCP catalo
    - **禁止**新增 `verified` 或 `reviewStatus`
    - 选择双语时同时填 `nameEn` / `summaryEn`
    - 不要把真实密钥写进文件
-   - `README.md` 必须面向详情页阅读：包含资源简介、核心能力、快速开始和资源入口；简洁的上游内容摘录或人工摘要均可。
+   - `README.md` 必须面向详情页阅读：包含“它解决什么问题”“核心能力”“适合谁”“使用前要知道”和“官方资源”；简洁的上游内容摘录或人工摘要均可。
    - README 必须通过 HTTPS 链接标注上游仓库或文档来源；不直接嵌入上游原始 HTML，也不复制与资源使用无关的徽章、广告或长篇变更记录。
-   - 快速开始优先给出可复制的官方命令；存在平台差异时才分平台列出，完整安装细节链接至上游文档。
-7. **禁止执行**源仓库或 `resource.json` 中的第三方安装命令（包括 `npx`、`pip`、`npm install` 指向该项目）。兼容性根据 README、文档和公开说明填写；不确定就用 `unknown` 并写 note。
+   - 只有上游明确提供平台专属资产、命令或配置时，才在 README 增加“上游明确提供的接入方式”并做简短摘录；没有就不添加平台章节，也不推断支持关系。
+   - 上游提供可复制的官方命令时可以收录为文本；完整安装细节链接至上游文档。详情页会另外生成按工具区分的简明安装内容。
+7. **禁止执行**源仓库或 `resource.json` 中的第三方安装命令（包括 `npx`、`pip`、`npm install` 指向该项目）。兼容性只根据 README、官方文档和公开说明填写；协议通用、目录结构相似或理论上可安装都不算支持证据。不确定就用 `unknown` 并写 note。
 8. 校验：在临时目录放入 `schemas/`、`catalog/`、`resources/`（含现有条目与新条目）后运行 `yarn validate:resources`。能跑时再跑 `yarn lint`。不要把 QA、预览、`catalog.json` 或临时文件放进 PR。
 9. 发布：
    - 有上游写权限：直接在索引仓库开 `submit/<resource-id>` 分支

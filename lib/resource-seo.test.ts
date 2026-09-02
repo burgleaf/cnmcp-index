@@ -1,4 +1,4 @@
-import { detailFixturePlatforms, detailFixtureResource } from "@/test/fixtures/resource-detail";
+import { detailFixtureResource } from "@/test/fixtures/resource-detail";
 
 import {
   createResourceJsonLd,
@@ -45,30 +45,28 @@ describe("资源 SEO", () => {
     }
   });
 
-  it("输出含类型、作者、许可证和兼容平台的软件结构化数据", () => {
-    const jsonLd = createResourceJsonLd(detailFixtureResource, detailFixturePlatforms);
+  it("输出类型、作者和许可证，但不把平台兼容性写入结构化数据", () => {
+    const jsonLd = createResourceJsonLd(detailFixtureResource);
 
     expect(jsonLd["@type"]).toEqual(["CreativeWork", "SoftwareSourceCode"]);
     expect(jsonLd.author).toMatchObject({ name: "Fixture 作者" });
     expect(jsonLd.license).toBe("MIT");
-    expect(jsonLd.runtimePlatform).toEqual(["Codex", "Claude Code", "注册平台"]);
     expect(jsonLd.additionalProperty).toEqual(expect.arrayContaining([
       expect.objectContaining({ name: "资源类型", value: "mcp" }),
-      expect.objectContaining({ name: "Codex", value: "native" }),
     ]));
+    expect(jsonLd).not.toHaveProperty("runtimePlatform");
     expect(serializeJsonLd({ value: "</script>" })).not.toContain("</script>");
   });
 
   it("Skill 仅使用 CreativeWork；所有非公开状态都拒绝 Metadata 和 JSON-LD", () => {
     expect(createResourceJsonLd(
       { ...detailFixtureResource, id: "fixture-skill", kind: "skill" },
-      detailFixturePlatforms,
     )["@type"]).toBe("CreativeWork");
 
     for (const visibility of ["unlisted", "removed"] as const) {
       const hidden = { ...detailFixtureResource, visibility };
       expect(() => createResourceMetadata(hidden)).toThrow("不得生成 SEO 输出");
-      expect(() => createResourceJsonLd(hidden, detailFixturePlatforms)).toThrow("不得生成 SEO 输出");
+      expect(() => createResourceJsonLd(hidden)).toThrow("不得生成 SEO 输出");
     }
   });
 });

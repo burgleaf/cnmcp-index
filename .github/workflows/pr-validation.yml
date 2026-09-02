@@ -76,9 +76,6 @@ jobs:
       - name: Generate deterministic catalogs
         run: node .yarn/releases/yarn-1.22.19.cjs generate:catalog
 
-      - name: Check featured and maintainer-review security policy
-        run: node --test test/content/content-review-policy.test.mjs test/content/submission-assets.test.mjs
-
       - name: Lint root application and scripts
         run: node .yarn/releases/yarn-1.22.19.cjs lint
 

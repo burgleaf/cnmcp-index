@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import yaml from "js-yaml";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-const workflowNames = ["pr-validation.yml", "content-review.yml", "deploy-worker.yml", "deploy-pages.yml", "deploy-discovery.yml"];
+const workflowNames = ["pr-validation.yml", "deploy-worker.yml", "deploy-pages.yml", "deploy-discovery.yml"];
 
 async function workflow(name) {
   const source = await readFile(path.join(ROOT, ".github", "workflows", name), "utf8");
@@ -17,7 +17,7 @@ function stepIndex(value, jobName, stepName) {
   return value.jobs[jobName].steps.findIndex((step) => step.name === stepName);
 }
 
-test("所有任务 8 工作流 YAML 可解析且第三方 actions 固定到完整 commit", async () => {
+test("所有任务 4 个工作流 YAML 可解析且第三方 actions 固定到完整 commit", async () => {
   for (const name of workflowNames) {
     const { source, value } = await workflow(name);
     assert.equal(typeof value, "object", name);
@@ -32,7 +32,7 @@ test("PR 工作流只有只读权限，无 Cloudflare secret，并按要求执�
   assert.deepEqual(value.permissions, { contents: "read" });
   assert.doesNotMatch(source, /CLOUDFLARE_API_TOKEN|HASH_SALT|environment:\s*production/);
   const names = value.jobs.validate.steps.map((step) => step.name);
-  for (const required of ["Validate resource content", "Generate deterministic catalogs", "Check featured and maintainer-review security policy", "Lint root application and scripts", "Typecheck root application", "Run all root tests", "Build static export", "Run Worker lint, typecheck and tests", "Build Worker deployment bundle without upload", "Run Discovery lint, typecheck and tests", "Build Discovery deployment bundle without upload"]) {
+  for (const required of ["Validate resource content", "Generate deterministic catalogs", "Lint root application and scripts", "Typecheck root application", "Run all root tests", "Build static export", "Run Worker lint, typecheck and tests", "Build Worker deployment bundle without upload", "Run Discovery lint, typecheck and tests", "Build Discovery deployment bundle without upload"]) {
     assert.ok(names.includes(required), required);
   }
   assert.match(source, /yarn-1\.22\.19\.cjs install --frozen-lockfile/);

@@ -361,7 +361,13 @@ export async function validateCatalog(options = {}) {
     try {
       validateMarkdown(await readFile(readmePath, "utf8"), resourceId, readmePath, errors, projectRoot);
     } catch (error) {
-      if (error.code !== "ENOENT") errors.push(validationMessage(resourceId, readmePath, "$", `README 无法读取：${error.message}`, projectRoot));
+      errors.push(validationMessage(
+        resourceId,
+        readmePath,
+        "$",
+        error.code === "ENOENT" ? "每个资源都必须提供 README.md" : `README 无法读取：${error.message}`,
+        projectRoot,
+      ));
     }
     resources.push({ ...resource, directory: resourceDirectory, resourceFile, readmePath });
   }

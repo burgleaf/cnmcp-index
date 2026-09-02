@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { ResourceDetail } from "@/components/resource-detail";
-import { getAllPlatforms, getAllResources, getResourceById } from "@/lib/catalog";
+import { getAllResources, getResourceById } from "@/lib/catalog";
 import {
   createResourceJsonLd,
   createResourceMetadata,
@@ -35,8 +35,7 @@ export default async function ResourceDetailPage({
   const { id } = await params;
   const resource = getResourceById(id);
   if (!resource) notFound();
-  const platforms = getAllPlatforms();
-  const jsonLd = createResourceJsonLd(resource, platforms);
+  const jsonLd = createResourceJsonLd(resource);
 
   return (
     <>
@@ -44,7 +43,7 @@ export default async function ResourceDetailPage({
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
         type="application/ld+json"
       />
-      <ResourceDetail platforms={platforms} resource={resource} />
+      <ResourceDetail resource={resource} />
     </>
   );
 }

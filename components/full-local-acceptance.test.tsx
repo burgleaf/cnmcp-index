@@ -5,7 +5,6 @@ import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/re
 import {
   fullAcceptanceCatalog,
   fullAcceptanceMcp,
-  fullAcceptancePlatforms,
 } from "@/test/fixtures/full-acceptance";
 
 import { ResourceDetail } from "./resource-detail";
@@ -106,15 +105,14 @@ describe("9.1 本地跨层验收", () => {
     global.fetch = fetchMock as unknown as typeof fetch;
     const writeText = jest.fn().mockResolvedValue(undefined);
     setClipboard(writeText);
-    render(<ResourceDetail platforms={fullAcceptancePlatforms} resource={fullAcceptanceMcp} />);
+    render(<ResourceDetail resource={fullAcceptanceMcp} />);
 
     await waitFor(() => expect(screen.getByLabelText("统计数据可用")).toBeTruthy());
-    fireEvent.click(screen.getByRole("button", { name: "复制 AI 安装提示词" }));
-    await waitFor(() => expect(screen.getByRole("status").textContent).toContain("提示词已复制"));
-    expect(writeText.mock.calls[0][0]).toContain(fullAcceptanceMcp.repository);
-    expect(writeText.mock.calls[0][0]).toContain("先阅读源码仓库和官方安装文档");
+    fireEvent.click(screen.getByRole("button", { name: "复制安装内容" }));
+    await waitFor(() => expect(screen.getByRole("status").textContent).toContain("安装内容已复制"));
+    expect(writeText.mock.calls[0][0]).toBe("acceptance-mcp install --token {{TOKEN_VALUE}}");
 
-    for (const name of ["源码仓库", "官方网站", "使用文档"]) {
+    for (const name of ["查看源代码 ↗", "访问官网 ↗", "阅读使用文档 ↗"]) {
       const link = screen.getByRole("link", { name });
       expect(link.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }))).toBe(true);
     }
@@ -131,20 +129,20 @@ describe("9.1 本地跨层验收", () => {
     global.fetch = fetchMock as unknown as typeof fetch;
     const writeText = jest.fn().mockResolvedValue(undefined);
     setClipboard(writeText);
-    render(<ResourceDetail platforms={fullAcceptancePlatforms} resource={fullAcceptanceMcp} />);
+    render(<ResourceDetail resource={fullAcceptanceMcp} />);
 
     await waitFor(() => expect(screen.getByText(/统计服务暂不可用/)).toBeTruthy());
     expect(screen.getByRole("heading", { name: "验收 MCP" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "复制 AI 安装提示词" }));
+    expect(screen.getByRole("button", { name: "复制安装内容" }));
 
-    fireEvent.click(screen.getByRole("button", { name: "复制 AI 安装提示词" }));
-    await waitFor(() => expect(screen.getByRole("status").textContent).toContain("提示词已复制"));
+    fireEvent.click(screen.getByRole("button", { name: "复制安装内容" }));
+    await waitFor(() => expect(screen.getByRole("status").textContent).toContain("安装内容已复制"));
     expect(writeText).toHaveBeenCalledTimes(1);
 
     for (const [name, href] of [
-      ["源码仓库", fullAcceptanceMcp.repository],
-      ["官方网站", fullAcceptanceMcp.homepage],
-      ["使用文档", fullAcceptanceMcp.documentation],
+      ["查看源代码 ↗", fullAcceptanceMcp.repository],
+      ["访问官网 ↗", fullAcceptanceMcp.homepage],
+      ["阅读使用文档 ↗", fullAcceptanceMcp.documentation],
     ] as const) {
       const link = screen.getByRole("link", { name });
       expect(link.getAttribute("href")).toBe(href);
@@ -158,13 +156,13 @@ describe("9.1 本地跨层验收", () => {
     const fetchMock = jest.fn(normalWorkerFetch);
     global.fetch = fetchMock as unknown as typeof fetch;
     setClipboard(jest.fn().mockRejectedValue(new Error("clipboard denied")));
-    render(<ResourceDetail platforms={fullAcceptancePlatforms} resource={fullAcceptanceMcp} />);
+    render(<ResourceDetail resource={fullAcceptanceMcp} />);
 
     await waitFor(() => expect(screen.getByLabelText("统计数据可用")).toBeTruthy());
-    fireEvent.click(screen.getByRole("button", { name: "复制 AI 安装提示词" }));
+    fireEvent.click(screen.getByRole("button", { name: "复制安装内容" }));
     await waitFor(() => expect(screen.getByRole("alert").textContent).toContain("剪贴板不可用"));
-    expect((screen.getByLabelText("AI 安装提示词") as HTMLTextAreaElement).value)
-      .toContain(fullAcceptanceMcp.repository);
+    expect((screen.getByLabelText("安装内容") as HTMLTextAreaElement).value)
+      .toContain("acceptance-mcp install");
     expect(eventBodies(fetchMock).filter((event) => event.eventType === "command_copy")).toHaveLength(0);
   });
 });
