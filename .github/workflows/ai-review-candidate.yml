@@ -27,7 +27,7 @@ jobs:
   review:
     if: github.event_name == 'workflow_dispatch' || github.event.label.name == 'ai-review'
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 10
     steps:
       - name: Checkout default branch
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -51,11 +51,11 @@ jobs:
         env:
           AI_REVIEW_ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
           AI_REVIEW_FORCE: ${{ inputs.force || false }}
-          AI_REVIEW_TIMEOUT_MS: "60000"
+          AI_REVIEW_TIMEOUT_MS: "180000"
           AI_REVIEW_MAX_TOKENS: "3000"
-          AI_REVIEW_MAX_ATTEMPTS: "3"
+          AI_REVIEW_MAX_ATTEMPTS: "2"
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           DEEPSEEK_BASE_URL: https://api.deepseek.com
-          DEEPSEEK_MODEL: deepseek-v4-pro
+          DEEPSEEK_MODEL: deepseek-v4-flash
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/ai-review-candidate.mjs

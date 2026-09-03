@@ -7,7 +7,7 @@
 1. 解析并规范化候选 GitHub 仓库地址。
 2. 读取 GitHub 仓库元数据、README 和许可证，且限制来源、内容长度、跳转和请求范围。
 3. 在调用模型前按 Catalog 仓库地址进行确定性查重。
-4. 使用 DeepSeek V4 Pro 的 OpenAI Chat Completions 格式生成 JSON 审核报告。
+4. 使用 DeepSeek V4 Flash 的 OpenAI Chat Completions 格式生成 JSON 审核报告。
 5. 校验报告 Schema、候选身份、事实来源和兼容性证据。
 6. 创建或更新同一条 Issue 评论；不会创建 PR、运行上游代码或修改 Catalog。
 
@@ -22,10 +22,10 @@
 工作流内固定以下非敏感配置：
 
 - `DEEPSEEK_BASE_URL=https://api.deepseek.com`
-- `DEEPSEEK_MODEL=deepseek-v4-pro`
-- 单次最长 60 秒、最多 3 次尝试、最多 3000 输出 token。
+- `DEEPSEEK_MODEL=deepseek-v4-flash`
+- 单次最长 180 秒、最多 2 次尝试、最多 3000 输出 token；工作流任务最长运行 10 分钟。
 
-如需降低成本，可把工作流中的模型切换为 `deepseek-v4-flash`。应用层只接受官方 V4 文本模型标识和官方 HTTPS Base URL。
+应用层只接受官方 V4 文本模型标识和官方 HTTPS Base URL，且拒绝超过 180 秒的单次请求超时配置。
 
 ## 人工操作
 

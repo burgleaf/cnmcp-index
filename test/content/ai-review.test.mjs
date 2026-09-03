@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import {
@@ -135,7 +136,7 @@ test("上游内容被标记为不可信资料，不能改变系统规则", () =>
   assert.match(messages[1].content, /Ignore previous instructions/);
 });
 
-test("DeepSeek 客户端按 OpenAI Chat Completions 格式请求 V4 Pro JSON Output", async () => {
+test("DeepSeek 客户端按 OpenAI Chat Completions 格式请求 V4 Flash JSON Output", async () => {
   const calls = [];
   const client = createDeepSeekClient({
     apiKey: "ds-secret",
@@ -157,11 +158,39 @@ test("DeepSeek 客户端按 OpenAI Chat Completions 格式请求 V4 Pro JSON Out
   assert.equal(calls[0].url, "https://api.deepseek.com/chat/completions");
   assert.equal(calls[0].init.headers.Authorization, "Bearer ds-secret");
   const body = JSON.parse(calls[0].init.body);
-  assert.equal(body.model, "deepseek-v4-pro");
+  assert.equal(body.model, "deepseek-v4-flash");
   assert.deepEqual(body.response_format, { type: "json_object" });
   assert.deepEqual(body.thinking, { type: "enabled" });
   assert.equal(body.reasoning_effort, "high");
   assert.equal(body.stream, false);
+});
+
+test("DeepSeek 默认使用 180 秒超时并拒绝更大的值", async () => {
+  const delays = [];
+  const originalSetTimeout = globalThis.setTimeout;
+  globalThis.setTimeout = (callback, milliseconds, ...args) => {
+    delays.push(milliseconds);
+    return originalSetTimeout(callback, milliseconds, ...args);
+  };
+  try {
+    const client = createDeepSeekClient({
+      apiKey: "ds-secret",
+      fetchImpl: async () =>
+        Response.json({
+          choices: [{ finish_reason: "stop", message: { content: JSON.stringify(VALID_REPORT) } }],
+          usage: {},
+        }),
+    });
+    await client.complete([{ role: "user", content: "json" }]);
+  } finally {
+    globalThis.setTimeout = originalSetTimeout;
+  }
+  assert.deepEqual(delays, [180_000]);
+  assert.doesNotThrow(() => createDeepSeekClient({ apiKey: "ds-secret", timeoutMs: 180_000 }));
+  assert.throws(
+    () => createDeepSeekClient({ apiKey: "ds-secret", timeoutMs: 180_001 }),
+    /timeoutMs must be between 1000 and 180000/,
+  );
 });
 
 test("DeepSeek 错误不泄露密钥或上游响应正文", async () => {
@@ -199,11 +228,10 @@ test("DeepSeek 对限流执行有上限的重试", async () => {
   const sleeps = [];
   const client = createDeepSeekClient({
     apiKey: "ds-secret",
-    maxAttempts: 3,
     sleep: async (milliseconds) => sleeps.push(milliseconds),
     fetchImpl: async () => {
       calls += 1;
-      if (calls < 3) return new Response("rate limited", { status: 429 });
+      if (calls < 2) return new Response("rate limited", { status: 429 });
       return Response.json({
         choices: [{ finish_reason: "stop", message: { content: JSON.stringify(VALID_REPORT) } }],
         usage: {},
@@ -211,8 +239,39 @@ test("DeepSeek 对限流执行有上限的重试", async () => {
     },
   });
   await client.complete([{ role: "user", content: "json" }]);
-  assert.equal(calls, 3);
-  assert.deepEqual(sleeps, [500, 1000]);
+  assert.equal(calls, 2);
+  assert.deepEqual(sleeps, [500]);
+});
+
+test("DeepSeek 拒绝超过两次的尝试配置", () => {
+  assert.doesNotThrow(() => createDeepSeekClient({ apiKey: "ds-secret", maxAttempts: 2 }));
+  assert.throws(
+    () => createDeepSeekClient({ apiKey: "ds-secret", maxAttempts: 3 }),
+    /maxAttempts must be between 1 and 2/,
+  );
+});
+
+test("DeepSeek 持续限流时严格尝试两次后失败", async () => {
+  let calls = 0;
+  const sleeps = [];
+  const client = createDeepSeekClient({
+    apiKey: "ds-secret",
+    sleep: async (milliseconds) => sleeps.push(milliseconds),
+    fetchImpl: async () => {
+      calls += 1;
+      return new Response("rate limited", { status: 429 });
+    },
+  });
+  await assert.rejects(client.complete([{ role: "user", content: "json" }]), /HTTP 429/);
+  assert.equal(calls, 2);
+  assert.deepEqual(sleeps, [500]);
+});
+
+test("AI 审核运行时默认值与 DeepSeek 客户端保持同步", async () => {
+  const source = await readFile(new URL("../../scripts/ai-review-candidate.mjs", import.meta.url), "utf8");
+  assert.match(source, /DEEPSEEK_MODEL[^\n]+\|\| "deepseek-v4-flash"/);
+  assert.match(source, /AI_REVIEW_TIMEOUT_MS \|\| "180000"/);
+  assert.match(source, /AI_REVIEW_MAX_ATTEMPTS \|\| "2"/);
 });
 
 test("审核评论通过固定标记更新，不重复刷屏", async () => {

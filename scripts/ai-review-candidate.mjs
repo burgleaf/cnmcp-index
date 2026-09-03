@@ -50,7 +50,7 @@ export async function runCandidateReview({ fetchImpl = globalThis.fetch, now = (
   const githubToken = required("GITHUB_TOKEN");
   const catalogRepository = required("GITHUB_REPOSITORY");
   const number = issueNumber();
-  const model = process.env.DEEPSEEK_MODEL?.trim() || "deepseek-v4-pro";
+  const model = process.env.DEEPSEEK_MODEL?.trim() || "deepseek-v4-flash";
   const issue = await getIssue({ fetchImpl, token: githubToken, repository: catalogRepository, issueNumber: number });
   const candidate = parseCandidateIssue(issue.body);
   const sources = await readCandidateSources({ fetchImpl, token: githubToken, repoFullName: candidate.repoFullName });
@@ -84,9 +84,9 @@ export async function runCandidateReview({ fetchImpl = globalThis.fetch, now = (
       baseUrl: process.env.DEEPSEEK_BASE_URL?.trim() || "https://api.deepseek.com",
       model,
       fetchImpl,
-      timeoutMs: Number.parseInt(process.env.AI_REVIEW_TIMEOUT_MS || "60000", 10),
+      timeoutMs: Number.parseInt(process.env.AI_REVIEW_TIMEOUT_MS || "180000", 10),
       maxTokens: Number.parseInt(process.env.AI_REVIEW_MAX_TOKENS || "3000", 10),
-      maxAttempts: Number.parseInt(process.env.AI_REVIEW_MAX_ATTEMPTS || "3", 10),
+      maxAttempts: Number.parseInt(process.env.AI_REVIEW_MAX_ATTEMPTS || "2", 10),
     });
     const result = await client.complete(buildReviewMessages({ candidate, ...sources }));
     const report = validateReviewReport(result.report);

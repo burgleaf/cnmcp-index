@@ -1,5 +1,5 @@
 const DEFAULT_BASE_URL = "https://api.deepseek.com";
-const DEFAULT_MODEL = "deepseek-v4-pro";
+const DEFAULT_MODEL = "deepseek-v4-flash";
 
 function sanitizedError(message) {
   return new Error(`DeepSeek request failed: ${message}`);
@@ -10,18 +10,18 @@ export function createDeepSeekClient({
   baseUrl = DEFAULT_BASE_URL,
   model = DEFAULT_MODEL,
   fetchImpl = globalThis.fetch,
-  timeoutMs = 60_000,
+  timeoutMs = 180_000,
   maxTokens = 3_000,
-  maxAttempts = 1,
+  maxAttempts = 2,
   sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds)),
 } = {}) {
   if (!apiKey) throw new Error("DEEPSEEK_API_KEY is required");
   const normalizedBaseUrl = String(baseUrl).replace(/\/+$/, "");
   if (normalizedBaseUrl !== DEFAULT_BASE_URL) throw new Error("DEEPSEEK_BASE_URL must be https://api.deepseek.com");
   if (!/^deepseek-v4-(?:pro|flash)$/.test(model)) throw new Error("DEEPSEEK_MODEL must be a supported DeepSeek V4 text model");
-  if (!Number.isInteger(timeoutMs) || timeoutMs < 1_000 || timeoutMs > 120_000) throw new Error("timeoutMs must be between 1000 and 120000");
+  if (!Number.isInteger(timeoutMs) || timeoutMs < 1_000 || timeoutMs > 180_000) throw new Error("timeoutMs must be between 1000 and 180000");
   if (!Number.isInteger(maxTokens) || maxTokens < 500 || maxTokens > 8_000) throw new Error("maxTokens must be between 500 and 8000");
-  if (!Number.isInteger(maxAttempts) || maxAttempts < 1 || maxAttempts > 3) throw new Error("maxAttempts must be between 1 and 3");
+  if (!Number.isInteger(maxAttempts) || maxAttempts < 1 || maxAttempts > 2) throw new Error("maxAttempts must be between 1 and 2");
 
   return {
     model,

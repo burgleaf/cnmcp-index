@@ -114,7 +114,11 @@ test("AI 审核只由标签或手动入口触发，并使用最小 Issue 权限�
   assert.ok(value.on.workflow_dispatch);
   assert.match(source, /github\.event\.label\.name == 'ai-review'/);
   assert.match(source, /secrets\.DEEPSEEK_API_KEY/);
-  assert.match(source, /DEEPSEEK_MODEL: deepseek-v4-pro/);
+  assert.equal(value.jobs.review["timeout-minutes"], 10);
+  const reviewStep = value.jobs.review.steps.find((step) => step.name === "Review candidate and update Issue report");
+  assert.equal(reviewStep.env.AI_REVIEW_TIMEOUT_MS, "180000");
+  assert.equal(reviewStep.env.AI_REVIEW_MAX_ATTEMPTS, "2");
+  assert.equal(reviewStep.env.DEEPSEEK_MODEL, "deepseek-v4-flash");
   assert.match(source, /DEEPSEEK_BASE_URL: https:\/\/api\.deepseek\.com/);
   assert.doesNotMatch(source, /pull-requests:\s*write|contents:\s*write|DEEPSEEK_API_KEY:\s*deepseek/);
 });
