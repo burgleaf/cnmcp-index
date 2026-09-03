@@ -1,8 +1,16 @@
 const DEFAULT_BASE_URL = "https://api.deepseek.com";
 const DEFAULT_MODEL = "deepseek-v4-flash";
 
-function sanitizedError(message) {
-  return new Error(`DeepSeek request failed: ${message}`);
+class DeepSeekRequestError extends Error {
+  constructor(message, { retryable = false } = {}) {
+    super(`DeepSeek request failed: ${message}`);
+    this.name = "DeepSeekRequestError";
+    this.retryable = retryable;
+  }
+}
+
+function sanitizedError(message, options) {
+  return new DeepSeekRequestError(message, options);
 }
 
 export function createDeepSeekClient({
@@ -11,7 +19,7 @@ export function createDeepSeekClient({
   model = DEFAULT_MODEL,
   fetchImpl = globalThis.fetch,
   timeoutMs = 180_000,
-  maxTokens = 3_000,
+  maxTokens = 6_000,
   maxAttempts = 2,
   sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds)),
 } = {}) {
@@ -41,8 +49,7 @@ export function createDeepSeekClient({
               model,
               messages,
               response_format: { type: "json_object" },
-              thinking: { type: "enabled" },
-              reasoning_effort: "high",
+              thinking: { type: "disabled" },
               max_tokens: maxTokens,
               stream: false,
             }),
@@ -50,13 +57,15 @@ export function createDeepSeekClient({
           });
           if (!response.ok) {
             const retryable = response.status === 429 || response.status >= 500;
-            if (retryable && attempt < maxAttempts) {
-              await sleep(500 * 2 ** (attempt - 1));
-              continue;
-            }
-            throw sanitizedError(`HTTP ${response.status}`);
+            throw sanitizedError(`HTTP ${response.status}`, { retryable });
           }
-          const payload = await response.json();
+          const responseBody = await response.text();
+          let payload;
+          try {
+            payload = JSON.parse(responseBody);
+          } catch {
+            throw sanitizedError("invalid JSON response");
+          }
           const choice = payload?.choices?.[0];
           if (choice?.finish_reason === "length") throw sanitizedError("JSON output was truncated");
           const content = choice?.message?.content;
@@ -79,11 +88,11 @@ export function createDeepSeekClient({
         } catch (error) {
           lastError =
             error?.name === "AbortError"
-              ? sanitizedError("timeout")
-              : error instanceof Error && error.message.startsWith("DeepSeek request failed:")
+              ? sanitizedError("timeout", { retryable: true })
+              : error instanceof DeepSeekRequestError
                 ? error
-                : sanitizedError("network error");
-          if (attempt < maxAttempts && !String(lastError?.message).includes("HTTP 4")) {
+                : sanitizedError("network error", { retryable: true });
+          if (attempt < maxAttempts && lastError.retryable) {
             await sleep(500 * 2 ** (attempt - 1));
             continue;
           }

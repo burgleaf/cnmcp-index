@@ -52,7 +52,7 @@ jobs:
           AI_REVIEW_ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
           AI_REVIEW_FORCE: ${{ inputs.force || false }}
           AI_REVIEW_TIMEOUT_MS: "180000"
-          AI_REVIEW_MAX_TOKENS: "3000"
+          AI_REVIEW_MAX_TOKENS: "6000"
           AI_REVIEW_MAX_ATTEMPTS: "2"
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           DEEPSEEK_BASE_URL: https://api.deepseek.com

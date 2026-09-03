@@ -85,7 +85,7 @@ export async function runCandidateReview({ fetchImpl = globalThis.fetch, now = (
       model,
       fetchImpl,
       timeoutMs: Number.parseInt(process.env.AI_REVIEW_TIMEOUT_MS || "180000", 10),
-      maxTokens: Number.parseInt(process.env.AI_REVIEW_MAX_TOKENS || "3000", 10),
+      maxTokens: Number.parseInt(process.env.AI_REVIEW_MAX_TOKENS || "6000", 10),
       maxAttempts: Number.parseInt(process.env.AI_REVIEW_MAX_ATTEMPTS || "2", 10),
     });
     const result = await client.complete(buildReviewMessages({ candidate, ...sources }));

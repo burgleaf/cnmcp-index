@@ -117,6 +117,7 @@ test("AI 审核只由标签或手动入口触发，并使用最小 Issue 权限�
   assert.equal(value.jobs.review["timeout-minutes"], 10);
   const reviewStep = value.jobs.review.steps.find((step) => step.name === "Review candidate and update Issue report");
   assert.equal(reviewStep.env.AI_REVIEW_TIMEOUT_MS, "180000");
+  assert.equal(reviewStep.env.AI_REVIEW_MAX_TOKENS, "6000");
   assert.equal(reviewStep.env.AI_REVIEW_MAX_ATTEMPTS, "2");
   assert.equal(reviewStep.env.DEEPSEEK_MODEL, "deepseek-v4-flash");
   assert.match(source, /DEEPSEEK_BASE_URL: https:\/\/api\.deepseek\.com/);

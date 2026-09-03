@@ -23,7 +23,7 @@
 
 - `DEEPSEEK_BASE_URL=https://api.deepseek.com`
 - `DEEPSEEK_MODEL=deepseek-v4-flash`
-- 单次最长 180 秒、最多 2 次尝试、最多 3000 输出 token；工作流任务最长运行 10 分钟。
+- 使用非思考模式，单次最长 180 秒、最多 2 次尝试、最多 6000 输出 token；工作流任务最长运行 10 分钟。
 
 应用层只接受官方 V4 文本模型标识和官方 HTTPS Base URL，且拒绝超过 180 秒的单次请求超时配置。
 
@@ -51,6 +51,6 @@
 
 ## 失败处理
 
-超时、限流、非法 JSON、Schema 错误或身份不一致都会令任务失败，并且不会写入半成品评论。先查看 Actions 的结构化错误类型；不要把密钥、完整提示或未清洗的上游内容复制到公开 Issue。
+超时、限流、非法 JSON、Schema 错误或身份不一致都会令任务失败，并且不会写入半成品评论。客户端仅对限流、服务端错误、网络错误和超时进行重试；输出被截断、非法 JSON 或空输出会立即失败，避免重复产生同类无效结果。先查看 Actions 的结构化错误类型；不要把密钥、完整提示或未清洗的上游内容复制到公开 Issue。
 
 DeepSeek 的接口依据：[Chat Completions](https://api-docs.deepseek.com/api/create-chat-completion/)、[JSON Output](https://api-docs.deepseek.com/zh-cn/guides/json_mode/) 和 [模型与价格](https://api-docs.deepseek.com/quick_start/pricing/)。

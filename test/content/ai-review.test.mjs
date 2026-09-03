@@ -160,8 +160,9 @@ test("DeepSeek 客户端按 OpenAI Chat Completions 格式请求 V4 Flash JSON O
   const body = JSON.parse(calls[0].init.body);
   assert.equal(body.model, "deepseek-v4-flash");
   assert.deepEqual(body.response_format, { type: "json_object" });
-  assert.deepEqual(body.thinking, { type: "enabled" });
-  assert.equal(body.reasoning_effort, "high");
+  assert.deepEqual(body.thinking, { type: "disabled" });
+  assert.equal("reasoning_effort" in body, false);
+  assert.equal(body.max_tokens, 6_000);
   assert.equal(body.stream, false);
 });
 
@@ -243,6 +244,132 @@ test("DeepSeek 对限流执行有上限的重试", async () => {
   assert.deepEqual(sleeps, [500]);
 });
 
+test("DeepSeek 输出被截断时立即失败且不重试", async () => {
+  let calls = 0;
+  const sleeps = [];
+  const client = createDeepSeekClient({
+    apiKey: "ds-secret",
+    maxAttempts: 2,
+    sleep: async (milliseconds) => sleeps.push(milliseconds),
+    fetchImpl: async () => {
+      calls += 1;
+      return Response.json({
+        choices: [{ finish_reason: "length", message: { content: '{"schemaVersion":1' } }],
+        usage: {},
+      });
+    },
+  });
+  await assert.rejects(client.complete([{ role: "user", content: "json" }]), /JSON output was truncated/);
+  assert.equal(calls, 1);
+  assert.deepEqual(sleeps, []);
+});
+
+test("DeepSeek 非法或空模型输出立即失败且不重试", async () => {
+  const responses = [
+    () => Response.json({ choices: [{ finish_reason: "stop", message: { content: "not json" } }] }),
+    () => Response.json({ choices: [{ finish_reason: "stop", message: { content: "  " } }] }),
+    () => new Response("not a provider JSON response", { status: 200 }),
+  ];
+  for (const response of responses) {
+    let calls = 0;
+    const sleeps = [];
+    const client = createDeepSeekClient({
+      apiKey: "ds-secret",
+      maxAttempts: 2,
+      sleep: async (milliseconds) => sleeps.push(milliseconds),
+      fetchImpl: async () => {
+        calls += 1;
+        return response();
+      },
+    });
+    await assert.rejects(client.complete([{ role: "user", content: "json" }]), (error) => {
+      assert.match(error.message, /invalid JSON|empty model output/);
+      assert.doesNotMatch(error.message, /not json|not a provider JSON response/);
+      return true;
+    });
+    assert.equal(calls, 1);
+    assert.deepEqual(sleeps, []);
+  }
+});
+
+test("DeepSeek 仅对限流、服务端、网络和超时错误重试", async () => {
+  const retryableFailures = [
+    () => new Response("rate limited", { status: 429 }),
+    () => new Response("unavailable", { status: 503 }),
+    () => {
+      throw new Error("connection reset");
+    },
+    () => {
+      const error = new Error("request aborted");
+      error.name = "AbortError";
+      throw error;
+    },
+  ];
+  for (const fail of retryableFailures) {
+    let calls = 0;
+    const sleeps = [];
+    const client = createDeepSeekClient({
+      apiKey: "ds-secret",
+      maxAttempts: 2,
+      sleep: async (milliseconds) => sleeps.push(milliseconds),
+      fetchImpl: async () => {
+        calls += 1;
+        if (calls === 1) return fail();
+        return Response.json({
+          choices: [{ finish_reason: "stop", message: { content: JSON.stringify(VALID_REPORT) } }],
+          usage: {},
+        });
+      },
+    });
+    await client.complete([{ role: "user", content: "json" }]);
+    assert.equal(calls, 2);
+    assert.deepEqual(sleeps, [500]);
+  }
+});
+
+test("DeepSeek 读取响应正文时的超时或网络错误会重试", async () => {
+  const bodyReadFailures = [
+    () => {
+      const error = new Error("body read aborted");
+      error.name = "AbortError";
+      return error;
+    },
+    () => new TypeError("terminated while reading body"),
+  ];
+  for (const createFailure of bodyReadFailures) {
+    let calls = 0;
+    const sleeps = [];
+    const client = createDeepSeekClient({
+      apiKey: "ds-secret",
+      maxAttempts: 2,
+      sleep: async (milliseconds) => sleeps.push(milliseconds),
+      fetchImpl: async () => {
+        calls += 1;
+        if (calls === 1) {
+          return {
+            ok: true,
+            status: 200,
+            text: async () => {
+              throw createFailure();
+            },
+            json: async () => {
+              throw createFailure();
+            },
+          };
+        }
+        return Response.json({
+          choices: [{ finish_reason: "stop", message: { content: JSON.stringify(VALID_REPORT) } }],
+          usage: {},
+        });
+      },
+    });
+    const result = await client.complete([{ role: "user", content: "json" }]);
+    assert.deepEqual(result.report, VALID_REPORT);
+    assert.equal(calls, 2);
+    assert.deepEqual(sleeps, [500]);
+  }
+});
+
 test("DeepSeek 拒绝超过两次的尝试配置", () => {
   assert.doesNotThrow(() => createDeepSeekClient({ apiKey: "ds-secret", maxAttempts: 2 }));
   assert.throws(
@@ -271,6 +398,7 @@ test("AI 审核运行时默认值与 DeepSeek 客户端保持同步", async () =
   const source = await readFile(new URL("../../scripts/ai-review-candidate.mjs", import.meta.url), "utf8");
   assert.match(source, /DEEPSEEK_MODEL[^\n]+\|\| "deepseek-v4-flash"/);
   assert.match(source, /AI_REVIEW_TIMEOUT_MS \|\| "180000"/);
+  assert.match(source, /AI_REVIEW_MAX_TOKENS \|\| "6000"/);
   assert.match(source, /AI_REVIEW_MAX_ATTEMPTS \|\| "2"/);
 });
 
