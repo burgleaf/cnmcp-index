@@ -118,3 +118,12 @@ test("AI 审核只由标签或手动入口触发，并使用最小 Issue 权限�
   assert.match(source, /DEEPSEEK_BASE_URL: https:\/\/api\.deepseek\.com/);
   assert.doesNotMatch(source, /pull-requests:\s*write|contents:\s*write|DEEPSEEK_API_KEY:\s*deepseek/);
 });
+
+test("AI 审核在锁定安装后、审核候选前生成 deterministic catalog", async () => {
+  const { value } = await workflow("ai-review-candidate.yml");
+  const ordered = ["Install locked dependencies", "Generate deterministic catalogs", "Review candidate and update Issue report"];
+  const indexes = ordered.map((name) => stepIndex(value, "review", name));
+  assert.ok(indexes.every((index) => index >= 0));
+  assert.deepEqual(indexes, [...indexes].sort((a, b) => a - b));
+  assert.equal(value.jobs.review.steps[indexes[1]].run, "node .yarn/releases/yarn-1.22.19.cjs generate:catalog");
+});
